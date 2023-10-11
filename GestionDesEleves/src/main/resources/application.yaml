@@ -1,0 +1,44 @@
+# OpenAPI
+springdoc:
+  swagger-ui.path: /openapi/swagger-ui.html
+  api-docs.path: /openapi/v3/api-docs
+  packagesToScan: ml.kalanblow.gestiondesinscriptions
+  pathsToMatch: /**
+api:
+  common:
+    version: 1.0.0
+    title: Kalanblow Rest API gestion des élèves.
+    description: Description de l'API...
+    termsOfService: Gestion des Elèves
+    licence: " MIT license"
+    licenseUrl: "https://github.com/"
+    externalDocDesc: "Gestion des Elèves"
+    externalDocUrl: "https://github.com/"
+    contact:
+      name: "Kalanblow"
+      url: "https://github.com/"
+      email: contact@email.com
+
+responseCodes:
+  ok.description: OK
+  badRequest.description: Bad Request, invalid format of the request. See response message for more information
+  notFound.description: Not found, the specified id does not exist
+  unprocessableEntity.description: Unprocessable entity, input parameters caused the processing to fail. See response message for more information
+
+kalanblow-getion-eleve:
+  get-kalanblow-getion-eleve:
+    description: Returns a composite view of the specified product id
+    notes: |
+    # Normal response If the requested product id is found, the method will return information regarding:1. Gestion Inscription des élèves
+
+    # Expected partial and error responses In the following cases, only a partial response will be created (used to simplify testing of error conditions):
+
+      ## Eleve id 113 200 - Ok, but no recommendations will be returned
+
+     ## Eleve id 213 200 - Ok, but no reviews will be returned
+
+      ## Non-numerical eleve id 400 - A **Bad Request** error will be returned
+
+     ## Eleve id 13 404 - A **Not Found** error will be returned
+
+     ## Negative product ids 422 - An **Unprocessable Entity** error will be returned

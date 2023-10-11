@@ -1,18 +1,27 @@
 package ml.kalanblow.gestiondesinscriptions.config;
 
 
+import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
+import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
@@ -25,6 +34,39 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 @EnableWebMvc
 @Configuration
 public class KaladewnConfig implements WebMvcConfigurer {
+
+    @Value("${api.common.version}")
+    String apiVersion;
+
+    @Value("${api.common.title}")
+    String apiTitle;
+
+    @Value("${api.common.description}")
+    String apiDescription;
+
+    @Value("${api.common.termsOfService}")
+    String apiTermsOfService;
+
+    @Value("${api.common.licence}")
+    String apiLicense;
+
+    @Value("${api.common.licenseUrl}")
+    String apiLicenseUrl;
+
+    @Value("${api.common.externalDocDesc}")
+    String apiExternalDocDesc;
+
+    @Value("${api.common.externalDocUrl}")
+    String apiExternalDocUrl;
+
+    @Value("${api.common.contact.name}")
+    String apiContactName;
+
+    @Value("${api.common.contact.url}")
+    String apiContactUrl;
+
+    @Value("${api.common.contact.email}")
+    String apiContactEmail;
 
     /**
      * Configures a Thymeleaf template resolver for SVG templates.
@@ -97,7 +139,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
     }
 
 
-
     /**
      * Configures a CommonsRequestLoggingFilter for request logging.
      *
@@ -115,4 +156,34 @@ public class KaladewnConfig implements WebMvcConfigurer {
         return loggingFilter;
     }
 
+    /**
+     * @return new OpenAPI
+     */
+    @Bean
+    public OpenAPI getOpenApiDocumentation() {
+
+        return new OpenAPI().info(new Info().title(apiTitle).description(apiDescription)
+                .version(apiVersion).contact(new Contact().name(apiContactName).url(apiContactUrl))
+                .termsOfService(apiTermsOfService).license(new License().name(apiLicense).url(apiLicenseUrl))).externalDocs(new ExternalDocumentation().description(apiDescription).url(apiExternalDocUrl));
+
+    }
+
+    /**
+     * @return new RestTemple
+     */
+    @Bean
+    RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    /**
+     * @return
+     */
+    @Bean
+    public HttpExchangeRepository httpTraceRepository() {
+        return new InMemoryHttpExchangeRepository();
+
+    }
+
 }
+

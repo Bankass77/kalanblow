@@ -1,6 +1,9 @@
 package ml.kalanblow.gestiondesinscriptions.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
@@ -26,6 +29,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/eleves")
+@Tag(name = "Eleve", description = "Rest API pour décrire les informations des élèves de Kalanblow.")
 public class EleveController {
 
     private final EleveService eleveService;
@@ -35,6 +39,7 @@ public class EleveController {
      *
      * @param userService Le service d'élèves utilisé pour effectuer les opérations.
      */
+
     public EleveController(EleveService userService) {
         this.eleveService = userService;
     }
@@ -46,6 +51,20 @@ public class EleveController {
      * @param pageable Les paramètres de pagination.
      * @return Une ResponseEntity contenant une ApiResponse avec la liste des élèves récupérée.
      */
+    @Operation(
+            summary = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.description}",
+            description = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.notes}"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description =
+                    "${api.responseCodes.ok.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description =
+                    "${api.responseCodes.badRequest.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description =
+                    "${api.responseCodes.notFound.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "422", description =
+                    "${api.responseCodes.unprocessableEntity.description}")
+    })
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<ApiResponse<Page<Eleve>>> recupererTousLesEleves(Pageable pageable) {
         try {
@@ -70,7 +89,7 @@ public class EleveController {
 
         try {
 
-           Eleve newEleve= eleveService.CreationUtilisateur(createEleveParameters);
+            Eleve newEleve = eleveService.CreationUtilisateur(createEleveParameters);
 
             return ResponseEntity.ok(new ApiResponse<Eleve>(newEleve, "Elève crée avec succès."));
 
@@ -85,6 +104,20 @@ public class EleveController {
      * @param eleveId L'ID de l'élève à obtenir.
      * @return Une ResponseEntity contenant une ApiResponse avec l'élève récupéré.
      */
+    @Operation(
+            summary = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.description}",
+            description = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.notes}"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description =
+                    "${api.responseCodes.ok.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description =
+                    "${api.responseCodes.badRequest.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description =
+                    "${api.responseCodes.notFound.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "422", description =
+                    "${api.responseCodes.unprocessableEntity.description}")
+    })
     @RequestMapping(value = "/cleIdentification/{eleveId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Eleve>> obtenirEleveParSonId(@PathVariable Long eleveId) {
         log.info("Un Elève a été  trouvé avec : eleveId={}", eleveId);
@@ -123,6 +156,21 @@ public class EleveController {
      * @param email L'email de l'élève à chercher.
      * @return Une ResponseEntity contenant une ApiResponse avec l'élève récupéré par son email.
      */
+
+    @Operation(
+            summary = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.description}",
+            description = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.notes}"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description =
+                    "${api.responseCodes.ok.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description =
+                    "${api.responseCodes.badRequest.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description =
+                    "${api.responseCodes.notFound.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "422", description =
+                    "${api.responseCodes.unprocessableEntity.description}")
+    })
     @RequestMapping(value = "/email/{email}", method = RequestMethod.GET)
     public ResponseEntity<ApiResponse<Eleve>> chercherParEmail(@PathVariable String email) {
 
@@ -146,6 +194,21 @@ public class EleveController {
      * @param telephone Le numéro de téléphone de l'élève à récupérer.
      * @return Une ResponseEntity contenant un ApiResponse contenant l'élève si trouvé avec succès, sinon une réponse 404 (Not Found).
      */
+
+    @Operation(
+            summary = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.description}",
+            description = "${api.kalanblow-getion-eleve.get-kalanblow-getion-eleve.notes}"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description =
+                    "${api.responseCodes.ok.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description =
+                    "${api.responseCodes.badRequest.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description =
+                    "${api.responseCodes.notFound.description}"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "422", description =
+                    "${api.responseCodes.unprocessableEntity.description}")
+    })
     @RequestMapping(value = "/telephone/{telephone}", method = RequestMethod.GET)
     public ResponseEntity<ApiResponse<Eleve>> recupererEleveParTelephone(@PathVariable String telephone) {
 
@@ -189,14 +252,26 @@ public class EleveController {
      * @return Une liste d'élèves correspondant aux critères de recherche, encapsulée dans une ResponseEntity contenant un ApiResponse, ou null en cas d'exception KaladewnManagementException.EntityNotFoundException.
      */
     @RequestMapping(value = "/eleve/{prenom}/{nomDeFamille}")
-    public List<Eleve> recupererEleveParPrenomNom(@PathVariable("prenom") String prenom, @PathVariable("nomDeFamille") String nomDeFamille) {
+    public ResponseEntity<ApiResponse<List<Eleve>>> recupererEleveParPrenomNom(@PathVariable("prenom") String prenom, @PathVariable("nomDeFamille") String nomDeFamille) {
         log.info("Elève trouvé avec : prenom  et nom={},{}", prenom, nomDeFamille);
         try {
-            return (List<Eleve>) ResponseEntity.ok(new ApiResponse<List<Eleve>>(eleveService.recupererEleveParPrenomEtNom(prenom, nomDeFamille), "Eleve récupéré par son prénom et nom de famille."));
+            return ResponseEntity.ok(new ApiResponse<List<Eleve>>(eleveService.recupererEleveParPrenomEtNom(prenom, nomDeFamille), "Eleve récupéré par son prénom et nom de famille."));
         } catch (KaladewnManagementException.EntityNotFoundException e) {
 
             //TODO  à finir
             return null;
         }
+    }
+
+
+    /**
+     * @param eleveId
+     * @return Une liste d'élèves correspondant aux critères de recherche, encapsulée dans une ResponseEntity contenant un ApiResponse, ou null en cas d'exception KaladewnManagementException.EntityNotFoundException.
+     */
+    @RequestMapping(value = "/supprimerEleve/{eleveId}", method = RequestMethod.DELETE)
+    public ResponseEntity<ApiResponse<List<Eleve>>> supprimerEleveParSonIdentifiant(@PathVariable long eleveId) {
+
+        eleveService.supprimerEleveParSonId(eleveId);
+        return ResponseEntity.ok(new ApiResponse<>());
     }
 }
