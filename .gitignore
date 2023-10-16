@@ -56,4 +56,9 @@ build/
 
 ### VS Code ###
 .vscode/
+### Intellij
 *.iml
+### Properties files
+*.properties
+*.yaml
+*.yml
