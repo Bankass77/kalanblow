@@ -25,9 +25,9 @@ public enum UserRole implements Serializable {
     }
 
     public static UserRole fromValue(String value) {
-        for (UserRole role : UserRole.values()) {
-            if (role.name().equalsIgnoreCase(value)) {
-                return role;
+        for (UserRole userRole : UserRole.values()) {
+            if (userRole.name().equalsIgnoreCase(value)) {
+                return userRole;
             }
         }
         throw new IllegalArgumentException("Invalid UserRole value: " + value);

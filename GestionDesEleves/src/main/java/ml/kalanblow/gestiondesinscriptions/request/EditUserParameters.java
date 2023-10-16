@@ -30,7 +30,7 @@ public non-sealed class EditUserParameters extends CreateUserParameters {
 
     public EditUserParameters(long version, UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
                               PhoneNumber phoneNumber, Address address, LocalDateTime createdDate, LocalDateTime modifyDate,
-                              Set<UserRole> roles) {
+                              Set<Role> roles) {
         super(userName, gender, maritalStatus, email, null, phoneNumber, address, createdDate, modifyDate, roles);
 
         this.version = version;

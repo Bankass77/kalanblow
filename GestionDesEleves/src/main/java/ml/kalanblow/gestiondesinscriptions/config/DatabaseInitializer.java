@@ -6,6 +6,7 @@ import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.*;
+import ml.kalanblow.gestiondesinscriptions.repository.UserRoleRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.service.EtablissementScolaireService;
@@ -35,9 +36,12 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final EleveService eleveService;
     private final EtablissementScolaireService etablissementScolaireService;
 
-    public DatabaseInitializer(EleveService eleveService, EtablissementScolaireService etablissementScolaireService) {
+    private final UserRoleRepository  userRoleRepository;
+
+    public DatabaseInitializer(EleveService eleveService, EtablissementScolaireService etablissementScolaireService,UserRoleRepository  userRoleRepository) {
         this.eleveService = eleveService;
         this.etablissementScolaireService = etablissementScolaireService;
+        this.userRoleRepository=userRoleRepository;
     }
 
     /**
@@ -85,11 +89,13 @@ public class DatabaseInitializer implements CommandLineRunner {
         String fatherLastName = name.lastName();
         String fatherFirstName = name.firstName();
         PhoneNumber fatherMobile = phoneNumber;
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.STUDENT);
+        Set<Role> roles = new HashSet<>();
+        Role role = new Role();
+        role.setUserRole(UserRole.STUDENT);
+        userRoleRepository.save(role);
+        roles.add(role);
 
-        EtablissementScolaire etablissementScolaire = new EtablissementScolaire(1L, "Mamadou Konaté", address, null
-                , email, LocalDateTime.now(), LocalDateTime.now(), phoneNumber, null);
+        EtablissementScolaire etablissementScolaire = etablissementScolaireService.trouverEtablissementScolaireParSonIdentifiant(2);
         etablissementScolaireService.creerEtablissementScolaire(etablissementScolaire);
         return new CreateEleveParameters(userName, gender, maritalStatus, email, password, phoneNumber, address,
                 createdDate, modifyDate, dateDeNaissance, age, studentIneNumber, motherFirstName, motherLastName, motherMobile,

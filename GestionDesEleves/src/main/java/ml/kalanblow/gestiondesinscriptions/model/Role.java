@@ -3,9 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.model;
 import java.io.Serializable;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 
 
@@ -14,6 +12,10 @@ import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 @Data
 @EqualsAndHashCode
 @ToString
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role implements Serializable {
 
     @Id
