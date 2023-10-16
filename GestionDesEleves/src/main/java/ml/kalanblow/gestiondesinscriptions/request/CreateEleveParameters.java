@@ -11,6 +11,7 @@ import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,6 +33,7 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
     private PhoneNumber fatherMobile;
     private Set<Role> roles;
     private EtablissementScolaire etablissementScolaire;
+    private List<AbsenceEleve> absences;
 
     /**
      * @param userName
@@ -57,7 +59,7 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
                                  String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
                                  LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, String studentIneNumber, String motherFirstName,
                                  String motherLastName, PhoneNumber motherMobile, String fatherLastName, String fatherFirstName,
-                                 PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire) {
+                                 PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire, List<AbsenceEleve> absences) {
 
         super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate, roles);
 
@@ -72,6 +74,7 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
         this.etablissementScolaire=etablissementScolaire;
         this.roles = roles;
         this.studentIneNumber=studentIneNumber;
+        this.absences=absences;
 
     }
 

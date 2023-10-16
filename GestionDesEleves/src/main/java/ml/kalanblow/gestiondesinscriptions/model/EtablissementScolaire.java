@@ -104,6 +104,11 @@ public class EtablissementScolaire {
         private LocalDateTime lastModifiedDate = LocalDateTime.now();
         private PhoneNumber phoneNumber;
 
+        private Set<Eleve> eleves;
+        private Set<Enseignant> enseignants;
+
+        private Set<SalleDeClasse> salleDeClasses;
+
         public EtablissementScolaire build(){
 
             return new EtablissementScolaire(this);

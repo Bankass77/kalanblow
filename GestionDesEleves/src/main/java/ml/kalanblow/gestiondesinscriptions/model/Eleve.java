@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Past;
@@ -60,7 +61,8 @@ public class Eleve extends User {
     @NotBlank
     @NotNull(message = "Father First Name is required")
     private String fatherFirstName;
-
+    @OneToMany(mappedBy = "eleve")
+    private List<AbsenceEleve> absences;
 
     @ManyToOne
     @JoinColumn(name = "etablisementScolaireId")
@@ -68,13 +70,15 @@ public class Eleve extends User {
 
     private Eleve(EleveBuilder eleveBuilder) {
 
-        this.ineNumber = builder().ineNumber;
-        this.dateDeNaissance = builder().dateDeNaissance;
-        this.age = builder().age;
-        this.motherFirstName = builder().motherFirstName;
-        this.motherLastName = builder().motherLastName;
-        this.fatherFirstName = builder().fatherLastName;
-        this.fatherLastName = builder().fatherLastName;
+        this.ineNumber = eleveBuilder.ineNumber;
+        this.dateDeNaissance = eleveBuilder.dateDeNaissance;
+        this.age = eleveBuilder.age;
+        this.motherFirstName = eleveBuilder.motherFirstName;
+        this.motherLastName = eleveBuilder.motherLastName;
+        this.fatherFirstName = eleveBuilder.fatherLastName;
+        this.fatherLastName = eleveBuilder.fatherLastName;
+        this.etablissementScolaire=eleveBuilder.etablissementScolaire;
+        this.absences=eleveBuilder.absences;
     }
 
 
@@ -90,6 +94,8 @@ public class Eleve extends User {
         private String motherLastName;
         private String fatherFirstName;
         private String fatherLastName;
+        private EtablissementScolaire etablissementScolaire;
+        private List<AbsenceEleve> absences;
         public Eleve build() {
             return new Eleve(this);
         }

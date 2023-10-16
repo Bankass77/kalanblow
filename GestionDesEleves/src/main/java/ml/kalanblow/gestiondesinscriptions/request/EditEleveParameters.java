@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,10 +33,10 @@ public final class EditEleveParameters extends CreateEleveParameters {
                                Email email, String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
                                LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, String studentIneNumber, String motherFirstName,
                                String motherLastName, PhoneNumber motherMobile, String fatherLastName, String fatherFirstName,
-                               PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire) {
+                               PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire,List<AbsenceEleve> absences) {
         super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate, dateDeNaissance,
                 age, studentIneNumber, motherFirstName, motherLastName, motherMobile, fatherLastName, fatherFirstName,
-                fatherMobile, roles, etablissementScolaire);
+                fatherMobile, roles, etablissementScolaire, absences);
 
         this.version = version;
 
@@ -56,7 +57,7 @@ public final class EditEleveParameters extends CreateEleveParameters {
         eleve.setEtablissementScolaire(getEtablissementScolaire());
         eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
-
+        eleve.setAbsences(getAbsences());
         eleve.setFatherFirstName(getFatherFirstName());
         eleve.setFatherLastName(getFatherLastName());
 

@@ -8,6 +8,8 @@ import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.UserRoleRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
+import ml.kalanblow.gestiondesinscriptions.request.CreateEtablissementScolaireParameters;
+import ml.kalanblow.gestiondesinscriptions.request.EditEtablissementScolaireParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.service.EtablissementScolaireService;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
@@ -21,9 +23,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @Profile("dev")
@@ -90,16 +90,19 @@ public class DatabaseInitializer implements CommandLineRunner {
         String fatherFirstName = name.firstName();
         PhoneNumber fatherMobile = phoneNumber;
         Set<Role> roles = new HashSet<>();
+        List<AbsenceEleve> absenceEleves = new ArrayList<>();
         Role role = new Role();
         role.setUserRole(UserRole.STUDENT);
         userRoleRepository.save(role);
         roles.add(role);
 
         EtablissementScolaire etablissementScolaire = etablissementScolaireService.trouverEtablissementScolaireParSonIdentifiant(2);
-        etablissementScolaireService.creerEtablissementScolaire(etablissementScolaire);
+        CreateEtablissementScolaireParameters etablissementScolaireParameters= new EditEtablissementScolaireParameters(etablissementScolaire.getNomEtablissement(),etablissementScolaire.getAddress(),etablissementScolaire.getEmail(),etablissementScolaire.getCreatedDate(),etablissementScolaire.getLastModifiedDate(),etablissementScolaire.getPhoneNumber(),etablissementScolaire.getEleves(),etablissementScolaire.getEnseignants(),etablissementScolaire.getSalleDeClasses(),null);
+
+        etablissementScolaireService.creerEtablissementScolaire(etablissementScolaireParameters);
         return new CreateEleveParameters(userName, gender, maritalStatus, email, password, phoneNumber, address,
                 createdDate, modifyDate, dateDeNaissance, age, studentIneNumber, motherFirstName, motherLastName, motherMobile,
-                fatherLastName, fatherFirstName, fatherMobile, roles, etablissementScolaire);
+                fatherLastName, fatherFirstName, fatherMobile, roles, etablissementScolaire, absenceEleves);
 
     }
 

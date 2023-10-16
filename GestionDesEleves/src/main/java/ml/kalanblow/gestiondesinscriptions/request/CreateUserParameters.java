@@ -23,7 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public sealed class CreateUserParameters permits CreateEleveParameters, EditUserParameters {
+public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, EditUserParameters {
 
     private UserName userName;
     private Gender gender;

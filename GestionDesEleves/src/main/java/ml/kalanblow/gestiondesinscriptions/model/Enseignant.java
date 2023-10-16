@@ -11,7 +11,10 @@ import jakarta.validation.constraints.Past;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @PrimaryKeyJoinColumn(name = "id")
 @DiscriminatorValue("Enseignant")
@@ -40,15 +43,39 @@ public class Enseignant extends User {
     @Column(name = "age")
     private int age;
 
+    @OneToMany(mappedBy = "enseignant")
+    private List<CoursDEnseignement> coursDEnseignements;
+
+    @ElementCollection
+    @CollectionTable(name = "disponibilites", joinColumns = @JoinColumn(name = "enseignant_id"))
+    @Column(name = "jour_semaine")
+    private List<DayOfWeek> joursDisponibles;
+
+    @Column(name = "heure_debut_disponibilite")
+    private LocalTime heureDebutDisponibilite;
+
+    @Column(name = "heure_fin_disponibilite")
+    private LocalTime heureFinDisponibilite;
+
     @ManyToOne
     @JoinColumn(name = "etablisementScolaireId")
     private EtablissementScolaire etablissementScolaire;
 
-    private Enseignant(EnseignantBuilder enseignantBuilder) {
+    @ElementCollection
+    @CollectionTable(name = "horaires_enseignant", joinColumns = @JoinColumn(name = "enseignant_id"))
+    @OrderColumn(name = "jour_semaine")
+    private List<HoraireClasse> horaireClasses;
+
+    private Enseignant(EnseignantBuider enseignantBuilder) {
         this.leMatricule = enseignantBuilder.leMatricule;
-        this.age= enseignantBuilder.age;
-        this.etablissementScolaire= enseignantBuilder.etablissementScolaire;
-        this.dateDeNaissance=enseignantBuilder.dateDeNaissance;
+        this.age = enseignantBuilder.age;
+        this.etablissementScolaire = enseignantBuilder.etablissementScolaire;
+        this.dateDeNaissance = enseignantBuilder.dateDeNaissance;
+        this.coursDEnseignements= enseignantBuilder.coursDEnseignements;
+        this.heureDebutDisponibilite= enseignantBuilder.heureDebutDisponibilite;
+        this.heureFinDisponibilite= enseignantBuilder.heureFinDisponibilite;
+        this.joursDisponibles= enseignantBuilder.joursDisponibles;
+        this.horaireClasses= enseignantBuilder.horaireClasses;
 
     }
 
@@ -61,11 +88,16 @@ public class Enseignant extends User {
         private LocalDate dateDeNaissance;
         private EtablissementScolaire etablissementScolaire;
         private int age;
+        private List<CoursDEnseignement> coursDEnseignements;
+        private LocalTime heureDebutDisponibilite;
+        private List<DayOfWeek> joursDisponibles;
+        private List<HoraireClasse> horaireClasses;
+        private LocalTime heureFinDisponibilite;
 
-    public  Enseignant build() {
+        public Enseignant build (){
 
-        return  new Enseignant();
-    }
+            return new Enseignant(this);
+        }
 
     }
 

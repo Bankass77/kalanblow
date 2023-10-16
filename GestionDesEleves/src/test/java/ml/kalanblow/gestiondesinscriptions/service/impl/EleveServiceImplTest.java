@@ -21,7 +21,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,12 +41,13 @@ class EleveServiceImplTest {
     private EleveService eleveService;
 
     private UserRoleRepository userRoleRepository;
-    @BeforeEach
-    void initialisationService(){
 
-        eleveRepository= mock(EleveRepository.class);
-        eleveService= new EleveServiceImpl(eleveRepository, userRoleRepository);
-        Eleve  eleve = new Eleve();
+    @BeforeEach
+    void initialisationService() {
+
+        eleveRepository = mock(EleveRepository.class);
+        eleveService = new EleveServiceImpl(eleveRepository, userRoleRepository);
+        Eleve eleve = new Eleve();
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         eleve.setDateDeNaissance(LocalDate.of(1980, 6, 23));
         eleve.setAge(CalculateUserAge.calculateAge(eleve.getDateDeNaissance()));
@@ -71,11 +74,11 @@ class EleveServiceImplTest {
         eleve.setLastModifiedDate(LocalDateTime.now());
         eleve.setPassword("Homeboarding2014&");
         Set<Role> roles = new HashSet<>();
-        Role role= new Role();
+        Role role = new Role();
         role.setUserRole(UserRole.STUDENT);
         eleve.setRoles(roles);
 
-      eleveRepository.save(eleve);
+        eleveRepository.save(eleve);
         System.out.println(eleve);
     }
 
@@ -117,10 +120,10 @@ class EleveServiceImplTest {
     @Test
     void creationUtilisateur() {
 
-        CreateEleveParameters createEleveParameters= new CreateEleveParameters();
+        CreateEleveParameters createEleveParameters = new CreateEleveParameters();
         createEleveParameters.setModifyDate(LocalDateTime.now());
         createEleveParameters.setPhoneNumber(new PhoneNumber("0022367894326"));
-        Set<Role> userRoles= new HashSet<>();
+        Set<Role> userRoles = new HashSet<>();
         Role role = new Role();
         role.setUserRole(UserRole.STUDENT);
         userRoles.add(role);
@@ -151,11 +154,12 @@ class EleveServiceImplTest {
         createEleveParameters.setAddress(address);
         createEleveParameters.setCreatedDate(LocalDateTime.now());
         createEleveParameters.setPassword("Homeboarding2014&");
-
+        List<AbsenceEleve> absenceEleves = new ArrayList<>();
+        createEleveParameters.setAbsences(absenceEleves);
         Eleve builder = getEleve(createEleveParameters);
 
         when(eleveRepository.save(any(Eleve.class))).thenReturn(builder);
-        Eleve nouveauEleve=eleveService.CreationUtilisateur(createEleveParameters);
+        Eleve nouveauEleve = eleveService.CreationUtilisateur(createEleveParameters);
         assertNotNull(nouveauEleve);
 
     }
@@ -163,7 +167,8 @@ class EleveServiceImplTest {
     private static Eleve getEleve(CreateEleveParameters createEleveParameters) {
         Eleve builder = new Eleve(createEleveParameters.getStudentIneNumber(), createEleveParameters.getDateDeNaissance(),
                 createEleveParameters.getAge(), createEleveParameters.getMotherFirstName(), createEleveParameters.getMotherLastName()
-                , createEleveParameters.getFatherLastName(), createEleveParameters.getFatherFirstName(), createEleveParameters.getEtablissementScolaire());
+                , createEleveParameters.getFatherLastName(), createEleveParameters.getFatherFirstName(), createEleveParameters.getAbsences(),
+                createEleveParameters.getEtablissementScolaire());
 
         builder.setRoles(createEleveParameters.getRoles());
         builder.setGender(createEleveParameters.getGender());

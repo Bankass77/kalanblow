@@ -22,4 +22,5 @@ public interface EtablissementScolaireRepository extends JpaRepository<Etablisse
 
     EtablissementScolaire findByEtablisementScolaireId (long id);
 
+
 }
