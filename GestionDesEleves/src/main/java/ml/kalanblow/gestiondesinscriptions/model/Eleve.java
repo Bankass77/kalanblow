@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Past;
 import lombok.*;
@@ -65,16 +66,15 @@ public class Eleve extends User {
     @JoinColumn(name = "etablisementScolaireId")
     private EtablissementScolaire etablissementScolaire;
 
+    private Eleve(EleveBuilder eleveBuilder) {
 
-    private Eleve(EleveBuilder eleveBuilder){
-
-        this.ineNumber= builder().ineNumber;
-        this.dateDeNaissance= builder().dateDeNaissance;
-        this.age= builder().age;
-        this.motherFirstName= builder().motherFirstName;
-        this.motherLastName= builder().motherLastName;
-        this.fatherFirstName= builder().fatherLastName;
-        this.fatherLastName= builder().fatherLastName;
+        this.ineNumber = builder().ineNumber;
+        this.dateDeNaissance = builder().dateDeNaissance;
+        this.age = builder().age;
+        this.motherFirstName = builder().motherFirstName;
+        this.motherLastName = builder().motherLastName;
+        this.fatherFirstName = builder().fatherLastName;
+        this.fatherLastName = builder().fatherLastName;
     }
 
 
@@ -90,15 +90,15 @@ public class Eleve extends User {
         private String motherLastName;
         private String fatherFirstName;
         private String fatherLastName;
-        public  Eleve build(){
-            return  new Eleve(this);
+        public Eleve build() {
+            return new Eleve(this);
         }
     }
 
     // Méthode statique pour créer une instance de Eleve à partir du builder
     @JsonDeserialize(builder = User.UserBuilder.class)
-    public static Eleve createEleveFromBuilder( EleveBuilder builder) {
+    public static Eleve createEleveFromBuilder(EleveBuilder builder) {
 
-        return  builder().build();
+        return builder().build();
     }
 }

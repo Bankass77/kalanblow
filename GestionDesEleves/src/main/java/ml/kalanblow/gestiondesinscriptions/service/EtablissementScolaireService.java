@@ -10,4 +10,6 @@ public interface EtablissementScolaireService {
     EtablissementScolaire miseAJourEtablissementScolaire(long id, EtablissementScolaire etablissementScolaire);
 
     EtablissementScolaire trouverEtablissementScolaireParSonNom( String nom);
+
+    EtablissementScolaire trouverEtablissementScolaireParSonIdentifiant( long id);
 }

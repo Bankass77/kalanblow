@@ -77,6 +77,12 @@ public class EtablissementScolaire {
     @OneToMany(mappedBy = "etablissementScolaire")
     private Set<Eleve> eleves;
 
+    @OneToMany (mappedBy = "etablissementScolaire")
+    private Set<Enseignant> enseignants;
+
+    @OneToMany(mappedBy = "etablissementScolaire")
+    private Set<SalleDeClasse> salleDeClasses;
+
     private EtablissementScolaire (EtablissementScolaireBuilder builder){
         this.address=builder.address;
         this.avatar=builder.avatar;
@@ -84,11 +90,13 @@ public class EtablissementScolaire {
         this.createdDate=builder.createdDate;
         this.lastModifiedDate=builder.lastModifiedDate;
         this.phoneNumber=builder.phoneNumber;
+        this.nomEtablissement=builder.nomEtablissement;
     }
 
 
     @JsonPOJOBuilder(withPrefix = "")
     public static  class  EtablissementScolaireBuilder{
+        private String nomEtablissement;
         private Address address;
         private byte[] avatar;
         private Email email;

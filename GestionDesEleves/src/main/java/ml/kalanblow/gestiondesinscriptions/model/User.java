@@ -1,7 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -16,7 +15,6 @@ import jakarta.persistence.*;
 
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,7 +23,7 @@ import lombok.experimental.Accessors;
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.util.GenderConverter;
+import ml.kalanblow.gestiondesinscriptions.util.converter.GenderConverter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -108,11 +106,16 @@ public abstract class User implements Serializable {
             @AttributeOverride(name = "country", column = @Column(name = "country"))})
     private Address address;
 
-    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "student_roles")
+
+
     @Column(name = "role")
-    private Set<UserRole> roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
     @NotNull
     @Column(name = "password")
@@ -138,7 +141,7 @@ public abstract class User implements Serializable {
 
         private Address address;
 
-        private Set<UserRole> roles;
+        private Set<Role> roles;
 
         private String password;
     }

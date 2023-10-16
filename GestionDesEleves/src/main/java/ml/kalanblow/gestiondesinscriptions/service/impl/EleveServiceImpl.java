@@ -4,13 +4,16 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
+import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
+import ml.kalanblow.gestiondesinscriptions.model.Role;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
+import ml.kalanblow.gestiondesinscriptions.repository.UserRoleRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
@@ -27,9 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static ml.kalanblow.gestiondesinscriptions.service.impl.EleveSpecification.recupererEleveParSonNomePrenom;
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -44,10 +45,13 @@ public class EleveServiceImpl implements EleveService {
 
     private final EleveRepository eleveRepository;
 
+    private final UserRoleRepository userRoleRepository;
+
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository) {
+    public EleveServiceImpl(EleveRepository eleveRepository,UserRoleRepository userRoleRepository) {
 
         this.eleveRepository = eleveRepository;
+        this.userRoleRepository=userRoleRepository;
 
 
     }
@@ -123,7 +127,8 @@ public class EleveServiceImpl implements EleveService {
         eleve.setLastModifiedDate(createEleveParameters.getModifyDate());
         eleve.setAddress(createEleveParameters.getAddress());
         eleve.setPassword(createEleveParameters.getPassword());
-        eleve.setRoles(createEleveParameters.getRoles());
+        Set<Role> userRoles= createEleveParameters.getRoles();
+        eleve.setRoles(userRoles);
         ajouterPhotoSiPresent(createEleveParameters, eleve);
         eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());
         eleve.setAge(createEleveParameters.getAge());

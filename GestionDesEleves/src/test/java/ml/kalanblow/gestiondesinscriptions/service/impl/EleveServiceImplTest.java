@@ -5,6 +5,7 @@ import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
+import ml.kalanblow.gestiondesinscriptions.repository.UserRoleRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
@@ -36,11 +37,13 @@ class EleveServiceImplTest {
     private EleveRepository eleveRepository;
 
     private EleveService eleveService;
+
+    private UserRoleRepository userRoleRepository;
     @BeforeEach
     void initialisationService(){
 
         eleveRepository= mock(EleveRepository.class);
-        eleveService= new EleveServiceImpl(eleveRepository);
+        eleveService= new EleveServiceImpl(eleveRepository, userRoleRepository);
         Eleve  eleve = new Eleve();
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         eleve.setDateDeNaissance(LocalDate.of(1980, 6, 23));
@@ -67,8 +70,9 @@ class EleveServiceImplTest {
         eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
         eleve.setPassword("Homeboarding2014&");
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.STUDENT);
+        Set<Role> roles = new HashSet<>();
+        Role role= new Role();
+        role.setUserRole(UserRole.STUDENT);
         eleve.setRoles(roles);
 
       eleveRepository.save(eleve);
@@ -116,8 +120,10 @@ class EleveServiceImplTest {
         CreateEleveParameters createEleveParameters= new CreateEleveParameters();
         createEleveParameters.setModifyDate(LocalDateTime.now());
         createEleveParameters.setPhoneNumber(new PhoneNumber("0022367894326"));
-        Set<UserRole> userRoles= new HashSet<>();
-        userRoles.add(UserRole.STUDENT);
+        Set<Role> userRoles= new HashSet<>();
+        Role role = new Role();
+        role.setUserRole(UserRole.STUDENT);
+        userRoles.add(role);
         createEleveParameters.setRoles(userRoles);
         createEleveParameters.setStudentIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         createEleveParameters.setDateDeNaissance(LocalDate.of(1980, 6, 23));
@@ -145,9 +151,6 @@ class EleveServiceImplTest {
         createEleveParameters.setAddress(address);
         createEleveParameters.setCreatedDate(LocalDateTime.now());
         createEleveParameters.setPassword("Homeboarding2014&");
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(UserRole.STUDENT);
-        createEleveParameters.setRoles(roles);
 
         Eleve builder = getEleve(createEleveParameters);
 

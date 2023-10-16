@@ -22,15 +22,15 @@ import java.util.Set;
 public sealed class CreateEleveParameters extends CreateUserParameters permits EditEleveParameters {
 
     private LocalDate dateDeNaissance;
-    private int age;
-    private String studentIneNumber;
+    private int age=CalculateUserAge.calculateAge(dateDeNaissance);
+    private String studentIneNumber=KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength();
     private String motherFirstName;
     private String motherLastName;
     private PhoneNumber motherMobile;
     private String fatherLastName;
     private String fatherFirstName;
     private PhoneNumber fatherMobile;
-    private Set<UserRole> roles;
+    private Set<Role> roles;
     private EtablissementScolaire etablissementScolaire;
 
     /**
@@ -57,12 +57,12 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
                                  String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
                                  LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, String studentIneNumber, String motherFirstName,
                                  String motherLastName, PhoneNumber motherMobile, String fatherLastName, String fatherFirstName,
-                                 PhoneNumber fatherMobile, Set<UserRole> roles, EtablissementScolaire etablissementScolaire) {
+                                 PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire) {
 
         super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate, roles);
 
         this.dateDeNaissance = dateDeNaissance;
-        this.age = CalculateUserAge.calculateAge(dateDeNaissance);
+        this.age = age;
         this.fatherFirstName = fatherFirstName;
         this.fatherLastName = fatherLastName;
         this.fatherMobile = fatherMobile;
@@ -71,7 +71,8 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
         this.motherMobile = motherMobile;
         this.etablissementScolaire=etablissementScolaire;
         this.roles = roles;
-        this.studentIneNumber = KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength();
+        this.studentIneNumber=studentIneNumber;
+
     }
 
 

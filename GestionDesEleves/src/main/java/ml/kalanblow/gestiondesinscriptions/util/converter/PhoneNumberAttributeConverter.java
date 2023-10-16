@@ -1,4 +1,4 @@
-package ml.kalanblow.gestiondesinscriptions.util;
+package ml.kalanblow.gestiondesinscriptions.util.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
