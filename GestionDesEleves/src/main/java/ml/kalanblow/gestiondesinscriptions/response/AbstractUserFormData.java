@@ -18,6 +18,7 @@ import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
+import ml.kalanblow.gestiondesinscriptions.model.Role;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupTwo;
 import org.springframework.data.annotation.CreatedDate;
@@ -80,5 +81,5 @@ public   sealed class AbstractUserFormData permits CreateUserFormData, EditUserF
     @Nullable
     private MultipartFile avatarFile;
 
-    private Set<UserRole> roles;
+    private Set<Role> roles;
 }

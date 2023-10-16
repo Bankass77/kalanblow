@@ -45,4 +45,9 @@ public class EtablissementScolaireServiceImpl implements EtablissementScolaireSe
     public EtablissementScolaire trouverEtablissementScolaireParSonNom(String nom) {
         return etablissementScolaireRepository.findByNomEtablissement(nom);
     }
+
+    @Override
+    public EtablissementScolaire trouverEtablissementScolaireParSonIdentifiant(long id) {
+        return etablissementScolaireRepository.findByEtablisementScolaireId(id);
+    }
 }

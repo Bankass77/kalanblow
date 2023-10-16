@@ -32,7 +32,7 @@ public final class EditEleveParameters extends CreateEleveParameters {
                                Email email, String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
                                LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, String studentIneNumber, String motherFirstName,
                                String motherLastName, PhoneNumber motherMobile, String fatherLastName, String fatherFirstName,
-                               PhoneNumber fatherMobile, Set<UserRole> roles, EtablissementScolaire etablissementScolaire) {
+                               PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire) {
         super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate, dateDeNaissance,
                 age, studentIneNumber, motherFirstName, motherLastName, motherMobile, fatherLastName, fatherFirstName,
                 fatherMobile, roles, etablissementScolaire);
