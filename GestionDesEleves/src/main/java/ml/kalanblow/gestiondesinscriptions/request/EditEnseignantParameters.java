@@ -22,23 +22,10 @@ import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Getter
-@Setter
 public non-sealed class EditEnseignantParameters extends CreateEnseignantParameters {
 
     private Long version;
 
-    public EditEnseignantParameters(Long version, UserName userName, Gender gender, MaritalStatus maritalStatus,
-                                    Email email, String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
-                                    LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, Set<Role> roles,
-                                    EtablissementScolaire etablissementScolaire, List<CoursDEnseignement> coursDEnseignements,
-                                    List<DayOfWeek> joursDisponibles, LocalTime heureDebutDisponibilite,
-                                    LocalTime heureFinDisponibilite, List<HoraireClasse> horaireClasses) {
-
-
-        this.version=version;
-
-    }
 
   public void  updateEnseignant( Enseignant enseignant){
 

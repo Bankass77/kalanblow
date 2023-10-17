@@ -22,8 +22,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Getter
-@Setter
 public non-sealed class EditUserParameters extends CreateUserParameters {
 
     private final long version;

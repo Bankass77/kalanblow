@@ -57,6 +57,27 @@ public class AnneeScolaire {
         private Duration duree;
         private TypeDeVacances typeDeVacances;
 
+
+        public AnneeScolaireBuilder anneeScolaireBuilder (int annee){
+
+            this.annee=annee;
+            return  this;
+        }
+
+
+        public AnneeScolaireBuilder dureeAnneeScolaire( Duration duree){
+
+            this.duree=duree;
+
+            return  this;
+        }
+
+        public AnneeScolaireBuilder typeDeVacancesBuilder(TypeDeVacances typeDeVacances){
+
+            this.typeDeVacances=typeDeVacances;
+
+            return this;
+        }
         public AnneeScolaire build() {
 
             return new AnneeScolaire(this);

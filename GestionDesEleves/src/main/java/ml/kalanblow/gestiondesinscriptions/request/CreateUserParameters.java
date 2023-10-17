@@ -21,8 +21,6 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, EditUserParameters {
 
     private UserName userName;

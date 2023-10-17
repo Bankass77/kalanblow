@@ -34,8 +34,6 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Getter
-@Setter
 public   sealed class AbstractUserFormData permits CreateUserFormData, EditUserFormData {
     @NotBlank
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)

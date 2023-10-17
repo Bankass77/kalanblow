@@ -1,5 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.model.AbsenceEleve;
 import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
@@ -11,10 +13,14 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class CreateAppelDePresenceParameters {
+
+    @NotNull
+    @NotBlank
     private CoursDEnseignement cours;
+
+    @NotNull
+    @NotBlank
     private Eleve eleve;
 
     private List<AbsenceEleve> absences;

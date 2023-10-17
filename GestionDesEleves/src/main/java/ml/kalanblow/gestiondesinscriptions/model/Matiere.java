@@ -74,6 +74,46 @@ public class Matiere implements Serializable {
 
         private String description;
         private Set<CoursDEnseignement> coursDEnseignements;
+
+
+        public MatiereBuilder note( double note){
+
+            this.note=note;
+            return  this;
+        }
+
+        public MatiereBuilder coefficient(double coefficient){
+
+            this.coefficient=coefficient;
+
+            return this;
+        }
+
+        public MatiereBuilder moyenne (double moyenne){
+
+            this.moyenne=moyenne;
+
+            return this;
+        }
+
+        public  MatiereBuilder nomMatiere(String nomMatiere){
+
+            this.nomMatiere=nomMatiere;
+             return this;
+        }
+
+        public  MatiereBuilder description(String description){
+
+            this.description=description;
+            return  this;
+        }
+
+        public MatiereBuilder cours (Set<CoursDEnseignement> coursDEnseignements){
+
+            this.coursDEnseignements=coursDEnseignements;
+
+            return  this;
+        }
         public Matiere build() {
 
             return new Matiere(this);

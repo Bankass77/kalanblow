@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -25,6 +26,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(builder = AbsenceEleve.AbsenceEleveBuilder.class)
+@Data
 public class AbsenceEleve implements Serializable {
 
     @Id
@@ -77,6 +79,35 @@ public class AbsenceEleve implements Serializable {
 
         private AppelDePresence appelDePresence;
         private Eleve eleve;
+
+        public AbsenceEleveBuilder motif(String motif) {
+            this.motif = motif;
+            return this;
+        }
+
+        public AbsenceEleveBuilder estJustifiee(boolean estJustifiee) {
+            this.estJustifiee = estJustifiee;
+            return this;
+        }
+
+        public AbsenceEleveBuilder cours(CoursDEnseignement cours) {
+            this.cours = cours;
+            return this;
+        }
+
+        public AbsenceEleveBuilder appelDePresence ( AppelDePresence appelDePresence){
+
+            this.appelDePresence=appelDePresence;
+
+            return  this;
+        }
+
+        public AbsenceEleveBuilder eleve (Eleve eleve){
+
+            this.eleve=eleve;
+
+            return this;
+        }
 
         public AbsenceEleve build() {
 

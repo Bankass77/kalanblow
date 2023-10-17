@@ -1,10 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
@@ -23,24 +20,11 @@ import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Getter
-@Setter
+@NoArgsConstructor
 public final class EditEleveParameters extends CreateEleveParameters {
 
     private Long version;
 
-    public EditEleveParameters(long version, UserName userName, Gender gender, MaritalStatus maritalStatus,
-                               Email email, String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
-                               LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, String studentIneNumber, String motherFirstName,
-                               String motherLastName, PhoneNumber motherMobile, String fatherLastName, String fatherFirstName,
-                               PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire,List<AbsenceEleve> absences) {
-        super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate, dateDeNaissance,
-                age, studentIneNumber, motherFirstName, motherLastName, motherMobile, fatherLastName, fatherFirstName,
-                fatherMobile, roles, etablissementScolaire, absences);
-
-        this.version = version;
-
-    }
 
     // tag::update[]
     public void updateStudent(Eleve eleve) {

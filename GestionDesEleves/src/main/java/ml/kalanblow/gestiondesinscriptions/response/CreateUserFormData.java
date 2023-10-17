@@ -3,14 +3,19 @@ package ml.kalanblow.gestiondesinscriptions.response;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingUser;
+import ml.kalanblow.gestiondesinscriptions.constraint.PasswordsMatch;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 import ml.kalanblow.gestiondesinscriptions.model.UserName;
 import ml.kalanblow.gestiondesinscriptions.request.CreateUserParameters;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupTwo;
 
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@PasswordsMatch(groups = ValidationGroupTwo.class)
+@NotExistingUser(groups = ValidationGroupTwo.class)
 public non-sealed class CreateUserFormData extends AbstractUserFormData {
 
     @NotBlank

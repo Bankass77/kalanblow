@@ -36,12 +36,12 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final EleveService eleveService;
     private final EtablissementScolaireService etablissementScolaireService;
 
-    private final UserRoleRepository  userRoleRepository;
+    private final UserRoleRepository userRoleRepository;
 
-    public DatabaseInitializer(EleveService eleveService, EtablissementScolaireService etablissementScolaireService,UserRoleRepository  userRoleRepository) {
+    public DatabaseInitializer(EleveService eleveService, EtablissementScolaireService etablissementScolaireService, UserRoleRepository userRoleRepository) {
         this.eleveService = eleveService;
         this.etablissementScolaireService = etablissementScolaireService;
-        this.userRoleRepository=userRoleRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     /**
@@ -97,9 +97,6 @@ public class DatabaseInitializer implements CommandLineRunner {
         roles.add(role);
 
         EtablissementScolaire etablissementScolaire = etablissementScolaireService.trouverEtablissementScolaireParSonIdentifiant(2);
-        CreateEtablissementScolaireParameters etablissementScolaireParameters= new EditEtablissementScolaireParameters(etablissementScolaire.getNomEtablissement(),etablissementScolaire.getAddress(),etablissementScolaire.getEmail(),etablissementScolaire.getCreatedDate(),etablissementScolaire.getLastModifiedDate(),etablissementScolaire.getPhoneNumber(),etablissementScolaire.getEleves(),etablissementScolaire.getEnseignants(),etablissementScolaire.getSalleDeClasses(),null);
-
-        etablissementScolaireService.creerEtablissementScolaire(etablissementScolaireParameters);
         return new CreateEleveParameters(userName, gender, maritalStatus, email, password, phoneNumber, address,
                 createdDate, modifyDate, dateDeNaissance, age, studentIneNumber, motherFirstName, motherLastName, motherMobile,
                 fatherLastName, fatherFirstName, fatherMobile, roles, etablissementScolaire, absenceEleves);

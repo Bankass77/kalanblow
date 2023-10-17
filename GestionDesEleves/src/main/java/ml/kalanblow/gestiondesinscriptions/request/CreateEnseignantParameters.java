@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.*;
@@ -20,14 +21,19 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public sealed class CreateEnseignantParameters  extends CreateUserParameters permits EditEnseignantParameters {
 
+
+    @NotBlank
+    @NotNull
     private String leMatricule;
 
+    @NotBlank
+    @NotNull
     private LocalDate dateDeNaissance;
 
+    @NotBlank
+    @NotNull
     private int age;
 
     private List<DayOfWeek> joursDisponibles;
@@ -36,7 +42,10 @@ public sealed class CreateEnseignantParameters  extends CreateUserParameters per
 
     private LocalTime heureFinDisponibilite;
 
+    @NotBlank
+    @NotNull
     private EtablissementScolaire etablissementScolaire;
+
 
     private List<CoursDEnseignement> coursDEnseignements;
 

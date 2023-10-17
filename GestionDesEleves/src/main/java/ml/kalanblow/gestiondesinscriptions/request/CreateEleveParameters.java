@@ -1,5 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
@@ -18,21 +20,46 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+
 public sealed class CreateEleveParameters extends CreateUserParameters permits EditEleveParameters {
 
+    @NotBlank
+    @NotNull
     private LocalDate dateDeNaissance;
+    @NotBlank
+    @NotNull
     private int age=CalculateUserAge.calculateAge(dateDeNaissance);
+
+    @NotBlank
+    @NotNull
     private String studentIneNumber=KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength();
+
+    @NotBlank
+    @NotNull
     private String motherFirstName;
+    @NotBlank
+    @NotNull
     private String motherLastName;
+    @NotBlank
+    @NotNull
     private PhoneNumber motherMobile;
+    @NotBlank
+    @NotNull
     private String fatherLastName;
+    @NotBlank
+    @NotNull
     private String fatherFirstName;
+    @NotBlank
+    @NotNull
     private PhoneNumber fatherMobile;
+    @NotBlank
+    @NotNull
     private Set<Role> roles;
+
+    @NotBlank
+    @NotNull
     private EtablissementScolaire etablissementScolaire;
+
     private List<AbsenceEleve> absences;
 
     /**

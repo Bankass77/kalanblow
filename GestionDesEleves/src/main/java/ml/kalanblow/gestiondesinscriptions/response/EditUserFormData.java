@@ -14,8 +14,6 @@ import java.util.Base64;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Getter
-@Setter
 public non-sealed class EditUserFormData extends AbstractUserFormData {
     private Long id;
     private String avatarBase64Encoded;

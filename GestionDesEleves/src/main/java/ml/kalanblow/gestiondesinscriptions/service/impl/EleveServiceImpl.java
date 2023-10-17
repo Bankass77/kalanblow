@@ -46,10 +46,10 @@ public class EleveServiceImpl implements EleveService {
     private final UserRoleRepository userRoleRepository;
 
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository,UserRoleRepository userRoleRepository) {
+    public EleveServiceImpl(EleveRepository eleveRepository, UserRoleRepository userRoleRepository) {
 
         this.eleveRepository = eleveRepository;
-        this.userRoleRepository=userRoleRepository;
+        this.userRoleRepository = userRoleRepository;
 
 
     }
@@ -109,7 +109,6 @@ public class EleveServiceImpl implements EleveService {
     }
 
 
-
     /**
      * @param userId
      * @param parameters
@@ -124,11 +123,28 @@ public class EleveServiceImpl implements EleveService {
             throw new ObjectOptimisticLockingFailureException(Eleve.class, eleve.get().getId());
 
         }
-        parameters = new EditEleveParameters(eleve.get().getVersion(), eleve.get().getUserName(), eleve.get().getGender(),
-                eleve.get().getMaritalStatus(), eleve.get().getEmail(), eleve.get().getPassword(), eleve.get().getPhoneNumber(), eleve.get().getAddress(),
-                eleve.get().getCreatedDate(), eleve.get().getLastModifiedDate(), eleve.get().getDateDeNaissance(), eleve.get().getAge(),
-                eleve.get().getIneNumber(), eleve.get().getMotherFirstName(), eleve.get().getMotherLastName(), eleve.get().getPhoneNumber(),
-                eleve.get().getMotherFirstName(), eleve.get().getFatherLastName(), eleve.get().getPhoneNumber(), eleve.get().getRoles(),eleve.get().getEtablissementScolaire(), eleve.get().getAbsences());
+        parameters = new EditEleveParameters();
+        parameters.setVersion(eleve.get().getVersion());
+        parameters.setUserName(eleve.get().getUserName());
+        parameters.setGender(eleve.get().getGender());
+        parameters.setMaritalStatus(eleve.get().getMaritalStatus());
+        parameters.setEmail(eleve.get().getEmail());
+        parameters.setPassword(eleve.get().getPassword());
+        parameters.setPhoneNumber(eleve.get().getPhoneNumber());
+        parameters.setAddress(eleve.get().getAddress());
+        parameters.setCreatedDate(eleve.get().getCreatedDate());
+        parameters.setModifyDate(eleve.get().getLastModifiedDate());
+        parameters.setDateDeNaissance(eleve.get().getDateDeNaissance());
+        parameters.setAge(eleve.get().getAge());
+        parameters.setStudentIneNumber(eleve.get().getIneNumber());
+        parameters.setMotherFirstName(eleve.get().getMotherFirstName());
+        parameters.setMotherLastName(eleve.get().getMotherLastName());
+        parameters.setPhoneNumber(eleve.get().getPhoneNumber());
+        parameters.setFatherMobile(eleve.get().getPhoneNumber());
+        parameters.setFatherLastName(eleve.get().getFatherLastName());
+        parameters.setRoles(eleve.get().getRoles());
+        parameters.setEtablissementScolaire(eleve.get().getEtablissementScolaire());
+        parameters.setAbsences(eleve.get().getAbsences());
         parameters.updateStudent(eleve.get());
 
         return eleve.get();
@@ -303,7 +319,7 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public Optional<Eleve> searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(LocalDate dateDeNaissance, String numeroIne) {
 
-       Optional<Eleve> eleve=  eleveRepository.searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(dateDeNaissance, numeroIne);
+        Optional<Eleve> eleve = eleveRepository.searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(dateDeNaissance, numeroIne);
         return eleve;
     }
 
@@ -358,7 +374,7 @@ public class EleveServiceImpl implements EleveService {
         eleve.setLastModifiedDate(createEleveParameters.getModifyDate());
         eleve.setAddress(createEleveParameters.getAddress());
         eleve.setPassword(createEleveParameters.getPassword());
-        Set<Role> userRoles= createEleveParameters.getRoles();
+        Set<Role> userRoles = createEleveParameters.getRoles();
         eleve.setRoles(userRoles);
         ajouterPhotoSiPresent(createEleveParameters, eleve);
         eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());

@@ -1,5 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
 
@@ -10,14 +12,23 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class CreateMatiereParameters {
+
     private double note;
+
+    @NotBlank
+    @NotNull
     private double coefficient;
+
     private double moyenne;
+
+    @NotBlank
+    @NotNull
     private String nomMatiere;
 
+    @NotBlank
+    @NotNull
     private String description;
+
     private Set<CoursDEnseignement> coursDEnseignements;
 }
