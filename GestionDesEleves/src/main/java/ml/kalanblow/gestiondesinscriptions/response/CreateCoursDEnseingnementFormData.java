@@ -26,17 +26,17 @@ public class CreateCoursDEnseingnementFormData {
 
     @NotNull
     @NotBlank
-    private AnneeScolaire anneeScolaire;
+    private Periode anneeScolaire;
 
     @NotNull
     @NotBlank
     private Matiere matiere;
 
-    private Set<AbsenceEleve> absenceEleves;
+    private Set<Absence> absenceEleves;
 
     @NotNull
     @NotBlank
-    private Set<HoraireClasse> horaireClasses;
+    private Set<Horaire> horaireClasses;
 
     @NotNull
     @NotBlank
@@ -44,7 +44,7 @@ public class CreateCoursDEnseingnementFormData {
 
     @NotNull
     @NotBlank
-    private SalleDeClasse salleDeClasse;
+    private Salle salleDeClasse;
 
 
     public CreateCoursDEnseignementParameters toCoursDEnseignementParameters() {

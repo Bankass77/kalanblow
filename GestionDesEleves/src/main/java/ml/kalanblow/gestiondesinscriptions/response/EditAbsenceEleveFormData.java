@@ -3,23 +3,36 @@ package ml.kalanblow.gestiondesinscriptions.response;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ml.kalanblow.gestiondesinscriptions.model.AbsenceEleve;
-import ml.kalanblow.gestiondesinscriptions.request.CreateAbsenceEleveParameters;
+import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.EditAbsenceEleveParameters;
-import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditAbsenceEleveFormData extends CreateAbsenceEleveParameters {
+public class EditAbsenceEleveFormData  {
 
-    public static EditAbsenceEleveFormData fromAbsenceEleve(AbsenceEleve absenceEleve) {
+    private long version;
+
+    private Horaire horaireClasse;
+
+    private String motif;
+
+    private boolean estJustifiee;
+
+    private Cours cours;
+
+    private Presence presence;
+
+    private Eleve eleve;
+
+    public static EditAbsenceEleveFormData fromAbsenceEleve(Absence absenceEleve) {
 
         EditAbsenceEleveFormData editAbsenceEleveFormData = new EditAbsenceEleveFormData();
-        editAbsenceEleveFormData.setAppelDePresence(absenceEleve.getAppelDePresence());
+        editAbsenceEleveFormData.setPresence(absenceEleve.getPresence());
         editAbsenceEleveFormData.setEleve(absenceEleve.getEleve());
         editAbsenceEleveFormData.setMotif(absenceEleve.getMotif());
         editAbsenceEleveFormData.setCours(absenceEleve.getCours());
         editAbsenceEleveFormData.setEstJustifiee(absenceEleve.isEstJustifiee());
+        editAbsenceEleveFormData.setVersion(absenceEleve.getVersion());
 
         return editAbsenceEleveFormData;
     }
@@ -28,12 +41,13 @@ public class EditAbsenceEleveFormData extends CreateAbsenceEleveParameters {
 
         EditAbsenceEleveParameters editEleveParameters = new EditAbsenceEleveParameters();
 
-        editEleveParameters.setAppelDePresence(getAppelDePresence());
+        editEleveParameters.setPresence(getPresence());
         editEleveParameters.setCours(getCours());
         editEleveParameters.setEleve(getEleve());
         editEleveParameters.setHoraireClasse(getHoraireClasse());
         editEleveParameters.setMotif(getMotif());
         editEleveParameters.setEstJustifiee(isEstJustifiee());
+        editEleveParameters.setVersion(version);
         return editEleveParameters;
 
 

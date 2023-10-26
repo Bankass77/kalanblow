@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.request.CreateMatiereParameters;
 
 import java.util.Set;
@@ -31,7 +31,7 @@ public class CreateMatiereFormData {
     @NotNull
     private String description;
 
-    private Set<CoursDEnseignement> coursDEnseignements;
+    private Set<Cours> coursDEnseignements;
 
     public CreateMatiereParameters toMatiereParameters() {
 

@@ -3,8 +3,8 @@ package ml.kalanblow.gestiondesinscriptions.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.model.AbsenceEleve;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Absence;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 
 import java.util.List;
@@ -17,11 +17,11 @@ public class CreateAppelDePresenceParameters {
 
     @NotNull
     @NotBlank
-    private CoursDEnseignement cours;
+    private Cours cours;
 
     @NotNull
     @NotBlank
     private Eleve eleve;
 
-    private List<AbsenceEleve> absences;
+    private List<Absence> absences;
 }

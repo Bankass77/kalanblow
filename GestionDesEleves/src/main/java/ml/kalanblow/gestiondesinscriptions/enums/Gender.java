@@ -12,7 +12,7 @@ import ml.kalanblow.gestiondesinscriptions.model.json.GenderDeserializer;
 @AllArgsConstructor
 public enum Gender  {
 
-    MONSIEUR("Monsieur"), MADEMOISELLE("Mademoiselle"), MADAME("Madame");
+    MALE("Homme"), FEMALE("Femme");
 
     private String value;
 

@@ -1,6 +1,5 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -43,7 +42,7 @@ public class CreateEtablissementScolaireParameters {
 
     private Set<Enseignant> enseignants;
 
-    private Set<SalleDeClasse> salleDeClasses;
+    private Set<Salle> salleDeClasses;
 
     private MultipartFile avatar;
 }

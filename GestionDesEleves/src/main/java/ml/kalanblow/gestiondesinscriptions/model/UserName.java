@@ -21,4 +21,8 @@ public class UserName  implements Serializable {
 
     private String nomDeFamille;
 
+    public String getFullName() {
+
+        return  String.format("%s %s", prenom, nomDeFamille);
+    }
 }

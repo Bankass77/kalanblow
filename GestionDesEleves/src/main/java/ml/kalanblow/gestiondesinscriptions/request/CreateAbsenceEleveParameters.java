@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.AppelDePresence;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Presence;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
-import ml.kalanblow.gestiondesinscriptions.model.HoraireClasse;
+import ml.kalanblow.gestiondesinscriptions.model.Horaire;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class CreateAbsenceEleveParameters {
 
     @NotNull
     @NotBlank
-    private HoraireClasse horaireClasse;
+    private Horaire horaireClasse;
 
     @NotNull
     @NotBlank
@@ -30,11 +30,11 @@ public class CreateAbsenceEleveParameters {
 
     @NotNull
     @NotBlank
-    private CoursDEnseignement cours;
+    private Cours cours;
 
     @NotNull
     @NotBlank
-    private AppelDePresence appelDePresence;
+    private Presence presence;
 
     @NotNull
     @NotBlank

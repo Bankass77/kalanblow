@@ -1,16 +1,11 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
-import ml.kalanblow.gestiondesinscriptions.model.EtablissementScolaire;
-import ml.kalanblow.gestiondesinscriptions.model.HoraireClasse;
-import org.springframework.format.annotation.DateTimeFormat;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
+import ml.kalanblow.gestiondesinscriptions.model.Horaire;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -44,11 +39,11 @@ public sealed class CreateEnseignantParameters  extends CreateUserParameters per
 
     @NotBlank
     @NotNull
-    private EtablissementScolaire etablissementScolaire;
+    private Etablissement etablissement;
 
 
-    private List<CoursDEnseignement> coursDEnseignements;
+    private List<Cours> coursDEnseignements;
 
-    private List<HoraireClasse> horaireClasses;
+    private List<Horaire> horaireClasses;
 
 }

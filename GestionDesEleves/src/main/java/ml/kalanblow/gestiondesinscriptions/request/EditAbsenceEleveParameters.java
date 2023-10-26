@@ -3,22 +3,22 @@ package ml.kalanblow.gestiondesinscriptions.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.AbsenceEleve;
+import ml.kalanblow.gestiondesinscriptions.model.Absence;
 
 @NoArgsConstructor
 @Data
 public class EditAbsenceEleveParameters extends  CreateAbsenceEleveParameters{
 
+    private  long version;
+    public void updateAbsenceEleve (Absence absenceEleve){
 
-    public void updateAbsenceEleve (AbsenceEleve absenceEleve){
-
-        AbsenceEleve.AbsenceEleveBuilder absenceEleveBuilder= new AbsenceEleve.AbsenceEleveBuilder();
+        Absence.AbsenceBuilder absenceEleveBuilder= new Absence.AbsenceBuilder();
 
         absenceEleveBuilder
                 .motif(getMotif())
                 .estJustifiee(isEstJustifiee())
                 .cours(getCours())
-                .appelDePresence(getAppelDePresence())
+                .appelDePresence(getPresence())
                 .eleve(getEleve());
         absenceEleve  = absenceEleveBuilder.build();
 

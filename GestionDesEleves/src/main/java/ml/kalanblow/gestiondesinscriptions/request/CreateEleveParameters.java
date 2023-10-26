@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
-import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
@@ -14,7 +13,6 @@ import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -52,15 +50,13 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
     @NotBlank
     @NotNull
     private PhoneNumber fatherMobile;
-    @NotBlank
-    @NotNull
-    private Set<Role> roles;
+
 
     @NotBlank
     @NotNull
-    private EtablissementScolaire etablissementScolaire;
+    private Etablissement etablissement;
 
-    private List<AbsenceEleve> absences;
+    private List<Absence> absences;
 
     /**
      * @param userName
@@ -86,9 +82,9 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
                                  String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
                                  LocalDateTime modifyDate, LocalDate dateDeNaissance, int age, String studentIneNumber, String motherFirstName,
                                  String motherLastName, PhoneNumber motherMobile, String fatherLastName, String fatherFirstName,
-                                 PhoneNumber fatherMobile, Set<Role> roles, EtablissementScolaire etablissementScolaire, List<AbsenceEleve> absences) {
+                                 PhoneNumber fatherMobile, Etablissement etablissement, List<Absence> absences) {
 
-        super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate, roles);
+        super(userName, gender, maritalStatus, email, password, phoneNumber, address, createdDate, modifyDate);
 
         this.dateDeNaissance = dateDeNaissance;
         this.age = age;
@@ -98,8 +94,7 @@ public sealed class CreateEleveParameters extends CreateUserParameters permits E
         this.motherFirstName = motherFirstName;
         this.motherLastName = motherLastName;
         this.motherMobile = motherMobile;
-        this.etablissementScolaire=etablissementScolaire;
-        this.roles = roles;
+        this.etablissement = etablissement;
         this.studentIneNumber=studentIneNumber;
         this.absences=absences;
 

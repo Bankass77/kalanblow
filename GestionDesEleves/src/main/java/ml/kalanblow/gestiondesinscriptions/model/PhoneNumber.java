@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Pattern;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
@@ -9,6 +10,7 @@ import java.io.Serializable;
 @ToString
 public class PhoneNumber implements Serializable {
 
+    @Pattern(regexp = "^(00223|\\+223)[67]\\d{6}$")
     private String phoneNumber;
     // end::class[]
 

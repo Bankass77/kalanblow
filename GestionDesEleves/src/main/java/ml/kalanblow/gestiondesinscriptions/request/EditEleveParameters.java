@@ -1,31 +1,24 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
 
-import lombok.*;
-
-import ml.kalanblow.gestiondesinscriptions.enums.Gender;
-import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
-import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
-import ml.kalanblow.gestiondesinscriptions.model.*;
+import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public final class EditEleveParameters extends CreateEleveParameters {
 
-    private Long version;
-
-
+    private long version;
     // tag::update[]
     public void updateStudent(Eleve eleve) {
 
@@ -38,7 +31,7 @@ public final class EditEleveParameters extends CreateEleveParameters {
         eleve.setMaritalStatus(getMaritalStatus());
         eleve.setIneNumber(getStudentIneNumber());
         eleve.setAge(getAge());
-        eleve.setEtablissementScolaire(getEtablissementScolaire());
+        eleve.setEtablissement(getEtablissement());
         eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
         eleve.setAbsences(getAbsences());
@@ -47,9 +40,6 @@ public final class EditEleveParameters extends CreateEleveParameters {
 
         eleve.setMotherFirstName(getMotherFirstName());
         eleve.setMotherLastName(getMotherLastName());
-
-        eleve.setRoles(getRoles());
-
         MultipartFile avatar = getAvatar();
 
         if (avatar != null) {

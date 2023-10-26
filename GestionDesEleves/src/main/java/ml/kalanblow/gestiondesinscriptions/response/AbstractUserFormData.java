@@ -1,24 +1,19 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingUser;
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
-import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
-import ml.kalanblow.gestiondesinscriptions.model.Role;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupTwo;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,7 +29,7 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public   sealed class AbstractUserFormData permits CreateUserFormData, EditUserFormData {
+public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFormData {
     @NotBlank
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String prenom;
@@ -44,8 +39,10 @@ public   sealed class AbstractUserFormData permits CreateUserFormData, EditUserF
     private String nomDeFamille;
 
     @NotNull
-    private PhoneNumber phoneNumber;
+    @Pattern(regexp = "^(00223|\\+223)[67]\\d{6}$")
+    private String phoneNumber;
 
+    @NotNull
     @NotNull
     private UserRole userRole;
 
@@ -79,5 +76,6 @@ public   sealed class AbstractUserFormData permits CreateUserFormData, EditUserF
     @Nullable
     private MultipartFile avatarFile;
 
-    private Set<Role> roles;
+    @Nullable
+    private Set<UserRole> roles;
 }

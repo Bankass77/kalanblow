@@ -6,12 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.AppelDePresence;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Presence;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
-import ml.kalanblow.gestiondesinscriptions.model.HoraireClasse;
+import ml.kalanblow.gestiondesinscriptions.model.Horaire;
 import ml.kalanblow.gestiondesinscriptions.request.CreateAbsenceEleveParameters;
-import ml.kalanblow.gestiondesinscriptions.request.CreateAnneScolaireParameters;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +19,7 @@ public class CreateAbsenceEleveFormData {
 
     @NotNull
     @NotBlank
-    private HoraireClasse horaireClasse;
+    private Horaire horaireClasse;
     @NotNull
     @NotBlank
     private String motif;
@@ -29,10 +28,10 @@ public class CreateAbsenceEleveFormData {
     private boolean estJustifiee;
     @NotNull
     @NotBlank
-    private CoursDEnseignement cours;
+    private Cours cours;
     @NotNull
     @NotBlank
-    private AppelDePresence appelDePresence;
+    private Presence presence;
     @NotNull
     @NotBlank
     private Eleve eleve;
@@ -46,7 +45,7 @@ public class CreateAbsenceEleveFormData {
         createAbsenceEleveParameters.setEleve(getEleve());
         createAbsenceEleveParameters.setCours(getCours());
         createAbsenceEleveParameters.setHoraireClasse(getHoraireClasse());
-        createAbsenceEleveParameters.setAppelDePresence(getAppelDePresence());
+        createAbsenceEleveParameters.setPresence(getPresence());
         createAbsenceEleveParameters.setEstJustifiee(isEstJustifiee());
 
         return createAbsenceEleveParameters;

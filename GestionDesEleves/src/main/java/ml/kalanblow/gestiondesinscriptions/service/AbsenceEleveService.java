@@ -1,7 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.service;
 
-import ml.kalanblow.gestiondesinscriptions.model.AbsenceEleve;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Absence;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ public interface AbsenceEleveService {
      * @param coursDEnseignement Le cours d'enseignement pour lequel rechercher l'absence.
      * @return Une instance facultative (Optional) de l'absence d'élève trouvée, ou une instance vide si aucune absence correspondante n'est trouvée.
      */
-    Optional<AbsenceEleve> findDistinctByEleveAndAndCours(Eleve eleve, CoursDEnseignement coursDEnseignement);
+    Optional<Absence> findDistinctByEleveAndAndCours(Eleve eleve, Cours coursDEnseignement);
 
     /**
      * Recherche une absence d'élève en fonction de la justifiée, de l'élève, du cours d'enseignement et du motif spécifiés.
@@ -26,7 +26,7 @@ public interface AbsenceEleveService {
      * @param motif Le motif de l'absence.
      * @return Une instance facultative (Optional) de l'absence d'élève trouvée, ou une instance vide si aucune absence correspondante n'est trouvée.
      */
-    Optional<AbsenceEleve> findAbsenceEleveByEstJustifieeAndAndEleveAndAndCoursAndMotif(boolean estJustifiee, Eleve eleve,
-                                                                                        CoursDEnseignement coursDEnseignement, String motif);
+    Optional<Absence> findAbsenceEleveByEstJustifieeAndAndEleveAndAndCoursAndMotif(boolean estJustifiee, Eleve eleve,
+                                                                                   Cours coursDEnseignement, String motif);
 
 }

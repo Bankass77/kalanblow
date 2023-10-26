@@ -10,11 +10,9 @@ import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
-import ml.kalanblow.gestiondesinscriptions.repository.UserRoleRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
-import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +41,11 @@ public class EleveServiceImpl implements EleveService {
 
     private final EleveRepository eleveRepository;
 
-    private final UserRoleRepository userRoleRepository;
 
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository, UserRoleRepository userRoleRepository) {
+    public EleveServiceImpl(EleveRepository eleveRepository) {
 
         this.eleveRepository = eleveRepository;
-        this.userRoleRepository = userRoleRepository;
 
 
     }
@@ -142,8 +138,7 @@ public class EleveServiceImpl implements EleveService {
         parameters.setPhoneNumber(eleve.get().getPhoneNumber());
         parameters.setFatherMobile(eleve.get().getPhoneNumber());
         parameters.setFatherLastName(eleve.get().getFatherLastName());
-        parameters.setRoles(eleve.get().getRoles());
-        parameters.setEtablissementScolaire(eleve.get().getEtablissementScolaire());
+        parameters.setEtablissement(eleve.get().getEtablissement());
         parameters.setAbsences(eleve.get().getAbsences());
         parameters.updateStudent(eleve.get());
 
@@ -213,6 +208,7 @@ public class EleveServiceImpl implements EleveService {
     public void deleteAllEleves() {
         log.debug("deleteAllEleves");
 
+
     }
 
     /**
@@ -236,7 +232,8 @@ public class EleveServiceImpl implements EleveService {
      * @return
      */
     @Override
-    public Eleve CreationUtilisateur(CreateEleveParameters createEleveParameters) {
+    public Eleve ajouterUnEleve(CreateEleveParameters createEleveParameters) {
+        log.debug("createEleveParameters", createEleveParameters);
         return ajouterUnNouveauEleve(createEleveParameters);
 
     }
@@ -303,7 +300,7 @@ public class EleveServiceImpl implements EleveService {
      * @return Un objet Optional contenant l'élève distinct correspondant à l'absence et au nom d'utilisateur (s'il existe).
      */
     @Override
-    public Optional<Eleve> findDistinctByAbsencesAndUserName(AbsenceEleve absenceEleve, UserName userName) {
+    public Optional<Eleve> findDistinctByAbsencesAndUserName(Absence absenceEleve, UserName userName) {
 
 
         return eleveRepository.findDistinctByAbsencesAndUserName(absenceEleve, userName);
@@ -343,7 +340,7 @@ public class EleveServiceImpl implements EleveService {
      * @return Un objet Optional contenant le nombre d'élèves correspondant aux critères de recherche (s'il existe).
      */
     @Override
-    public Optional<Eleve> countEleveByAbsencesAndCreatedDate(AbsenceEleve absenceEleve, LocalDate dateDeCreation) {
+    public Optional<Eleve> countEleveByAbsencesAndCreatedDate(Absence absenceEleve, LocalDate dateDeCreation) {
         return eleveRepository.countEleveByAbsencesAndCreatedDate(absenceEleve, dateDeCreation);
     }
 
@@ -354,13 +351,34 @@ public class EleveServiceImpl implements EleveService {
      * @return Un objet Optional contenant l'élève distinct correspondant à l'absence (s'il existe).
      */
     @Override
-    public Optional<Eleve> findDistinctByAbsences(AbsenceEleve absenceEleve) {
+    public Optional<Eleve> findDistinctByAbsences(Absence absenceEleve) {
         return eleveRepository.findDistinctByAbsences(absenceEleve);
+    }
+
+    /**
+     * Récupère la liste complète des élèves inscrits dans le système.
+     *
+     * @return Une instance facultative (Optional) contenant la liste complète des élèves s'ils sont disponibles, ou Optional.empty() s'il n'y a aucun élève inscrit.
+     */
+    @Override
+    public Optional<List<Eleve>> recupererLaListeDesEleves() {
+        return eleveRepository.findAll();
+    }
+
+    /**
+     * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
+     *
+     * @param salleDeClasse La salle de classe pour laquelle rechercher les élèves.
+     * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève ne correspond aux critères de recherche.
+     */
+    @Override
+    public Optional<List<Eleve>> recupererElevesParClasse(Salle salleDeClasse) {
+        return eleveRepository.findDistinctBySalle_Etablissement(salleDeClasse);
     }
 
     private Eleve ajouterUnNouveauEleve(CreateEleveParameters createEleveParameters) {
         Eleve eleve = new Eleve();
-        eleve.setEtablissementScolaire(createEleveParameters.getEtablissementScolaire());
+        eleve.setEtablissement(createEleveParameters.getEtablissement());
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         eleve.setMotherFirstName(createEleveParameters.getMotherFirstName());
         eleve.setMotherLastName(createEleveParameters.getMotherLastName());
@@ -374,13 +392,12 @@ public class EleveServiceImpl implements EleveService {
         eleve.setLastModifiedDate(createEleveParameters.getModifyDate());
         eleve.setAddress(createEleveParameters.getAddress());
         eleve.setPassword(createEleveParameters.getPassword());
-        Set<Role> userRoles = createEleveParameters.getRoles();
-        eleve.setRoles(userRoles);
         ajouterPhotoSiPresent(createEleveParameters, eleve);
         eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());
         eleve.setAge(createEleveParameters.getAge());
         eleve.setDateDeNaissance(createEleveParameters.getDateDeNaissance());
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        eleve.setRoles(Collections.singleton(UserRole.STUDENT));
         Set<ConstraintViolation<Eleve>> constraintViolations = validator.validate(eleve, ValidationGroupOne.class);
         if (!constraintViolations.isEmpty()) {
 

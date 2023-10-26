@@ -1,0 +1,36 @@
+<!-- src/main/resources/templates/fragments/user-details-fragment.html -->
+
+<div th:fragment="userDetailsFragment(user, fields)">
+  <p>
+    Gender: <span th:text="${user.gender}"></span>
+    <span th:if="${fields.hasErrors('user.gender')}" th:errors="*{user.gender}"></span>
+  </p>
+  <p>
+    Marital Status: <span th:text="${user.maritalStatus}"></span>
+    <span th:if="${fields.hasErrors('user.maritalStatus')}" th:errors="*{user.maritalStatus}"></span>
+  </p>
+  <p>
+    Created Date: <span th:text="${user.createdDate}"></span>
+  </p>
+  <p>
+    Last Modified Date: <span th:text="${user.lastModifiedDate}"></span>
+  </p>
+  <p>
+    Phone Number: <span th:text="${user.phoneNumber.asString()}"></span>
+  </p>
+  <p>
+    Email: <span th:text="${user.email}"></span>
+  </p>
+  <p>
+    Avatar: <!-- Afficher l'avatar ici -->
+  </p>
+  <p>
+    Password: <!-- Ne pas afficher le mot de passe ici pour des raisons de sécurité -->
+  </p>
+  <p>
+    Roles:
+    <span th:each="role : ${user.roles}">
+            <span th:text="${role.name}"></span>
+        </span>
+  </p>
+</div>

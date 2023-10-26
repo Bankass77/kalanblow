@@ -3,7 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
+import ml.kalanblow.gestiondesinscriptions.model.Periode;
 
 
 @NoArgsConstructor
@@ -11,12 +11,13 @@ import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 @Data
 public class EditAnneScolaireParameters extends CreateAnneScolaireParameters {
 
-    public void updateAnneeScolaire(AnneeScolaire anneeScolaire) {
+    private  long version;
+    public void updateAnneeScolaire(Periode anneeScolaire) {
 
-        AnneeScolaire.AnneeScolaireBuilder builder = new AnneeScolaire.AnneeScolaireBuilder();
+        Periode.PeriodeBuilder builder = new Periode.PeriodeBuilder();
         builder.dureeAnneeScolaire(getDuree());
         builder.typeDeVacancesBuilder(getTypeDeVacances());
-        builder.anneeScolaireBuilder(getAnnee());
+        builder.periodeBuilder(getAnnee());
         anneeScolaire = builder.build();
 
 

@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeDeClasse;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
-import ml.kalanblow.gestiondesinscriptions.model.EtablissementScolaire;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 
 import java.util.Set;
 
@@ -29,8 +29,8 @@ public class CreateSalleDeClasseParameters {
 
     @NotBlank
     @NotNull
-    private EtablissementScolaire etablissementScolaire;
+    private Etablissement etablissement;
 
 
-    private Set<CoursDEnseignement> coursPlanifies;
+    private Set<Cours> coursPlanifies;
 }

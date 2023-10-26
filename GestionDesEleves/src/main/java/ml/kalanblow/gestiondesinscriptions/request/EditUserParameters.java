@@ -1,16 +1,10 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
-import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
@@ -19,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public non-sealed class EditUserParameters extends CreateUserParameters {
@@ -27,9 +20,9 @@ public non-sealed class EditUserParameters extends CreateUserParameters {
     private final long version;
 
     public EditUserParameters(long version, UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
-                              PhoneNumber phoneNumber, Address address, LocalDateTime createdDate, LocalDateTime modifyDate,
-                              Set<Role> roles) {
-        super(userName, gender, maritalStatus, email, null, phoneNumber, address, createdDate, modifyDate, roles);
+                              PhoneNumber phoneNumber, Address address, LocalDateTime createdDate, LocalDateTime modifyDate
+                             ) {
+        super(userName, gender, maritalStatus, email, null, phoneNumber, address, createdDate, modifyDate);
 
         this.version = version;
     }
@@ -44,8 +37,8 @@ public non-sealed class EditUserParameters extends CreateUserParameters {
         user.setMaritalStatus(getMaritalStatus());
         user.setAddress(getAddress());
         user.setUserName(getUserName());
-        user.setVersion(user.getVersion());
-        user.setRoles(getRoles());
+        user.setVersion(version);
+        user.setPassword(getPassword());
 
         MultipartFile avatar = getAvatar();
         if (avatar != null) {

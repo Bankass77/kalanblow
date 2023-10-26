@@ -32,6 +32,10 @@ public class Matiere implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Version()
+    private Long version;
+
     @Column
     private double note;
 
@@ -47,8 +51,9 @@ public class Matiere implements Serializable {
     @Column
     private String description;
 
+
     @OneToMany(mappedBy = "matiere")
-    private Set<CoursDEnseignement> coursDEnseignements;
+    private Set<Cours> coursDEnseignements;
 
 
     private Matiere(MatiereBuilder matiereBuilder) {
@@ -57,7 +62,7 @@ public class Matiere implements Serializable {
         this.description = matiereBuilder.description;
         this.moyenne = matiereBuilder.coefficient;
         this.note = matiereBuilder.note;
-        this.coefficient= matiereBuilder.coefficient;
+        this.coefficient = matiereBuilder.coefficient;
 
 
     }
@@ -73,50 +78,56 @@ public class Matiere implements Serializable {
         private String nomMatiere;
 
         private String description;
-        private Set<CoursDEnseignement> coursDEnseignements;
+        private Set<Cours> coursDEnseignements;
 
 
-        public MatiereBuilder note( double note){
+        public MatiereBuilder note(double note) {
 
-            this.note=note;
-            return  this;
+            this.note = note;
+            return this;
         }
 
-        public MatiereBuilder coefficient(double coefficient){
+        public MatiereBuilder coefficient(double coefficient) {
 
-            this.coefficient=coefficient;
+            this.coefficient = coefficient;
 
             return this;
         }
 
-        public MatiereBuilder moyenne (double moyenne){
+        public MatiereBuilder moyenne(double moyenne) {
 
-            this.moyenne=moyenne;
+            this.moyenne = moyenne;
 
             return this;
         }
 
-        public  MatiereBuilder nomMatiere(String nomMatiere){
+        public MatiereBuilder nomMatiere(String nomMatiere) {
 
-            this.nomMatiere=nomMatiere;
-             return this;
+            this.nomMatiere = nomMatiere;
+            return this;
         }
 
-        public  MatiereBuilder description(String description){
+        public MatiereBuilder description(String description) {
 
-            this.description=description;
-            return  this;
+            this.description = description;
+            return this;
         }
 
-        public MatiereBuilder cours (Set<CoursDEnseignement> coursDEnseignements){
+        public MatiereBuilder cours(Set<Cours> coursDEnseignements) {
 
-            this.coursDEnseignements=coursDEnseignements;
+            this.coursDEnseignements = coursDEnseignements;
 
-            return  this;
+            return this;
         }
+
         public Matiere build() {
 
             return new Matiere(this);
+        }
+
+        public static Matiere creerMatiere(MatiereBuilder matiereBuilder) {
+
+            return matiereBuilder.build();
         }
 
     }

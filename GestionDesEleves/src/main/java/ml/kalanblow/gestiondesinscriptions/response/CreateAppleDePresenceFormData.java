@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.AbsenceEleve;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Absence;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.request.CreateAppelDePresenceParameters;
 
@@ -21,13 +21,13 @@ public class CreateAppleDePresenceFormData {
 
     @NotNull
     @NotBlank
-    private CoursDEnseignement cours;
+    private Cours cours;
 
     @NotNull
     @NotBlank
     private Eleve eleve;
 
-    private List<AbsenceEleve> absences;
+    private List<Absence> absences;
 
 
     public CreateAppelDePresenceParameters toAppelDePresenceParameters() {

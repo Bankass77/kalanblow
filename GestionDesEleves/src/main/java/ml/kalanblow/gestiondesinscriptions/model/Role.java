@@ -1,10 +1,12 @@
+/*
 package ml.kalanblow.gestiondesinscriptions.model;
-
-import java.io.Serializable;
 
 import jakarta.persistence.*;
 import lombok.*;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
+
+import java.io.Serializable;
+import java.util.Set;
 
 
 @Entity
@@ -23,5 +25,6 @@ public class Role implements Serializable {
     private Long id;
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private UserRole userRole;
+    private Set<UserRole> userRole;
 }
+*/

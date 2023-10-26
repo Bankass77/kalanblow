@@ -1,9 +1,5 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,9 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-
-
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +23,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @Data
@@ -108,18 +107,16 @@ public abstract class User implements Serializable {
 
 
 
+    @ElementCollection(targetClass = UserRole.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles")
     @Column(name = "role")
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles;
+    private Set<UserRole> roles;
 
     @NotNull
     @Column(name = "password")
     @NotNull(message = "Password is required")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
     private String password;
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -141,9 +138,10 @@ public abstract class User implements Serializable {
 
         private Address address;
 
-        private Set<Role> roles;
+        private Set<UserRole> roles;
 
         private String password;
+
     }
 
 }

@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeDeClasse;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
-import ml.kalanblow.gestiondesinscriptions.model.EtablissementScolaire;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.request.CreateSalleDeClasseParameters;
 
 import java.util.Set;
@@ -31,9 +31,9 @@ public class CreateSalleDeClasseFormData {
 
     @NotNull
     @NotBlank
-    private EtablissementScolaire etablissementScolaire;
+    private Etablissement etablissement;
 
-    private Set<CoursDEnseignement> coursPlanifies;
+    private Set<Cours> coursPlanifies;
 
 
     public CreateSalleDeClasseParameters toSalleDeClasseParameters (){
@@ -43,7 +43,7 @@ public class CreateSalleDeClasseFormData {
         createSalleDeClasseParameters.setTypeDeClasse(getTypeDeClasse());
         createSalleDeClasseParameters.setCoursPlanifies(getCoursPlanifies());
         createSalleDeClasseParameters.setNombreDePlace(getNombreDePlace());
-        createSalleDeClasseParameters.setEtablissementScolaire(getEtablissementScolaire());
+        createSalleDeClasseParameters.setEtablissement(getEtablissement());
 
         return  createSalleDeClasseParameters;
     }

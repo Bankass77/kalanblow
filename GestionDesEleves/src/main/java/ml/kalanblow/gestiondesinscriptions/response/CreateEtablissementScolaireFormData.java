@@ -45,7 +45,7 @@ public class CreateEtablissementScolaireFormData {
 
     private Set<Enseignant> enseignants;
 
-    private Set<SalleDeClasse> salleDeClasses;
+    private Set<Salle> salleDeClasses;
 
     private MultipartFile avatar;
 
