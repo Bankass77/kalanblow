@@ -7,7 +7,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Vacances;
 
 @NoArgsConstructor
 @Data
-public class EditPeriodeDeVacancesParameters extends CreatePeriodeDeVacancesParameters {
+public class EditVacancesParameters extends CreateVacancesParameters {
     private  long version;
     public void updatePeriodeDeVacances(Vacances periodeDeVacances){
 

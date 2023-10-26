@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Absence;
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
-import ml.kalanblow.gestiondesinscriptions.request.CreateAppelDePresenceParameters;
+import ml.kalanblow.gestiondesinscriptions.request.CreatePresenceParameters;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 import java.util.List;
 
@@ -17,22 +18,24 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class CreateAppleDePresenceFormData {
+public class CreatePresenceFormData {
 
-    @NotNull
+
     @NotBlank
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Cours cours;
 
-    @NotNull
+
     @NotBlank
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Eleve eleve;
 
     private List<Absence> absences;
 
 
-    public CreateAppelDePresenceParameters toAppelDePresenceParameters() {
+    public CreatePresenceParameters toAppelDePresenceParameters() {
 
-        CreateAppelDePresenceParameters createAppelDePresenceParameters = new CreateAppelDePresenceParameters();
+        CreatePresenceParameters createAppelDePresenceParameters = new CreatePresenceParameters();
 
         createAppelDePresenceParameters.setAbsences(getAbsences());
         createAppelDePresenceParameters.setEleve(getEleve());

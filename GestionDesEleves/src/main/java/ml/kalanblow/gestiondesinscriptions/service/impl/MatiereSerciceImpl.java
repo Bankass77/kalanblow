@@ -9,6 +9,7 @@ import ml.kalanblow.gestiondesinscriptions.request.CreateMatiereParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditMatiereParameters;
 import ml.kalanblow.gestiondesinscriptions.service.MatiereService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -90,6 +91,11 @@ public class MatiereSerciceImpl  implements MatiereService {
 
         Optional<Matiere> matiere= matiereRepository.findDistinctByIdOrAndAndNomMatiere(id, editMatiereParameters.getNomMatiere());
 
+        if ( editMatiereParameters.getVersion() != matiere.get().getVersion()) {
+
+            throw  new ObjectOptimisticLockingFailureException( Matiere.class, matiere.get().getId());
+        }
+
         if (matiere.isPresent()){
 
             matiere.get().setNomMatiere(editMatiereParameters.getNomMatiere());
@@ -100,9 +106,9 @@ public class MatiereSerciceImpl  implements MatiereService {
             matiere.get().setMoyenne(editMatiereParameters.getMoyenne());
             matiere.get().setCoefficient(editMatiereParameters.getCoefficient());
 
-            matiereRepository.save(matiere.get());
+              editMatiereParameters.updateMatiere(matiere.get());
             log.info("La matière  a été modifiéé: {}", matiere.get());
         }
-        return Optional.empty();
+        return matiere;
     }
 }

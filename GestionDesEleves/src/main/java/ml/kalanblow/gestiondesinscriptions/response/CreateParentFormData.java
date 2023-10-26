@@ -10,7 +10,7 @@ import ml.kalanblow.gestiondesinscriptions.request.CreateParentParameters;
 
 @Data
 @NoArgsConstructor
-public class CreateParentFormData extends CreateUserFormData {
+public class CreateParentFormData extends CreateUserFormData  {
 
     private String profession;
 
@@ -22,12 +22,13 @@ public class CreateParentFormData extends CreateUserFormData {
         createParentParameters.setGender(getGender());
         createParentParameters.setEmail(new Email(getEmail()));
         createParentParameters.setMaritalStatus(getMaritalStatus());
-        createParentParameters.setPassword(getPassword());
         createParentParameters.setModifyDate(getModifyDate());
         createParentParameters.setAvatar(getAvatarFile());
         createParentParameters.setCreatedDate(getCreatedDate());
+        createParentParameters.setPassword(getPassword());
         createParentParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
         createParentParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
+
         return createParentParameters;
     }
 }

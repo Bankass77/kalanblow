@@ -1,6 +1,9 @@
 package ml.kalanblow.gestiondesinscriptions.service.impl;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
@@ -19,14 +22,20 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
 @Transactional
 public class ParentServiceImpl implements ParentService {
 
+
+    private final ParentRepository parentRepository;
+
     @Autowired
-    private ParentRepository parentRepository;
+    public ParentServiceImpl(ParentRepository parentRepository) {
+        this.parentRepository = parentRepository;
+    }
 
     @Override
     public List<Parent> getAllParents() {
@@ -43,6 +52,14 @@ public class ParentServiceImpl implements ParentService {
         return parentRepository.findByProfession(profession);
     }
 
+    /**
+     * Saves a new parent using the provided parameters.
+     *
+     * @param createParentParameters The parameters for creating the new parent.
+     * @return An {@code Optional} containing the saved {@code Parent} if the save operation was successful,
+     *         or an empty {@code Optional} if the save operation failed.
+     * @throws KaladewnManagementException If there is an exception during the save operation (specify the exception type).
+     */
     @Override
     public Optional<Parent> saveParent(CreateParentParameters createParentParameters) {
 
@@ -59,40 +76,39 @@ public class ParentServiceImpl implements ParentService {
         parent.setMaritalStatus(createParentParameters.getMaritalStatus());
         parent.setEmail(createParentParameters.getEmail());
         ajouterPhotoSiPresent(createParentParameters, parent);
-        parent.setEnfantsMere(createParentParameters.getEnfantsMere());
-        parent.setEnfantsPere(createParentParameters.getEnfantsPere());
+        parent.addEnfantMere(createParentParameters.getEnfantsMere().iterator().next());
+        parent.addEnfantPere(createParentParameters.getEnfantsPere().iterator().next());
+
+        // Validation des données
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Set<ConstraintViolation<Parent>> constraintViolations = validator.validate(parent);
+
+        if (!constraintViolations.isEmpty()) {
+            constraintViolations.forEach(c -> KaladewnManagementException.throwException(c.getMessage()));
+        }
         return Optional.of(parentRepository.save(parent));
     }
 
+    /**
+     * Edits a parent with the specified identifier using the provided parameters.
+     *
+     * @param id The identifier of the parent to be edited.
+     * @param editParentParameters The parameters for editing the parent.
+     * @return An {@code Optional} containing the edited {@code Parent} if the edit was successful,
+     *         or an empty {@code Optional} if the parent with the given ID was not found.
+     * @throws ObjectOptimisticLockingFailureException If there is an exception during the edit operation (specify the exception type).
+     */
     @Override
     public Optional<Parent> editParent(Long id, EditParentParameters editParentParameters) {
 
         Optional<Parent> parent = parentRepository.findById(id);
 
-        if (editParentParameters.getVersion() != parent.get().getVersion()) {
-
+        if (parent.get().getVersion() != editParentParameters.getVersion()) {
 
             throw new ObjectOptimisticLockingFailureException(Parent.class, parent.get().getId());
         }
 
-        if (parent.isPresent()) {
-
-            parent.get().setProfession(editParentParameters.getProfession());
-            parent.get().setGender(editParentParameters.getGender());
-            parent.get().setCreatedDate(editParentParameters.getCreatedDate());
-            parent.get().setEmail(editParentParameters.getEmail());
-            parent.get().setLastModifiedDate(editParentParameters.getModifyDate());
-            parent.get().setMaritalStatus(editParentParameters.getMaritalStatus());
-            parent.get().setPhoneNumber(editParentParameters.getPhoneNumber());
-            parent.get().setPassword(editParentParameters.getPassword());
-            parent.get().setUserName(editParentParameters.getUserName());
-
-            parent.get().setEnfantsMere(editParentParameters.getEnfantsMere());
-            parent.get().setEnfantsPere(editParentParameters.getEnfantsPere());
-            editParentParameters.update(parent.get());
-
-
-        }
+        parent.ifPresent(editParentParameters::update);
 
         return parent;
     }
@@ -100,6 +116,12 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public void deleteParent(Long id) {
         parentRepository.deleteById(id);
+    }
+
+    @Override
+    public void remove(Parent parent) {
+
+        parentRepository.delete(parent);
     }
 
 

@@ -1,17 +1,16 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
 
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.Eleve;
-import ml.kalanblow.gestiondesinscriptions.model.Email;
-import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
-import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
+import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.List;
 
 
 /**
@@ -21,22 +20,26 @@ import java.util.Base64;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditEleveFormData extends EditUserFormData {
+public non-sealed class EditEleveFormData extends AbstractUserFormData {
 
     private Long id;
+
     private long version;
-    private String password;
-    private String passwordRepeated;
-    private LocalDate dateDeNaissance;
-    private Etablissement etablissement;
-    private int age;
-    private String motherFirstName;
-    private String motherLastName;
-    private String motherPhoneNumber;
-    private String fatherFirstName;
-    private String fatherLastName;
-    private String fatherPoneNumber;
+
+    private String avatarBase64Encoded;
+
     private String ineNumber;
+
+    private LocalDate dateDeNaissance;
+
+    private int age;
+
+    private Parent pere;
+
+    private Parent mere;
+
+    private Etablissement etablissement;
+
 
 
     /**
@@ -48,30 +51,33 @@ public class EditEleveFormData extends EditUserFormData {
     public static EditEleveFormData fromUser(Eleve eleve) {
 
         EditEleveFormData edit = new EditEleveFormData();
-        edit.setId(eleve.getId());
-        edit.setVersion(eleve.getVersion());
-        edit.setPrenom(eleve.getUserName().getPrenom());
-        edit.setNomDeFamille(eleve.getUserName().getNomDeFamille());
-        edit.setModifyDate(eleve.getLastModifiedDate());
-        edit.setCreatedDate(eleve.getCreatedDate());
-        edit.setAddress(eleve.getAddress());
-        edit.setEmail(eleve.getEmail().asString());
-        edit.setGender(eleve.getGender());
-        edit.setPassword(eleve.getPassword());
-        edit.setPasswordRepeated(eleve.getPassword());
-        edit.setRoles(eleve.getRoles());
-        edit.setDateDeNaissance(eleve.getDateDeNaissance());
-        edit.setEtablissement(eleve.getEtablissement());
 
-        edit.setMaritalStatus(eleve.getMaritalStatus());
-        edit.setPhoneNumber(eleve.getPhoneNumber().asString());
+           edit.setId(eleve.getId());
+           edit.setVersion(eleve.getVersion());
+           edit.setPrenom(eleve.getUserName().getPrenom());
+           edit.setNomDeFamille(eleve.getUserName().getNomDeFamille());
+           edit.setIneNumber(eleve.getIneNumber());
+           edit.setAddress(eleve.getAddress());
+           edit.setEmail(eleve.getEmail().asString());
+           edit.setGender(eleve.getGender());
+           edit.setMaritalStatus(eleve.getMaritalStatus());
+           edit.setRoles(eleve.getRoles());
+           edit.setDateDeNaissance(eleve.getDateDeNaissance());
+           edit.setAge(eleve.getAge());
+           edit.setEtablissement(eleve.getEtablissement());
+           edit.setPhoneNumber(eleve.getPhoneNumberAsString());
+           edit.setModifyDate(eleve.getLastModifiedDate());
+           edit.setCreatedDate(eleve.getCreatedDate());
+           edit.setPere(eleve.getPere());
+           edit.setMere(eleve.getMere());
 
-        if (eleve.getAvatar() != null) {
+           if (eleve.getAvatar() != null) {
 
-            String encoded = Base64.getEncoder().encodeToString(eleve.getAvatar());
+               String encoded = Base64.getEncoder().encodeToString(eleve.getAvatar());
 
-            edit.setAvatarBase64Encoded(encoded);
-        }
+               edit.setAvatarBase64Encoded(encoded);
+           }
+
         return edit;
 
     }
@@ -84,30 +90,23 @@ public class EditEleveFormData extends EditUserFormData {
     public EditEleveParameters toEleveParameters() {
 
         EditEleveParameters editEleveParameters = new EditEleveParameters();
-        editEleveParameters.setAge(getAge());
-        editEleveParameters.setEtablissement(getEtablissement());
-        editEleveParameters.setDateDeNaissance(getDateDeNaissance());
-        editEleveParameters.setVersion(getVersion());
+        editEleveParameters.setAge(age);
+        editEleveParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
+        editEleveParameters.setEtablissement(etablissement);
+        editEleveParameters.setDateDeNaissance(dateDeNaissance);
+        editEleveParameters.setVersion(version);
         editEleveParameters.setEmail(new Email(getEmail()));
         editEleveParameters.setMaritalStatus(getMaritalStatus());
-        editEleveParameters.setStudentIneNumber(getIneNumber());
-        editEleveParameters.setPassword(getPassword());
+        editEleveParameters.setStudentIneNumber(ineNumber);
         editEleveParameters.setGender(getGender());
         editEleveParameters.setAddress(getAddress());
         editEleveParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
         editEleveParameters.setCreatedDate(getCreatedDate());
         editEleveParameters.setModifyDate(getModifyDate());
+        editEleveParameters.setPere(pere);
+        editEleveParameters.setMere(mere);
 
-        editEleveParameters.setFatherMobile(new PhoneNumber(getPhoneNumber()));
-        editEleveParameters.setFatherFirstName(getFatherFirstName());
-        editEleveParameters.setFatherLastName(getFatherLastName());
-
-        editEleveParameters.setMotherFirstName(getMotherFirstName());
-        editEleveParameters.setMotherLastName(getMotherLastName());
-        editEleveParameters.setMotherMobile(new PhoneNumber(getMotherPhoneNumber()));
-
-
-        if (getAvatarFile() != null && !getAvatarFile().isEmpty()){
+        if (getAvatarFile() != null && !getAvatarFile().isEmpty()) {
 
             editEleveParameters.setAvatar(getAvatarFile());
         }

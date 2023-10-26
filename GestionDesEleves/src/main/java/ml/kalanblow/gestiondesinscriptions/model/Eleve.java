@@ -6,13 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,13 +25,13 @@ import java.util.List;
 @Setter
 @Entity
 @JsonDeserialize(builder = Eleve.EleveBuilder.class)
-public class Eleve extends User {
+public class Eleve extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Column(name = "ine_number")
     private String ineNumber;
 
-    @NotNull(message = "Age is required")
+
     @Column(name = "birthDate")
     @Past
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -43,36 +42,23 @@ public class Eleve extends User {
     @Column(name = "age")
     private int age;
 
-    @Column
-    @NotBlank
-    @NotNull(message = "Mother First Name is required")
-    @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
-    private String motherFirstName;
 
-    @Column
-    @NotBlank
-    @NotNull(message = "Mother Last Name is required")
-    @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
-    private String motherLastName;
+    @ManyToOne( fetch = FetchType.LAZY)
+    @JoinColumn(name = "pere_id")
+    private Parent pere;
 
-    @Column
-    @NotBlank
-    @NotNull(message = "Father Last Name is required")
-    @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
-    private String fatherLastName;
+    @ManyToOne( fetch = FetchType.LAZY)
+    @JoinColumn(name = "mere_id")
+    private Parent mere;
 
-    @Column
-    @NotBlank
-    @NotNull(message = "Father First Name is required")
-    private String fatherFirstName;
-    @OneToMany(mappedBy = "eleve")
+    @OneToMany(mappedBy = "eleve", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Absence> absences;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_Id")
     private Salle salle;
 
@@ -81,12 +67,10 @@ public class Eleve extends User {
         this.ineNumber = eleveBuilder.ineNumber;
         this.dateDeNaissance = eleveBuilder.dateDeNaissance;
         this.age = eleveBuilder.age;
-        this.motherFirstName = eleveBuilder.motherFirstName;
-        this.motherLastName = eleveBuilder.motherLastName;
-        this.fatherFirstName = eleveBuilder.fatherLastName;
-        this.fatherLastName = eleveBuilder.fatherLastName;
-        this.etablissement =eleveBuilder.etablissement;
-        this.absences=eleveBuilder.absences;
+        this.pere = eleveBuilder.pere;
+        this.mere = eleveBuilder.mere;
+        this.etablissement = eleveBuilder.etablissement;
+        this.absences = eleveBuilder.absences;
 
     }
 
@@ -99,62 +83,55 @@ public class Eleve extends User {
         private String ineNumber;
         private LocalDate dateDeNaissance;
         private int age;
-        private String motherFirstName;
-        private String motherLastName;
-        private String fatherFirstName;
-        private String fatherLastName;
+
+        private Parent pere;
+
+        private Parent mere;
+
+
         private Etablissement etablissement;
         private List<Absence> absences;
 
-        public EleveBuilder ineNumber(String  ineNumber){
+        public EleveBuilder ineNumber(String ineNumber) {
 
-            this.ineNumber= ineNumber;
-            return  this;
-        }
-
-        public  EleveBuilder dateDeNaissance (LocalDate dateDeNaissance){
-
-            this.dateDeNaissance=dateDeNaissance;
+            this.ineNumber = ineNumber;
             return this;
         }
 
-        public EleveBuilder motherFirstName(String motherFirstName){
 
-            this.motherFirstName=motherFirstName;
-            return  this;
+        public EleveBuilder pere(Parent pere) {
+
+            this.pere = pere;
+
+            return this;
         }
 
-        public  EleveBuilder motherLastName (String motherLastName){
+        public EleveBuilder mere(Parent mere) {
 
-            this.motherLastName=motherLastName;
-            return  this;
+            this.mere = mere;
+            return this;
         }
 
-        public EleveBuilder fatherFirstName(String fatherFirstName){
+        public EleveBuilder dateDeNaissance(LocalDate dateDeNaissance) {
 
-            this.fatherFirstName=fatherFirstName;
-            return  this;
+            this.dateDeNaissance = dateDeNaissance;
+            return this;
         }
 
-        public EleveBuilder fathreLastName(String fatherLastName){
-
-            this.fatherLastName=fatherLastName;
-
-            return  this;
-        }
-
-        public EleveBuilder etablissementScolaire (Etablissement etablissement){
+        public EleveBuilder etablissementScolaire(Etablissement etablissement) {
 
             this.etablissement = etablissement;
 
-            return  this;
-        }
-
-        public EleveBuilder absences  (List<Absence> absences){
-
-            this.absences=absences;
             return this;
         }
+
+        public EleveBuilder absences(List<Absence> absences) {
+
+            this.absences = absences;
+            return this;
+        }
+
+
         public Eleve build() {
 
             return new Eleve(this);

@@ -68,7 +68,7 @@ public class EleveController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<ApiResponse<Page<Eleve>>> recupererTousLesEleves(Pageable pageable) {
         try {
-            Page<Eleve> eleves = eleveService.obtenirListeElevePage(pageable);
+       Page<Eleve> eleves = eleveService.obtenirListeElevePage(pageable);
             log.info("La liste des élèves est: Eleves={}", eleves);
             return ResponseEntity.ok(new ApiResponse<>(eleves, "liste des élèves récupérer avec succès."));
         } catch (KaladewnManagementException.EntityNotFoundException e) {
@@ -145,10 +145,8 @@ public class EleveController {
             eleve.setIneNumber(parameters.getStudentIneNumber());
             eleve.setDateDeNaissance(parameters.getDateDeNaissance());
             eleve.setAge(parameters.getAge());
-            eleve.setMotherFirstName(parameters.getMotherFirstName());
-            eleve.setMotherLastName(parameters.getMotherLastName());
-            eleve.setFatherLastName(parameters.getFatherLastName());
-            eleve.setFatherFirstName(parameters.getFatherFirstName());
+             eleve.setPere(parameters.getPere());
+             eleve.setMere(parameters.getMere());
             eleve.setAbsences(parameters.getAbsences());
             eleve.setEtablissement(parameters.getEtablissement());
             return ResponseEntity.ok(new ApiResponse<Eleve>(eleveService.mettreAjourUtilisateur(id, parameters), successMessage));
@@ -260,10 +258,10 @@ public class EleveController {
      * @return Une liste d'élèves correspondant aux critères de recherche, encapsulée dans une ResponseEntity contenant un ApiResponse, ou null en cas d'exception KaladewnManagementException.EntityNotFoundException.
      */
     @RequestMapping(value = "/eleve/{prenom}/{nomDeFamille}")
-    public ResponseEntity<ApiResponse<List<Eleve>>> recupererEleveParPrenomNom(@PathVariable("prenom") String prenom, @PathVariable("nomDeFamille") String nomDeFamille) {
+    public ResponseEntity<ApiResponse<Optional<Eleve>>> recupererEleveParPrenomNom(@PathVariable("prenom") String prenom, @PathVariable("nomDeFamille") String nomDeFamille) {
         log.info("Elève trouvé avec : prenom  et nom={},{}", prenom, nomDeFamille);
         try {
-            return ResponseEntity.ok(new ApiResponse<List<Eleve>>(eleveService.recupererEleveParPrenomEtNom(prenom, nomDeFamille), "Eleve récupéré par son prénom et nom de famille."));
+            return ResponseEntity.ok(new ApiResponse<Optional<Eleve>>(eleveService.recupererEleveParPrenomEtNom(prenom, nomDeFamille), "Eleve récupéré par son prénom et nom de famille."));
         } catch (KaladewnManagementException.EntityNotFoundException e) {
 
             //TODO  à finir

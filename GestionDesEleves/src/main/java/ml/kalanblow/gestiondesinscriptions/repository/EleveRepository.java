@@ -2,6 +2,9 @@ package ml.kalanblow.gestiondesinscriptions.repository;
 
 
 import ml.kalanblow.gestiondesinscriptions.model.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +66,7 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * @param fin La date de fin de la période de création.
      * @return Un objet Optional contenant l'élève correspondant à la période de création (s'il existe).
      */
-    Optional<Optional> findEleveByCreatedDateBetween( LocalDate debut, LocalDate fin);
+    Optional<Eleve> findEleveByCreatedDateBetween( LocalDate debut, LocalDate fin);
 
 
     /**
@@ -88,7 +91,8 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      *
      * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève n'est trouvé.
      */
-    Optional<List<Eleve>> findAll();
+    @EntityGraph(attributePaths = {"pere", "mere"})
+    Page<Eleve> findAll(Pageable pageable);
 
     /**
      * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
@@ -97,5 +101,25 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève ne correspond aux critères de recherche.
      */
     Optional<List<Eleve>> findDistinctBySalle_Etablissement (Salle salleDeClasse);
+
+
+    /**
+     * Récupère un élève en fonction de son numéro INE.
+     *
+     * @param ineNumber Le numéro INE de l'élève.
+     * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
+     */
+    Optional<Eleve> findByIneNumber(String ineNumber);
+
+
+    /**
+     * Récupère une liste d'élèves par leur prénom et nom de famille.
+     *
+     * @param prenom       Le prénom de l'élève.
+     * @param nomDeFamille Le nom de famille de l'élève.
+     * @return Une liste d'élèves correspondant aux critères de recherche.
+     */
+    Optional<User> findByUserName_PrenomAndUserName_NomDeFamille(String prenom, String nomDeFamille);
+
 
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,33 +31,37 @@ public class Absence implements Serializable {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private Long version;
 
     @Column
+    @NotNull(message = "{notnull.message}")
     private String motif;
 
     @Column
+    @NotNull(message = "{notnull.message}")
     private LocalDate dateDeCreation;
 
     @Column
+    @NotNull(message = "{notnull.message}")
     private LocalDate dateDeJustification;
 
     @Column
+    @NotNull(message = "{notnull.message}")
     private boolean estJustifiee;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "cours_id")
     private Cours cours;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "eleve_id")
     private Eleve eleve;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "appel_de_presence_id")
     private Presence presence;
 

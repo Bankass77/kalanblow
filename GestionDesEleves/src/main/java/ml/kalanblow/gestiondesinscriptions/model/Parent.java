@@ -20,7 +20,7 @@ import java.util.Set;
 @JsonDeserialize(builder = Parent.ParentBuilder.class)
 public class Parent extends  User{
 
-    @NotNull(message = "{notnull.message}")
+    @NotNull(message = "{parent.profession.not.null}")
     private String profession;
 
     @JsonManagedReference
@@ -31,5 +31,24 @@ public class Parent extends  User{
     @OneToMany(mappedBy = "mere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> enfantsMere = new HashSet<>();
 
+    public void addEnfantPere(Eleve eleve) {
+        enfantsPere.add(eleve);
+        eleve.setPere(this);
+    }
+
+    public void removeEnfantPere(Eleve eleve) {
+        enfantsPere.remove(eleve);
+        eleve.setPere(null);
+    }
+
+    public void addEnfantMere(Eleve eleve) {
+        enfantsMere.add(eleve);
+        eleve.setMere(this);
+    }
+
+    public void removeEnfantMere(Eleve eleve) {
+        enfantsMere.remove(eleve);
+        eleve.setMere(null);
+    }
 
 }

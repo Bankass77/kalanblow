@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.service;
 
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEnseignantParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEnseignantParameters;
@@ -8,6 +9,7 @@ import ml.kalanblow.gestiondesinscriptions.request.EditEnseignantParameters;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.util.Set;
 
 public interface EnseignantService {
 
@@ -34,7 +36,7 @@ public interface EnseignantService {
      * @param email L'adresse e-mail à rechercher partiellement.
      * @return Une instance facultative (Optional) des enseignants trouvés, ou une instance vide si aucun enseignant correspondant n'est trouvé.
      */
-    Optional<Enseignant> searchAllByEmailIsLike(String email);
+    Optional<Enseignant> searchAllByEmailIsLike(Email email);
 
     /**
      * Obtient un enseignant en fonction du cours d'enseignement spécifié.
@@ -92,4 +94,7 @@ public interface EnseignantService {
     Optional<Enseignant> editerEnseignant(Long id, EditEnseignantParameters enseignantParameters);
 
 
+    Set<Enseignant> getAllEnseignants();
+
+    void deleteById(Long id);
 }

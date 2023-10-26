@@ -8,6 +8,7 @@ import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
+import ml.kalanblow.gestiondesinscriptions.model.UserName;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,10 +20,11 @@ import java.time.LocalDateTime;
 public final class EditEleveParameters extends CreateEleveParameters {
 
     private long version;
+
     // tag::update[]
     public void updateStudent(Eleve eleve) {
 
-        eleve.setUserName(getUserName());
+        eleve.setUserName(new UserName(getUserName().getPrenom(), getUserName().getNomDeFamille()));
         eleve.setEmail(getEmail());
         eleve.setPhoneNumber(getPhoneNumber());
         eleve.setAddress(getAddress());
@@ -31,15 +33,10 @@ public final class EditEleveParameters extends CreateEleveParameters {
         eleve.setMaritalStatus(getMaritalStatus());
         eleve.setIneNumber(getStudentIneNumber());
         eleve.setAge(getAge());
-        eleve.setEtablissement(getEtablissement());
         eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
-        eleve.setAbsences(getAbsences());
-        eleve.setFatherFirstName(getFatherFirstName());
-        eleve.setFatherLastName(getFatherLastName());
-
-        eleve.setMotherFirstName(getMotherFirstName());
-        eleve.setMotherLastName(getMotherLastName());
+        eleve.setPere(getPere());
+        eleve.setMere(getMere());
         MultipartFile avatar = getAvatar();
 
         if (avatar != null) {

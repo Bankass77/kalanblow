@@ -18,21 +18,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateSalleParameters {
-
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
+     
     private String nomDeLaSalle;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private int nombreDePlace;
-
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
+     
     private TypeDeClasse typeDeClasse;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private Etablissement etablissement;
 
     private LocalDateTime  salleReservationDate;

@@ -36,7 +36,7 @@ public interface EleveService {
      * @param pageable Les informations de pagination.
      * @return Une page d'élèves.
      */
-    Page<Eleve> obtenirListeElevePage(Pageable pageable);
+    Page<Eleve> obtenirListeElevePage(Pageable pageable) ;
 
     /**
      * Met à jour les informations d'un élève.
@@ -83,13 +83,6 @@ public interface EleveService {
      */
     void deleteAllEleves();
 
-    /**
-     * Récupère un élève en fonction de son numéro INE.
-     *
-     * @param ineNumber Le numéro INE de l'élève.
-     * @return Une instance d'élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
-     */
-    Optional<Eleve> getEleveByIneNumber(String ineNumber);
 
     /**
      * Crée un nouvel élève en utilisant les paramètres spécifiés.
@@ -106,7 +99,7 @@ public interface EleveService {
      * @param nomDeFamille Le nom de famille de l'élève.
      * @return Une liste d'élèves correspondant aux critères de recherche.
      */
-    List<Eleve> recupererEleveParPrenomEtNom(String prenom, String nomDeFamille);
+    Optional<Eleve> recupererEleveParPrenomEtNom(String prenom, String nomDeFamille);
 
     /**
      * Supprime un utilisateur par son identifiant.
@@ -147,9 +140,9 @@ public interface EleveService {
      *
      * @param debut La date de début de la période de création.
      * @param fin   La date de fin de la période de création.
-     * @return Un objet Optional contenant l'élève correspondant à la période de création (s'il existe).
+     * @return Un objet Eleve contenant l'élève correspondant à la période de création (s'il existe).
      */
-    Optional<Optional> findEleveByCreatedDateBetween(LocalDate debut, LocalDate fin);
+    Optional<Eleve> findEleveByCreatedDateBetween(LocalDate debut, LocalDate fin);
 
 
     /**
@@ -176,7 +169,7 @@ public interface EleveService {
      *
      * @return Une instance facultative (Optional) contenant la liste complète des élèves s'ils sont disponibles, ou Optional.empty() s'il n'y a aucun élève inscrit.
      */
-    Optional<List<Eleve>> recupererLaListeDesEleves();
+   Page<Eleve> recupererLaListeDesEleves(Pageable pageable);
 
 
     /**

@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.*;
-import ml.kalanblow.gestiondesinscriptions.request.CreateCoursDEnseignementParameters;
+import ml.kalanblow.gestiondesinscriptions.request.CreateCoursParameters;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 import java.util.Set;
 
@@ -14,22 +15,25 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCoursDEnseingnementFormData {
+public class CreateCoursFormData {
 
-    @NotNull
+
     @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
     private String nomDuCours;
 
-    @NotNull
     @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
     private String niveau;
 
-    @NotNull
+
     @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
     private Periode anneeScolaire;
 
-    @NotNull
+
     @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
     private Matiere matiere;
 
     private Set<Absence> absenceEleves;
@@ -38,17 +42,19 @@ public class CreateCoursDEnseingnementFormData {
     @NotBlank
     private Set<Horaire> horaireClasses;
 
-    @NotNull
+
     @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
     private Enseignant enseignant;
 
-    @NotNull
+
     @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
     private Salle salleDeClasse;
 
 
-    public CreateCoursDEnseignementParameters toCoursDEnseignementParameters() {
-        CreateCoursDEnseignementParameters createCoursDEnseignementParameters = new CreateCoursDEnseignementParameters();
+    public CreateCoursParameters toCoursDEnseignementParameters() {
+        CreateCoursParameters createCoursDEnseignementParameters = new CreateCoursParameters();
         createCoursDEnseignementParameters.setEnseignant(getEnseignant());
         createCoursDEnseignementParameters.setNomDuCours(getNomDuCours());
         createCoursDEnseignementParameters.setMatiere(getMatiere());

@@ -22,4 +22,6 @@ public interface ParentService {
 
     void deleteParent(Long id);
 
+     void remove(Parent parent);
+
 }

@@ -13,20 +13,19 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditParentFormData extends CreateParentFormData {
+public final class EditParentFormData extends CreateParentFormData {
 
     private Long id;
     private long version;
     private String profession;
     private Set<Eleve> enfantsPere = new HashSet<>();
-
     private Set<Eleve> enfantsMere = new HashSet<>();
 
     public static EditParentFormData fromParent(Parent parent) {
 
         EditParentFormData editParentFormData = new EditParentFormData();
-        editParentFormData.setVersion(editParentFormData.version);
-        editParentFormData.setId(editParentFormData.getId());
+        editParentFormData.setVersion(parent.getVersion());
+        editParentFormData.setId(parent.getId());
         editParentFormData.setAddress(parent.getAddress());
         editParentFormData.setEmail(parent.getEmail().asString());
         editParentFormData.setGender(parent.getGender());
@@ -38,12 +37,13 @@ public class EditParentFormData extends CreateParentFormData {
         editParentFormData.setPrenom(parent.getUserName().getPrenom());
         editParentFormData.setEnfantsPere(parent.getEnfantsPere());
         editParentFormData.setEnfantsMere(parent.getEnfantsMere());
-        editParentFormData.setProfession(editParentFormData.getProfession());
+        editParentFormData.setProfession(parent.getProfession());
 
 
         return editParentFormData;
     }
 
+    @Override
     public EditParentParameters toParentParameters() {
 
       EditParentParameters editParentParameters= new EditParentParameters();
@@ -52,7 +52,6 @@ public class EditParentFormData extends CreateParentFormData {
       editParentParameters.setProfession(getProfession());
       editParentParameters.setEmail(new Email(getEmail()));
       editParentParameters.setGender(getGender());
-      editParentParameters.setPassword(getPassword());
       editParentParameters.setEnfantsPere(enfantsPere);
       editParentParameters.setCreatedDate(getCreatedDate());
       editParentParameters.setMaritalStatus(getMaritalStatus());

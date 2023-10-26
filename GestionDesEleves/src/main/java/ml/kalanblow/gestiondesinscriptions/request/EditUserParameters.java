@@ -22,7 +22,7 @@ public non-sealed class EditUserParameters extends CreateUserParameters {
     public EditUserParameters(long version, UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
                               PhoneNumber phoneNumber, Address address, LocalDateTime createdDate, LocalDateTime modifyDate
                              ) {
-        super(userName, gender, maritalStatus, email, null, phoneNumber, address, createdDate, modifyDate);
+        super();
 
         this.version = version;
     }
@@ -38,7 +38,6 @@ public non-sealed class EditUserParameters extends CreateUserParameters {
         user.setAddress(getAddress());
         user.setUserName(getUserName());
         user.setVersion(version);
-        user.setPassword(getPassword());
 
         MultipartFile avatar = getAvatar();
         if (avatar != null) {

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,6 +23,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -43,6 +43,10 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @JsonDeserialize(builder = User.UserBuilder.class)
 public abstract class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,13 +59,13 @@ public abstract class User implements Serializable {
     @Embedded
     private UserName userName;
 
-    //@Enumerated(EnumType.STRING)
+
     @Column(name = "gender")
     @Convert(converter = GenderConverter.class)
-    @NotNull
+    
     private Gender gender;
 
-    @NotNull(message = "Marital Status is required")
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "marital_Status")
     private MaritalStatus maritalStatus;
@@ -71,16 +75,14 @@ public abstract class User implements Serializable {
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    @NotNull
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
     @Column(name = "last_modified_date")
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    @NotNull
-    private LocalDateTime lastModifiedDate = LocalDateTime.now();
+    private LocalDateTime lastModifiedDate ;
 
     @Column(name = "telephone_utilisateur", insertable = true, updatable = true, nullable = false)
     @Nullable
@@ -91,12 +93,12 @@ public abstract class User implements Serializable {
     @Nullable
     private byte[] avatar;
 
-    @NotNull(message = "Please enter a valid address email.")
+    
     @Column(unique = true, nullable = false, updatable = true, name = "email")
     @Embedded
     private Email email;
 
-    @NotNull(message = "Address is required")
+    
     @Embedded
     @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
 
@@ -118,8 +120,6 @@ public abstract class User implements Serializable {
 
     @NotNull
     @Column(name = "password")
-    @NotNull(message = "Password is required")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
     private String password;
 
     @JsonPOJOBuilder(withPrefix = "")
@@ -146,5 +146,10 @@ public abstract class User implements Serializable {
         private String password;
 
     }
+
+    public String getPhoneNumberAsString() {
+        return phoneNumber != null ? phoneNumber.asString() : "";
+    }
+
 
 }

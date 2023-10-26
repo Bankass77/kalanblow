@@ -18,17 +18,11 @@ import java.util.List;
 @AllArgsConstructor
 public sealed class CreateEnseignantParameters  extends CreateUserParameters permits EditEnseignantParameters {
 
-
-    @NotBlank
-    @NotNull
+     
     private String leMatricule;
 
-    @NotBlank
-    @NotNull
     private LocalDate dateDeNaissance;
 
-    @NotBlank
-    @NotNull
     private int age;
 
     private List<DayOfWeek> joursDisponibles;
@@ -37,10 +31,7 @@ public sealed class CreateEnseignantParameters  extends CreateUserParameters per
 
     private LocalTime heureFinDisponibilite;
 
-    @NotBlank
-    @NotNull
     private Etablissement etablissement;
-
 
     private List<Cours> coursDEnseignements;
 

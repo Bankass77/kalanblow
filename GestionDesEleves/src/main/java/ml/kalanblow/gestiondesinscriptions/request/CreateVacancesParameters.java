@@ -1,8 +1,9 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -12,12 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateVacancesParameters {
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private LocalDate dateDebut;
 
-
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private LocalDate dateFin;
 }

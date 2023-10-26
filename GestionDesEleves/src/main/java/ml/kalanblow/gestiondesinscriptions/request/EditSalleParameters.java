@@ -6,7 +6,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Salle;
 
 @NoArgsConstructor
 @Data
-public class EditSalleDeClasseParameters extends  CreateSalleDeClasseParameters{
+public class EditSalleParameters extends CreateSalleParameters {
     private  long version;
     public  void updateSalleDeClasse (Salle salleDeClasse){
 
