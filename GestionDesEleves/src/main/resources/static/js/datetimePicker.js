@@ -1,16 +1,16 @@
 $(document).ready(function() {
-    var selecteur = $('duet-date-picker');
+    var picker = $('duet-date-picker');
 
-    if (selecteur.length > 0) {
-        selecteur.each(function() {
+    if (picker.length > 0) {
+        picker.each(function() {
             $(this).dateAdapter({
-                parse: function(valeur, créerDate) {
+                parse: function(value, createDate) {
                     try {
-                        let àPartirDeFormat = luxon.DateTime.fromFormat(valeur, 'yyyy-LL-dd');
-                        if (àPartirDeFormat.isValid) {
-                            return créerDate(àPartirDeFormat.year, àPartirDeFormat.month, àPartirDeFormat.day);
+                        var fromFormat = luxon.DateTime.fromFormat(value, 'yyyy-LL-dd');
+                        if (fromFormat.isValid) {
+                            return createDate(fromFormat.year, fromFormat.month, fromFormat.day);
                         } else {
-                            console.log('àPartirDeFormat non valide');
+                            console.log('fromFormat not valid');
                         }
                     } catch (e) {
                         console.log(e);
@@ -19,10 +19,10 @@ $(document).ready(function() {
                 format: function(date) {
                     var DateTime = luxon.DateTime;
                     return DateTime.fromJSDate(date)
-                        .setLocale('[[${#strings.replace(#locale, '_', '-')}]]').toFormat('d LLLL yyyy');
+                        .setLocale('[[${#strings.replace(#locale, '_', '-')}]]')
+                .toFormat('d LLLL yyyy');
                 }
             });
         });
     }
 });
-

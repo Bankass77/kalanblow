@@ -40,6 +40,4 @@ public interface SalleRepository extends JpaRepository<Salle,Long> {
      * @return Une instance facultative (Optional) de la salle de classe trouvée, ou une instance vide si aucune salle de classe correspondante n'est trouvée.
      */
     Optional<Salle>  getSalleDeClasseByCoursPlanifies(Cours coursDEnseignement);
-
-    Optional<Salle> findSallesByTypeDeClasse( TypeDeClasse typeDeClasse);
 }

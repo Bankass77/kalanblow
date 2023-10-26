@@ -31,7 +31,7 @@ public class Salle implements Serializable {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Version()
     private Long version;
@@ -43,14 +43,10 @@ public class Salle implements Serializable {
     private int nombreDePlace;
 
     @Column
-    private boolean isAvailable;
-
-
-    @Column
     @Enumerated(EnumType.STRING)
     private TypeDeClasse typeDeClasse;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
@@ -59,10 +55,10 @@ public class Salle implements Serializable {
     @OrderColumn(name = "jour_semaine")
     private Set<Horaire> horaires;
 
-    @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "salle")
     private Set<Cours> coursPlanifies;
 
-    @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "salle")
     private Set<Eleve> eleves;
 
 

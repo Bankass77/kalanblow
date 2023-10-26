@@ -13,26 +13,23 @@ import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
-import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
-import ml.kalanblow.gestiondesinscriptions.service.ParentService;
-import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
+import static ml.kalanblow.gestiondesinscriptions.service.impl.EleveSpecification.recupererEleveParSonNomePrenom;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
  * Service pour la gestion des élèves.
@@ -44,20 +41,11 @@ public class EleveServiceImpl implements EleveService {
 
     private final EleveRepository eleveRepository;
 
-    private final ParentService parentService;
-
-    private final EtablissementService etablissementService;
-
-    private final BCryptPasswordEncoder passwordEncoder;
-
 
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService,BCryptPasswordEncoder passwordEncoder) {
+    public EleveServiceImpl(EleveRepository eleveRepository) {
 
         this.eleveRepository = eleveRepository;
-        this.parentService = parentService;
-        this.etablissementService = etablissementService;
-        this.passwordEncoder=passwordEncoder;
 
 
     }
@@ -72,9 +60,13 @@ public class EleveServiceImpl implements EleveService {
     public boolean verifierExistenceEmail(Email email) {
 
         log.debug("verifierExistenceEmail {}", email);
+        Specification<Eleve> eleveSpecificationEmail = where(null);
+        if (email != null) {
 
-        return    eleveRepository.findElevesByEmail(email).isPresent();
-
+            eleveSpecificationEmail = EleveSpecification.recupererEleveParEmail(email.asString());
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -103,24 +95,27 @@ public class EleveServiceImpl implements EleveService {
      * @return Une page contenant des élèves.
      */
     @Override
-    public Page<Eleve> obtenirListeElevePage(Pageable pageable)  {
-        log.debug("obtenirListeElevePage {}");
-        return eleveRepository.findAll(pageable);
+    public Page<Eleve> obtenirListeElevePage(Pageable pageable) {
+
+
+        Specification<Eleve> spec = EleveSpecification.all();
+        log.debug("obtenirListeElevePage {}", spec);
+
+        return eleveRepository.findAll(spec, pageable);
     }
 
 
-
     /**
-     * @param userId     L'identifiant de l'élève à mettre à jour.
-     * @param parameters Les paramètres de mise à jour.
-     * @return Une instance d'Élève représentant les nouvelles informations de l'élève.
+     * @param userId
+     * @param parameters
+     * @return
      */
     @Override
     public Eleve mettreAjourUtilisateur(Long userId, EditEleveParameters parameters) {
 
         Optional<Eleve> eleve = eleveRepository.findById(userId);
 
-        if (parameters.getVersion() != eleve.get().getVersion()) {
+        if (parameters.getEmail() != eleve.get().getEmail()) {
             throw new ObjectOptimisticLockingFailureException(Eleve.class, eleve.get().getId());
 
         }
@@ -130,7 +125,7 @@ public class EleveServiceImpl implements EleveService {
         parameters.setGender(eleve.get().getGender());
         parameters.setMaritalStatus(eleve.get().getMaritalStatus());
         parameters.setEmail(eleve.get().getEmail());
-        parameters.setPassword(passwordEncoder.encode(eleve.get().getPassword()));
+        parameters.setPassword(eleve.get().getPassword());
         parameters.setPhoneNumber(eleve.get().getPhoneNumber());
         parameters.setAddress(eleve.get().getAddress());
         parameters.setCreatedDate(eleve.get().getCreatedDate());
@@ -138,13 +133,15 @@ public class EleveServiceImpl implements EleveService {
         parameters.setDateDeNaissance(eleve.get().getDateDeNaissance());
         parameters.setAge(eleve.get().getAge());
         parameters.setStudentIneNumber(eleve.get().getIneNumber());
-        parameters.setPere(eleve.get().getPere());
-        parameters.setMere(eleve.get().getMere());
+        parameters.setMotherFirstName(eleve.get().getMotherFirstName());
+        parameters.setMotherLastName(eleve.get().getMotherLastName());
         parameters.setPhoneNumber(eleve.get().getPhoneNumber());
+        parameters.setFatherMobile(eleve.get().getPhoneNumber());
+        parameters.setFatherLastName(eleve.get().getFatherLastName());
         parameters.setEtablissement(eleve.get().getEtablissement());
         parameters.setAbsences(eleve.get().getAbsences());
         parameters.updateStudent(eleve.get());
-        log.debug("Metter à d'un Eleve {} ({})", parameters.getUserName().getFullName());
+
         return eleve.get();
     }
 
@@ -158,20 +155,25 @@ public class EleveServiceImpl implements EleveService {
     public Optional<Eleve> obtenirEleveParSonId(Long userId) {
         log.debug("obtenirEleveParSonId {}", userId);
 
-       Optional<Eleve> optionalEleve= eleveRepository.findById(userId);
-        return optionalEleve;
+        Specification<Eleve> spec = where(null);
+        if (userId != 0) {
+
+            spec = spec.and(EleveSpecification.hasId(userId));
+        }
+        return eleveRepository.findOne(spec);
     }
 
     /**
-     * Récupère un élève en fonction de son numéro INE.
-     *
-     * @param ineNumber Le numéro INE de l'élève.
-     * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
+     * @param ineNumber
+     * @return
      */
     @Override
     public Optional<Eleve> chercherParSonNumeroIne(String ineNumber) {
-
-        return  eleveRepository.findByIneNumber(ineNumber);
+        Specification<Eleve> eleveSpecification = where(null);
+        if (ineNumber != null) {
+            eleveSpecification = eleveSpecification.and((EleveSpecification.findIneNumber(ineNumber)));
+        }
+        return Optional.ofNullable((Eleve) eleveRepository.findAll(eleveSpecification));
     }
 
     /**
@@ -209,7 +211,21 @@ public class EleveServiceImpl implements EleveService {
 
     }
 
+    /**
+     * Récupère un élève en fonction de son numéro INE.
+     *
+     * @param ineNumber Le numéro INE de l'élève.
+     * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
+     */
+    @Override
+    public Optional<Eleve> getEleveByIneNumber(String ineNumber) {
 
+        Specification<Eleve> eleveSpecification = where(null);
+        if (ineNumber != null) {
+            eleveSpecification = eleveSpecification.and((EleveSpecification.findIneNumber(ineNumber)));
+        }
+        return Optional.ofNullable((Eleve) eleveRepository.findAll(eleveSpecification));
+    }
 
     /**
      * @param createEleveParameters
@@ -217,32 +233,28 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public Eleve ajouterUnEleve(CreateEleveParameters createEleveParameters) {
-        log.debug("Création d'un Eleve {} ({})", createEleveParameters.getUserName().getFullName());
+        log.debug("createEleveParameters", createEleveParameters);
         return ajouterUnNouveauEleve(createEleveParameters);
 
     }
 
     /**
-     * Récupère une liste d'élèves par leur prénom et nom de famille.
-     *
-     * @param prenom       Le prénom de l'élève.
-     * @param nomDeFamille Le nom de famille de l'élève.
-     * @return Une liste d'élèves correspondant aux critères de recherche.
+     * @param prenom
+     * @param nomDeFamille
+     * @return
      */
     @Override
-    public Optional<Eleve> recupererEleveParPrenomEtNom(String prenom, String nomDeFamille) {
-
-        Optional<User> optionalUser = eleveRepository.findByUserName_PrenomAndUserName_NomDeFamille(prenom, nomDeFamille);
-        Eleve eleve=  new Eleve();
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-          eleve= (Eleve) user;
-          return Optional.of(eleve);
-        }
-
-        return Optional.of(eleve);
+    public List<Eleve> recupererEleveParPrenomEtNom(String prenom, String nomDeFamille) {
+        return eleveRepository.findAll(where(recupererEleveParSonNomePrenom(prenom).and(recupererEleveParSonNomePrenom(nomDeFamille))));
     }
 
+    /**
+     * Édite les informations d'un élève existant.
+     *
+     * @param id         L'ID de l'élève à éditer.
+     * @param parameters Les paramètres de modification de l'élève.
+     * @return Une instance d'Élève représentant les nouvelles informations de l'élève.
+     */
 
     /**
      * Cette méthode permet d'ajouter une photo au profil d'un élève s'il est fourni dans les paramètres.
@@ -349,8 +361,8 @@ public class EleveServiceImpl implements EleveService {
      * @return Une instance facultative (Optional) contenant la liste complète des élèves s'ils sont disponibles, ou Optional.empty() s'il n'y a aucun élève inscrit.
      */
     @Override
-    public Page<Eleve> recupererLaListeDesEleves( Pageable pageable) {
-        return eleveRepository.findAll(pageable);
+    public Optional<List<Eleve>> recupererLaListeDesEleves() {
+        return eleveRepository.findAll();
     }
 
     /**
@@ -366,13 +378,12 @@ public class EleveServiceImpl implements EleveService {
 
     private Eleve ajouterUnNouveauEleve(CreateEleveParameters createEleveParameters) {
         Eleve eleve = new Eleve();
-
-        eleve.setPere(createEleveParameters.getMere());
-        eleve.setMere(createEleveParameters.getMere());
-
-        eleve.setEtablissement(etablissementService.trouverEtablissementScolaireParSonIdentifiant(createEleveParameters.getEtablissement().getEtablisementScolaireId()));
+        eleve.setEtablissement(createEleveParameters.getEtablissement());
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
-
+        eleve.setMotherFirstName(createEleveParameters.getMotherFirstName());
+        eleve.setMotherLastName(createEleveParameters.getMotherLastName());
+        eleve.setFatherFirstName(createEleveParameters.getFatherFirstName());
+        eleve.setFatherLastName(createEleveParameters.getFatherLastName());
         eleve.setUserName(createEleveParameters.getUserName());
         eleve.setCreatedDate(createEleveParameters.getCreatedDate());
         eleve.setGender(createEleveParameters.getGender());
@@ -383,13 +394,10 @@ public class EleveServiceImpl implements EleveService {
         eleve.setPassword(createEleveParameters.getPassword());
         ajouterPhotoSiPresent(createEleveParameters, eleve);
         eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());
-        eleve.setAge(CalculateUserAge.calculateAge(createEleveParameters.getDateDeNaissance()));
+        eleve.setAge(createEleveParameters.getAge());
         eleve.setDateDeNaissance(createEleveParameters.getDateDeNaissance());
-
-        eleve.setRoles(Collections.singleton(UserRole.STUDENT));
-
-
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        eleve.setRoles(Collections.singleton(UserRole.STUDENT));
         Set<ConstraintViolation<Eleve>> constraintViolations = validator.validate(eleve, ValidationGroupOne.class);
         if (!constraintViolations.isEmpty()) {
 

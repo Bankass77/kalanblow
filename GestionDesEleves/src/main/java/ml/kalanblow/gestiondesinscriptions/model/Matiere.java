@@ -30,7 +30,7 @@ import java.util.Set;
 public class Matiere implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Version()
@@ -52,7 +52,7 @@ public class Matiere implements Serializable {
     private String description;
 
 
-    @OneToMany(mappedBy = "matiere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "matiere")
     private Set<Cours> coursDEnseignements;
 
 

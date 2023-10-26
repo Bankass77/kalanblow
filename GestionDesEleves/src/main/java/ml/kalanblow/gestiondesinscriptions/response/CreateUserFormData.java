@@ -28,16 +28,10 @@ public non-sealed class CreateUserFormData extends AbstractUserFormData {
 
     public CreateUserParameters toUserParameters() {
 
-        CreateUserParameters parameters = new CreateUserParameters();
-        parameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
-                parameters.setMaritalStatus(getMaritalStatus());
-        parameters.setEmail(new Email(getEmail()));
-        parameters.setPassword(password);
-        parameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
-        parameters.setAddress(getAddress());
-        parameters.setCreatedDate(getCreatedDate());
-        parameters.setModifyDate(getModifyDate());
-        parameters.setGender(getGender());
+        CreateUserParameters parameters = new CreateUserParameters(new UserName(getPrenom(), getNomDeFamille()),
+                getGender(), getMaritalStatus(), new Email(getEmail()), password,
+                new PhoneNumber(getPhoneNumber()), getAddress(), getCreatedDate(), getModifyDate());
+
         if (getAvatarFile() != null && !getAvatarFile().isEmpty()) {
             parameters.setAvatar(getAvatarFile());
         }

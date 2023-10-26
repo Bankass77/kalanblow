@@ -9,20 +9,9 @@ import java.time.LocalTime;
 
 @Embeddable
 @Data
-public class Horaire implements Comparable<Horaire> {
+public class Horaire {
 
     private DayOfWeek dayOfWeek;
     private LocalTime heureDebut;
     private LocalTime heureFin;
-
-    @Override
-    public int compareTo(Horaire horaire) {
-        // Comparaison basée sur le jour de la semaine et l'heure de début
-        int comparaisonJour = this.dayOfWeek.compareTo(horaire.getDayOfWeek());
-        if (comparaisonJour != 0) {
-            return comparaisonJour;
-        }
-
-        return this.heureDebut.compareTo(horaire.getHeureDebut());
-    }
 }

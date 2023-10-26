@@ -4,7 +4,10 @@ package ml.kalanblow.gestiondesinscriptions.response;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.*;
+import ml.kalanblow.gestiondesinscriptions.model.Eleve;
+import ml.kalanblow.gestiondesinscriptions.model.Email;
+import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
+import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 
 import java.time.LocalDate;
@@ -18,7 +21,7 @@ import java.util.Base64;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditEleveFormData extends CreateEleveFormData {
+public class EditEleveFormData extends EditUserFormData {
 
     private Long id;
     private long version;
@@ -27,10 +30,13 @@ public class EditEleveFormData extends CreateEleveFormData {
     private LocalDate dateDeNaissance;
     private Etablissement etablissement;
     private int age;
-    private Parent pere;
-    private Parent mere;
+    private String motherFirstName;
+    private String motherLastName;
+    private String motherPhoneNumber;
+    private String fatherFirstName;
+    private String fatherLastName;
+    private String fatherPoneNumber;
     private String ineNumber;
-    private String avatarBase64Encoded;
 
 
     /**
@@ -91,11 +97,17 @@ public class EditEleveFormData extends CreateEleveFormData {
         editEleveParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
         editEleveParameters.setCreatedDate(getCreatedDate());
         editEleveParameters.setModifyDate(getModifyDate());
-        editEleveParameters.setPere(getPere());
-        editEleveParameters.setMere(getMere());
+
+        editEleveParameters.setFatherMobile(new PhoneNumber(getPhoneNumber()));
+        editEleveParameters.setFatherFirstName(getFatherFirstName());
+        editEleveParameters.setFatherLastName(getFatherLastName());
+
+        editEleveParameters.setMotherFirstName(getMotherFirstName());
+        editEleveParameters.setMotherLastName(getMotherLastName());
+        editEleveParameters.setMotherMobile(new PhoneNumber(getMotherPhoneNumber()));
 
 
-        if (getAvatarFile() != null && !getAvatarFile().isEmpty()) {
+        if (getAvatarFile() != null && !getAvatarFile().isEmpty()){
 
             editEleveParameters.setAvatar(getAvatarFile());
         }

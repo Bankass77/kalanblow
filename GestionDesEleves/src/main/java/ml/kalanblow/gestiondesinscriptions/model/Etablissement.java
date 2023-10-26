@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -30,19 +28,17 @@ public class Etablissement {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long etablisementScolaireId;
 
     @Version
     Long version;
 
     @Column
-    @NotNull(message = "{notnull.message}")
-    @NotBlank
-    @Size(min = 2, max = 200)
+    @NotNull
     private String nomEtablissement;
 
-    @NotNull(message = "{notnull.message}")
+    @NotNull(message = "Address is required")
     @Embedded
     @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
 
@@ -58,7 +54,7 @@ public class Etablissement {
     @Nullable
     private byte[] avatar;
 
-    @NotNull(message = "{notnull.message}")
+    @NotNull(message = "Please enter a valid address email.")
     @Column(unique = true, nullable = false, updatable = true, name = "email")
     @Embedded
     private Email email;
@@ -82,13 +78,13 @@ public class Etablissement {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement")
     private Set<Eleve> eleves;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement")
     private Set<Enseignant> enseignants;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement")
     private Set<Salle> salles;
 
     private Etablissement(EtablissementBuilder builder) {

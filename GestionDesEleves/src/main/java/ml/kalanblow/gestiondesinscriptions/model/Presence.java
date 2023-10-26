@@ -32,7 +32,7 @@ public class Presence implements Serializable {
 
     @Column
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
@@ -42,14 +42,14 @@ public class Presence implements Serializable {
     @Column
     private LocalDateTime dateAppel;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cours_id")
     private Cours cours;
 
-    @OneToMany(mappedBy = "presence", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "presence")
     private List<Absence> absences;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "eleve_id")
     private Eleve eleve;
 

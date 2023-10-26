@@ -1,7 +1,5 @@
 package ml.kalanblow.gestiondesinscriptions.config;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -42,9 +40,7 @@ public class PasswordGenerator {
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String password = generateRandomPassword(12);
-        String hashedPassword = encoder.encode(password);
-        System.out.println("Mot de passe généré : " + password + " ="+ hashedPassword);
+        String password = generateRandomPassword(12); // Vous pouvez spécifier la longueur souhaitée
+        System.out.println("Mot de passe généré : " + password);
     }
 }

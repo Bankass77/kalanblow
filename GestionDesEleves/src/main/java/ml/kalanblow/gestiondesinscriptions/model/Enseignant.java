@@ -32,7 +32,7 @@ public class Enseignant extends User {
     @Column
     private String leMatricule;
 
-    @NotNull(message = "{notnull.message}")
+    @NotNull(message = "Age is required")
     @Column(name = "birthDate")
     @Past
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -41,10 +41,9 @@ public class Enseignant extends User {
     private LocalDate dateDeNaissance;
 
     @Column(name = "age")
-    @NotNull(message = "{notnull.message}")
     private int age;
 
-    @OneToMany(mappedBy = "enseignant", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "enseignant")
     private List<Cours> coursDEnseignements;
 
     @ElementCollection
@@ -58,19 +57,14 @@ public class Enseignant extends User {
     @Column(name = "heure_fin_disponibilite")
     private LocalTime heureFinDisponibilite;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
-
-    // collection d'horaires pendant lesquels l'enseignant est disponible
     @ElementCollection
     @CollectionTable(name = "horaires_enseignant", joinColumns = @JoinColumn(name = "enseignant_id"))
     @OrderColumn(name = "jour_semaine")
-    private List<Horaire> disponibilites;
-
-    @NotNull(message = "{notnull.message}")
-    private boolean disponible;
+    private List<Horaire> horaireClasses;
 
     private Enseignant(EnseignantBuider enseignantBuilder) {
         this.leMatricule = enseignantBuilder.leMatricule;
@@ -81,11 +75,9 @@ public class Enseignant extends User {
         this.heureDebutDisponibilite = enseignantBuilder.heureDebutDisponibilite;
         this.heureFinDisponibilite = enseignantBuilder.heureFinDisponibilite;
         this.joursDisponibles = enseignantBuilder.joursDisponibles;
-        this.disponibilites = enseignantBuilder.horaireClasses;
+        this.horaireClasses = enseignantBuilder.horaireClasses;
 
     }
-
-
 
     /**
      * Builder de la class Elève
