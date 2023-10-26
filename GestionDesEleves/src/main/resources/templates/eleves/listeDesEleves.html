@@ -9,7 +9,7 @@
     <title>Liste des Elèves</title>
 </head>
 <body>
-<div layout:fragment="page-content">
+<div layout:fragment="page-content" >
     <!-- tag::create-button[] -->
     <div th:replace="~{fragments/titles :: title-with-button(#{eleves.title}, 'user-add', #{eleves.add}, @{/kalanden/eleve/ajouter})}"
        ></div>
@@ -38,7 +38,9 @@
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.maritalStatus},hideOnMobile=true)}"></th>
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.dateDeNaissance},hideOnMobile=true)}"></th>
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.email},hideOnMobile=true)}"></th>
+                                <th th:replace="~{fragments/table :: header(title=#{eleve.phoneNumber},hideOnMobile=true)}"></th>
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.address},hideOnMobile=true)}"></th>
+                                <th th:replace="~{fragments/table :: header('')}"></th>
                                 <th th:replace="~{fragments/table :: header('')}"></th>
                             </tr>
                             <!-- end::tr[] -->
@@ -46,12 +48,13 @@
                             <tbody>
                             <!-- tag::tr-body[] -->
                             <tr class="bg-white" th:each="eleve : ${eleves}">
-                                <td th:replace="~{fragments/table :: data(contents=${eleve.etablissement.getNomEtablissement()},hideOnMobile=true)}"></td>
+                                <td th:replace="~{fragments/table :: data(contents=${eleve.etablissement.nomEtablissement},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.userName.fullName},primary=true)}"></td> <!--.-->
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.gender},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.maritalStatus},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.dateDeNaissance},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.email.asString()},hideOnMobile=true)}"></td>
+                                <td th:replace="~{fragments/table :: data(contents=${eleve.phoneNumber.asString()},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.address.getFullAdresse()},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: dataWithLink(#{edit}, @{'/kalanden/eleve/'+ ${eleve.id}})}"></td>
                                 <!-- tag::delete-td[] -->

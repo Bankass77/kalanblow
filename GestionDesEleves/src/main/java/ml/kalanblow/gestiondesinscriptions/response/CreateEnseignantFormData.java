@@ -10,6 +10,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Horaire;
 import ml.kalanblow.gestiondesinscriptions.model.UserName;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEnseignantParameters;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -19,14 +20,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class CreateEnseignantFormData extends  CreateUserFormData{
+
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private String leMatricule;
+
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private LocalDate dateDeNaissance;
+
     @NotBlank
-    @NotNull
+
+    @NotNull(groups = ValidationGroupOne.class)
     private Etablissement etablissement;
 
     @NotBlank
@@ -37,12 +42,15 @@ public class CreateEnseignantFormData extends  CreateUserFormData{
     @NotNull
     private List<Cours> coursDEnseignements;
 
+    @NotNull(groups = ValidationGroupOne.class)
     private LocalTime heureDebutDisponibilite;
+
 
     private List<DayOfWeek> joursDisponibles;
 
     private List<Horaire> horaireClasses;
 
+    @NotNull(groups = ValidationGroupOne.class)
     private LocalTime heureFinDisponibilite;
 
 

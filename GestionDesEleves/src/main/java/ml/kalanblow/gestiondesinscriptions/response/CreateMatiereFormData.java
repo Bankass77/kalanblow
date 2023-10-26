@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.request.CreateMatiereParameters;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 import java.util.Set;
 
@@ -18,17 +19,17 @@ public class CreateMatiereFormData {
     private double note;
 
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private double coefficient;
 
     private double moyenne;
 
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private String nomMatiere;
 
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private String description;
 
     private Set<Cours> coursDEnseignements;

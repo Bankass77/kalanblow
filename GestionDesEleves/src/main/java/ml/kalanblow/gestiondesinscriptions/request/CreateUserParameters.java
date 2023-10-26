@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, EditUserParameters {
+public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, CreateParentParameters, EditParentParameters, EditUserParameters {
 
     private UserName userName;
     private Gender gender;
@@ -46,7 +46,6 @@ public sealed class CreateUserParameters permits CreateEleveParameters, CreateEn
      * @param address
      * @param createdDate
      * @param modifyDate
-     * @param roles
      */
     public CreateUserParameters(UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
                                 String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,

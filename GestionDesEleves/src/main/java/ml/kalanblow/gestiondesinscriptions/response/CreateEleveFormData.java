@@ -1,61 +1,58 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingUser;
-import ml.kalanblow.gestiondesinscriptions.constraint.PasswordsMatch;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
-import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
-import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupTwo;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@PasswordsMatch(groups = ValidationGroupTwo.class)
-@NotExistingUser(groups = ValidationGroupTwo.class)
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class CreateEleveFormData extends CreateUserFormData {
-    
-    @NotNull
-    private String ineNumber = KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength();
 
-    @NotNull
+
+    @NotNull(groups = ValidationGroupOne.class)
+    private String ineNumber;
+
+
+    @NotNull(groups = ValidationGroupOne.class)
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateDeNaissance;
-    
+
     @NotNull
     private int age;
 
-    @NotNull
-    private String motherFirstName;
+    @NotNull(groups = ValidationGroupOne.class)
+    private Parent pere;
 
-    @NotNull
-    private String motherLastName;
+    @NotNull(groups = ValidationGroupOne.class)
+    private Parent mere;
 
-    private String motherPhoneNumber;
 
-    @NotNull
-    private String fatherLastName;
-
-    @NotNull
-    private String fatherFirstName;
-
-    private String fatherPhoneNumber;
-
-    @NotBlank
+    @NotNull(groups = ValidationGroupOne.class)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
     private String password;
-    @NotBlank
+
+
+    @NotNull(groups = ValidationGroupOne.class)
+
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
     private String passwordRepeated;
 
-    @NotNull
+
+    @NotNull(groups = ValidationGroupOne.class)
     private Address address;
 
-    @NotNull
+
+    @NotNull(groups = ValidationGroupOne.class)
     private Etablissement etablissement;
 
 
@@ -67,24 +64,21 @@ public class CreateEleveFormData extends CreateUserFormData {
         createEleveParameters.setStudentIneNumber(getIneNumber());
         createEleveParameters.setAge(CalculateUserAge.calculateAge(getDateDeNaissance()));
         createEleveParameters.setModifyDate(LocalDateTime.now());
-        createEleveParameters.setMotherFirstName(getMotherFirstName());
-        createEleveParameters.setMotherLastName(getMotherLastName());
         createEleveParameters.setMaritalStatus(getMaritalStatus());
-        createEleveParameters.setMotherMobile(new PhoneNumber(getMotherPhoneNumber()));
-        createEleveParameters.setFatherMobile(new PhoneNumber(getPhoneNumber()));
+
         createEleveParameters.setCreatedDate(getCreatedDate());
         createEleveParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
         createEleveParameters.setGender(getGender());
         createEleveParameters.setPassword(getPassword());
         createEleveParameters.setAddress(getAddress());
-        createEleveParameters.setFatherLastName(getFatherLastName());
-        createEleveParameters.setFatherFirstName(getFatherFirstName());
-        createEleveParameters.setFatherMobile(new PhoneNumber(getFatherPhoneNumber()));
+        createEleveParameters.setPere(getPere());
+        createEleveParameters.setMere(getMere());
         createEleveParameters.setEmail(new Email(getEmail()));
         createEleveParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
         createEleveParameters.setEtablissement(getEtablissement());
         createEleveParameters.setPassword(getPassword());
-        if(getAvatarFile() !=null  && !getAvatarFile().isEmpty()){
+
+        if (getAvatarFile() != null && !getAvatarFile().isEmpty()) {
 
             createEleveParameters.setAvatar(getAvatarFile());
         }

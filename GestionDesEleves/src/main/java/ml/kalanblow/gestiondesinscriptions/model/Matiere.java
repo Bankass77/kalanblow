@@ -52,7 +52,7 @@ public class Matiere implements Serializable {
     private String description;
 
 
-    @OneToMany(mappedBy = "matiere")
+    @OneToMany(mappedBy = "matiere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Cours> coursDEnseignements;
 
 

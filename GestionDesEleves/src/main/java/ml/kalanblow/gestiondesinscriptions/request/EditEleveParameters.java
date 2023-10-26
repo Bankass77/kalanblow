@@ -35,11 +35,8 @@ public final class EditEleveParameters extends CreateEleveParameters {
         eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
         eleve.setAbsences(getAbsences());
-        eleve.setFatherFirstName(getFatherFirstName());
-        eleve.setFatherLastName(getFatherLastName());
-
-        eleve.setMotherFirstName(getMotherFirstName());
-        eleve.setMotherLastName(getMotherLastName());
+        eleve.setPere(getPere());
+        eleve.setMere(getMere());
         MultipartFile avatar = getAvatar();
 
         if (avatar != null) {

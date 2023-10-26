@@ -30,11 +30,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFormData {
+
     @NotBlank
+    @NotNull
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String prenom;
 
     @NotBlank
+    @NotNull
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String nomDeFamille;
 
@@ -46,7 +49,7 @@ public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFor
     @NotNull
     private UserRole userRole;
 
-    //@NotNull(groups = ValidationGroupOne.class)
+    @NotNull
     private Gender gender;
 
     @NotNull(groups = ValidationGroupOne.class)

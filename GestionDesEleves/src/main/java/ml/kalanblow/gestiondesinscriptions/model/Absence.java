@@ -48,15 +48,15 @@ public class Absence implements Serializable {
     @Column
     private boolean estJustifiee;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "cours_id")
     private Cours cours;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "eleve_id")
     private Eleve eleve;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "appel_de_presence_id")
     private Presence presence;
 

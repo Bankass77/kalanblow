@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html
         xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
         layout:decorate="~{layout/layout}"
         th:with="activeMenuItem='eleves'">
 
@@ -16,7 +16,7 @@
             th:text="${editMode?.name() == 'UPDATE'}?#{eleve.edit}:#{eleve.create}">Ajouter un Elève</h1>
     </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div class="py-4">
+        <div class="py-5">
             <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
                 <form id="user-form"
                       th:object="${eleve}"
@@ -40,6 +40,7 @@
                                         th:text="#{eleve.avatar.add}">Add picture
                                 </button> <!--.-->
                             </div>
+
                             <!-- end::avatar[] -->
                             <!-- tag::userRole[] -->
                             <div class="sm:col-span-2">
@@ -57,60 +58,35 @@
                             <!-- end::userRole[] -->
                             <!-- tag::gender[] -->
                             <div class="sm:col-span-6">
-                                <label class="block text-sm font-medium text-gray-700"
-                                       th:text="#{eleve.gender}">
-                                    Gender
-                                </label>
-                                <div>
-                                    <th:block th:each="possibleGender,iter : ${genders}">
-                                        <input type="radio"
-                                               th:id="${'gender-'+possibleGender}"
-                                               th:field="*{gender}"
-                                               th:value="${possibleGender}"
-                                               class="mr-1 focus:ring-green-500 h-4 w-4 text-green-500 border-gray-300"
-                                               th:classappend="${iter.index > 0 ?'ml-4':''}"
-                                        >
-                                        <label th:for="${'gender-'+possibleGender}"
-                                               th:text="#{'Gender.'+${possibleGender}}"
-                                               class="text-sm font-medium text-gray-700">
-                                        </label>
-
+                                <label class="block text-sm font-medium text-gray-700" th:text="#{eleve.gender}">Gender</label>
+                                <div class="flex items-center mt-2">
+                                    <th:block th:each="possibleGender, iter : ${genders}">
+                                        <div class="flex items-center mr-4">
+                                            <input type="radio" th:id="'gender-' + ${possibleGender}" th:field="*{gender}" th:value="${possibleGender}" class="mr-1 focus:ring-green-500 h-4 w-4 text-green-500 border-gray-300"   th:classappend="${iter.index > 0 ?'ml-4':''}">
+                                            <label th:for="'gender-' + ${possibleGender}" th:text="#{'Gender.' + ${possibleGender}}" class="text-sm font-medium text-gray-700 ml-2"></label>
+                                        </div>
                                     </th:block>
-                                    <p th:if="${#fields.hasErrors('gender')}"
-                                       th:text="${#strings.listJoin(#fields.errors('gender'), ', ')}"
-                                       class="mt-2 text-sm text-red-600" id="gender-error">Gender validation error message(s).</p>
                                 </div>
+                                <p th:if="${#fields.hasErrors('gender')}" th:text="${#strings.listJoin(#fields.errors('gender'), ', ')}" class="mt-2 text-sm text-red-600" id="gender-error">Gender validation error message(s).</p>
                             </div>
                             <!-- end::gender[] -->
-                            <!-- tag::maritalStatus[] -->
-                            <div class="sm:col-span-6">
-                                <label class="block text-sm font-medium text-gray-700"
-                                       th:text="#{eleve.maritalStatus}">
-                                    MaritalStatus
-                                </label>
-                                <div>
-                                    <th:block th:each="possibleMaritalStatus,iter : ${possiblesMaritalStatus}">
-                                        <input type="radio"
-                                               th:id="${'maritalStatus-'+possibleMaritalStatus}"
-                                               th:field="*{maritalStatus}"
-                                               th:value="${possibleMaritalStatus}"
-                                               class="mr-1 focus:ring-green-500 h-4 w-4 text-green-500 border-gray-300"
-                                               th:classappend="${iter.index > 0 ?'ml-4':''}"
-                                        >
-                                        <label th:for="${'maritalStatus-'+possibleMaritalStatus}"
-                                               th:text="#{'MaritalStatus.'+${possibleMaritalStatus}}"
-                                               class="text-sm font-medium text-gray-700">
-                                        </label>
 
-                                    </th:block>
-                                    <p th:if="${#fields.hasErrors('maritalStatus')}"
-                                       th:text="${#strings.listJoin(#fields.errors('maritalStatus'), ', ')}"
-                                       class="mt-2 text-sm text-red-600" id="maritalStatus-error">MaritalStatus validation error message(s).</p>
+                                <!-- tag::maritalStatus[] -->
+                                <div class="sm:col-span-6">
+                                    <label class="block text-sm font-medium text-gray-700" th:text="#{eleve.maritalStatus}">MaritalStatus</label>
+                                    <div class="flex items-center mt-2">
+                                        <th:block th:each="possibleMaritalStatus, iter : ${possiblesMaritalStatus}">
+                                            <div class="flex items-center mr-4">
+                                                <input type="radio" th:id="'maritalStatus-' + ${possibleMaritalStatus}" th:field="*{maritalStatus}" th:value="${possibleMaritalStatus}" class="mr-1 focus:ring-green-500 h-4 w-4 text-green-500 border-gray-300"   th:classappend="${iter.index > 0 ?'ml-4':''}">
+                                                <label th:for="'maritalStatus-' + ${possibleMaritalStatus}" th:text="#{'MaritalStatus.' + ${possibleMaritalStatus}}" class="text-sm font-medium text-gray-700 ml-2"></label>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                    <p th:if="${#fields.hasErrors('maritalStatus')}" th:text="${#strings.listJoin(#fields.errors('maritalStatus'), ', ')}" class="mt-2 text-sm text-red-600" id="maritalStatus-error">MaritalStatus validation error message(s).</p>
                                 </div>
-                            </div>
-                            <!-- end::maritalStatus[] -->
+                                <!-- end::maritalStatus[] -->
 
-                            <!-- tag::textinputs[] -->
+                                <!-- tag::textinputs[] -->
                             <div th:replace="~{fragments/forms :: textinput(#{eleve.etablissement}, 'etablissement.nomEtablissement', 'sm:col-span-3')}"></div>
                             <div th:replace="~{fragments/forms :: textinput(#{eleve.ineNumber}, 'ineNumber', 'sm:col-span-3')}"></div>
                             <div th:replace="~{fragments/forms :: textinput(#{eleve.prenom}, 'prenom', 'sm:col-span-3')}"></div>
@@ -119,16 +95,28 @@
 
                             <th:block th:if="${editMode?.name() == 'CREATE'}">
                                 <div th:replace="~{fragments/forms :: textinput(labelText=#{eleve.password}, fieldName='password', cssClass='sm:col-span-4', inputType='password')}"></div>
-                                <div th:replace="~{fragments/forms :: textinput(labelText=#{eleve.password.repeated}, fieldName='passwordRepeated', cssClass='sm:col-span-4', inputType='password')}"></div>
+                                <div th:replace="~{fragments/forms :: textinput(labelText=#{eleve.passwordRepeated}, fieldName='passwordRepeated', cssClass='sm:col-span-4', inputType='password')}"></div>
                             </th:block>
+
                             <div th:replace="~{fragments/forms :: textinput(#{eleve.phoneNumber}, 'phoneNumber', 'sm:col-span-4')}"></div>
-                            <div class="sm:col-span-2"></div>
-                            <div th:replace="~{fragments/forms :: dateinput(labelText=#{eleve.dateDeNaissance}, fieldName='dateDeNaissance', cssClass='sm:col-span-2')}"></div>  <!--.-->
+
+                            <div th:replace="~{fragments/forms :: dateinput(labelText=#{eleve.dateDeNaissance}, fieldName='dateDeNaissance', cssClass='sm:col-span-2')}" th:placeholder="#{eleve.dateDeNaissance.placeholder}"></div>  <!--.-->
                             <div th:replace="~{fragments/forms :: textinput(#{address.streetNumber}, 'address.streetNumber', 'sm:col-span-3')}"></div>
                             <div th:replace="~{fragments/forms :: textinput(#{address.street}, 'address.street', 'sm:col-span-3')}"></div>
                             <div th:replace="~{fragments/forms :: textinput(#{address.city}, 'address.city', 'sm:col-span-3')}"></div>
                             <div th:replace="~{fragments/forms :: textinput(#{address.codePostale}, 'address.codePostale', 'sm:col-span-3')}"></div>
-                            <div th:replace="~{fragments/forms :: textinput(#{address.country}, 'address.country', 'sm:col-span-3')}"></div>
+
+
+                                <div th:replace="~{fragments/forms :: textinput(#{address.country}, 'address.country', 'sm:col-span-3')}"></div>
+                                <div th:replace="~{fragments/forms :: textinput(#{mere.motherFirstName}, 'prenom', 'sm:col-span-3')}"></div>
+                                <div th:replace="~{fragments/forms :: textinput(#{mere.motherLastName}, 'nomDeFamille', 'sm:col-span-3')}"></div>
+                            <div th:replace="~{fragments/forms :: textinput(#{mere.phoneNumber}, 'phoneNumber', 'sm:col-span-3')}"></div>
+                                <div th:replace="~{fragments/forms :: textinput(#{pere.fatherFirstName}, 'prenom', 'sm:col-span-3')}"></div>
+                                <div th:replace="~{fragments/forms :: textinput(#{pere.fatherLastName}, 'nomDeFamille', 'sm:col-span-3')}"></div>
+                            <div th:replace="~{fragments/forms :: textinput(#{pere.phoneNumber}, 'phoneNumber', 'sm:col-span-3')}"></div>
+
+                            <div class="sm:col-span-2"></div>
+
                             <!-- end::textinputs[] -->
                         </div>
                     </div>

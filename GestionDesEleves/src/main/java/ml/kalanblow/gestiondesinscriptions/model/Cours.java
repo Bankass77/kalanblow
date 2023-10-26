@@ -40,10 +40,10 @@ public class Cours implements Serializable {
     @Column
     private String niveau;
 
-    @OneToMany(mappedBy = "cours")
+    @OneToMany(mappedBy = "cours", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Absence> absenceEleves;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "matiere_id")
     private Matiere matiere;
 
@@ -56,11 +56,11 @@ public class Cours implements Serializable {
     @ManyToOne
     private Enseignant enseignant;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_id")
     private Salle salle;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "annee_scolaire_id")
     private Periode anneeScolaire;
 

@@ -13,11 +13,13 @@ import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.validation.CreateUserValidationGroupSequence;
 import ml.kalanblow.gestiondesinscriptions.validation.EditUserValidationGroupSequence;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -50,6 +52,11 @@ public class KalanblowEleveController {
     public String listDesEleves(Model model, @SortDefault.SortDefaults({@SortDefault("userName.prenom"),
             @SortDefault("userName.nomDeFamille")}) Pageable pageable) {
 
+        Page<Eleve> elevesPage = eleveService.obtenirListeElevePage(pageable);
+        boolean isFirstPage = elevesPage.getNumber() == 0;
+
+        model.addAttribute("eleves", elevesPage);
+        model.addAttribute("isFirstPage", isFirstPage);
         model.addAttribute("eleves", eleveService.obtenirListeElevePage(pageable));
 
         return "eleves/listeDesEleves";
@@ -66,10 +73,11 @@ public class KalanblowEleveController {
     // tag::create-get[]
     @GetMapping("eleve/ajouter")
     public String ajouterNouvelEleve(Model model) {
-      /*  model.addAttribute("genders", genderList());
-        model.addAttribute("rolesPossibles", rolesPossibles().stream().iterator().next());
-        model.addAttribute("possiblesMaritalStatus", possibleStatusMarital());*/
+
         model.addAttribute("eleve", new CreateEleveFormData());
+        model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
+        model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
+        model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
         model.addAttribute("editMode", EditMode.CREATE);
 
         return "eleves/editerEleve";
@@ -90,9 +98,9 @@ public class KalanblowEleveController {
     public String crerUnNouvelEleve(@Validated(CreateUserValidationGroupSequence.class) @ModelAttribute("eleve") CreateEleveFormData formData, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
-            /*model.addAttribute("genders", genderList());
-            model.addAttribute("rolesPossibles", rolesPossibles());
-            model.addAttribute("possiblesMaritalStatus", possibleStatusMarital());*/
+            model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
+            model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
+            model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
             model.addAttribute("editMode", EditMode.CREATE);
             return "redirect: /eleves/editerEleve";
         }
@@ -116,9 +124,9 @@ public class KalanblowEleveController {
 
         Optional<Eleve> eleve = eleveService.obtenirEleveParSonId(id);
         model.addAttribute("eleve", EditEleveFormData.fromUser(eleve.get()));
-        /*model.addAttribute("genders", genderList());
-        model.addAttribute("rolesPossibles", rolesPossibles().stream().iterator().next());
-        model.addAttribute("possiblesMaritalStatus", possibleStatusMarital());*/
+        model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
+        model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
+        model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
         model.addAttribute("editMode", EditMode.UPDATE);
         return "eleves/editerEleve";
     }
@@ -139,9 +147,9 @@ public class KalanblowEleveController {
 
         if (bindingResult.hasErrors()) {
 
-           /* model.addAttribute("genders", genderList());
-            model.addAttribute("rolesPossibles", rolesPossibles());
-            model.addAttribute("possiblesMaritalStatus", possibleStatusMarital());*/
+            model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
+            model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
+            model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
             model.addAttribute("editMode", EditMode.UPDATE);
 
             return "eleves/editerEleve";

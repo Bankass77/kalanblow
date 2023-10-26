@@ -46,7 +46,7 @@ public class Salle implements Serializable {
     @Enumerated(EnumType.STRING)
     private TypeDeClasse typeDeClasse;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
@@ -55,10 +55,10 @@ public class Salle implements Serializable {
     @OrderColumn(name = "jour_semaine")
     private Set<Horaire> horaires;
 
-    @OneToMany(mappedBy = "salle")
+    @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Cours> coursPlanifies;
 
-    @OneToMany(mappedBy = "salle")
+    @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> eleves;
 
 

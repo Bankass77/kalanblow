@@ -1,23 +1,23 @@
 package ml.kalanblow.gestiondesinscriptions.validation;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingUser;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
-import ml.kalanblow.gestiondesinscriptions.response.AbstractUserFormData;
-
+import ml.kalanblow.gestiondesinscriptions.response.CreateEleveFormData;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class NotExistingUserValidator implements ConstraintValidator<NotExistingUser, AbstractUserFormData> {
+public class NotExistingUserValidator implements ConstraintValidator<NotExistingUser, CreateEleveFormData> {
 
-    private final EleveService userService;
+    private final EleveService eleveService;
 
     @Autowired
     public NotExistingUserValidator(EleveService userService) {
         super();
-        this.userService = userService;
+        this.eleveService = userService;
     }
 
     @Override
@@ -26,9 +26,9 @@ public class NotExistingUserValidator implements ConstraintValidator<NotExisting
     }
 
     @Override
-    public boolean isValid(AbstractUserFormData value, ConstraintValidatorContext context) {
+    public boolean isValid(CreateEleveFormData value, ConstraintValidatorContext context) {
 
-        if (!StringUtils.isEmpty(value.getEmail()) && userService.verifierExistenceEmail(new Email(value.getEmail()))) {
+        if (!StringUtils.isEmpty(value.getEmail()) && eleveService.verifierExistenceEmail(new Email(value.getEmail()))) {
 
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("{UserAlreadyExisting}").addPropertyNode("email")

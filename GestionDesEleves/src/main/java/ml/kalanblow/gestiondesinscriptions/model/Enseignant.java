@@ -32,7 +32,7 @@ public class Enseignant extends User {
     @Column
     private String leMatricule;
 
-    @NotNull(message = "Age is required")
+    @NotNull(message = "dateDeNaissance is required")
     @Column(name = "birthDate")
     @Past
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -43,7 +43,7 @@ public class Enseignant extends User {
     @Column(name = "age")
     private int age;
 
-    @OneToMany(mappedBy = "enseignant")
+    @OneToMany(mappedBy = "enseignant", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cours> coursDEnseignements;
 
     @ElementCollection
@@ -57,7 +57,7 @@ public class Enseignant extends User {
     @Column(name = "heure_fin_disponibilite")
     private LocalTime heureFinDisponibilite;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 

@@ -42,14 +42,14 @@ public class Presence implements Serializable {
     @Column
     private LocalDateTime dateAppel;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "cours_id")
     private Cours cours;
 
-    @OneToMany(mappedBy = "presence")
+    @OneToMany(mappedBy = "presence", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Absence> absences;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "eleve_id")
     private Eleve eleve;
 

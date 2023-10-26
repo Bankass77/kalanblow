@@ -78,13 +78,13 @@ public class Etablissement {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    @OneToMany(mappedBy = "etablissement")
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> eleves;
 
-    @OneToMany(mappedBy = "etablissement")
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Enseignant> enseignants;
 
-    @OneToMany(mappedBy = "etablissement")
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Salle> salles;
 
     private Etablissement(EtablissementBuilder builder) {

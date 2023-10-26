@@ -14,7 +14,7 @@ import java.io.IOException;
 @EqualsAndHashCode(callSuper = false)
 public non-sealed class EditEnseignantParameters extends CreateEnseignantParameters {
 
-
+private long version;
   public void  updateEnseignant( Enseignant enseignant){
 
         enseignant.setCoursDEnseignements(getCoursDEnseignements());
@@ -35,6 +35,7 @@ public non-sealed class EditEnseignantParameters extends CreateEnseignantParamet
         enseignant.setPhoneNumber(getPhoneNumber());
         enseignant.setMaritalStatus(getMaritalStatus());
         enseignant.setLastModifiedDate(getModifyDate());
+        enseignant.setVersion(getVersion());
 
       MultipartFile avatar = getAvatar();
 

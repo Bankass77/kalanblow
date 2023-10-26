@@ -9,6 +9,7 @@ import ml.kalanblow.gestiondesinscriptions.request.CreateEnseignantParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEnseignantParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -157,23 +158,24 @@ public class EnseignantServiceImpl implements EnseignantService {
     public Optional<Enseignant> editerEnseignant(Long id, EditEnseignantParameters editEnseignantParameters) {
 
         Enseignant enseignant = enseignantRepository.getReferenceById(id);
-        if (enseignant != null) {
+        if (editEnseignantParameters.getVersion() != enseignant.getVersion()) {
 
-            Enseignant.EnseignantBuider enseignantBuider = new Enseignant.EnseignantBuider();
-            enseignantBuider.heureFinDisponibilite(editEnseignantParameters.getHeureFinDisponibilite());
-            enseignantBuider.coursDEnseignements(editEnseignantParameters.getCoursDEnseignements());
-            enseignantBuider.joursDisponibilite(editEnseignantParameters.getJoursDisponibles());
-            enseignantBuider.leMatricule(editEnseignantParameters.getLeMatricule());
-            enseignantBuider.horaireClasses(editEnseignantParameters.getHoraireClasses());
-            enseignantBuider.heureDebutDisponibilite(editEnseignantParameters.getHeureDebutDisponibilite());
-            enseignantBuider.etablissementScolaire(editEnseignantParameters.getEtablissement());
-            enseignantBuider.dateDeNaissance(editEnseignantParameters.getDateDeNaissance());
-            enseignantBuider.build();
-            enseignant = Enseignant.createEnseignatFromBuilder(enseignantBuider);
-            log.info("Mise à jour des informations de l'Enseignant {} ({})", enseignant.getUserName().getFullName(), enseignant.getEmail().asString());
-            enseignantRepository.save(enseignant);
+            throw  new ObjectOptimisticLockingFailureException(Enseignant.class, enseignant.getId());
 
         }
+        Enseignant.EnseignantBuider enseignantBuider = new Enseignant.EnseignantBuider();
+        enseignantBuider.heureFinDisponibilite(editEnseignantParameters.getHeureFinDisponibilite());
+        enseignantBuider.coursDEnseignements(editEnseignantParameters.getCoursDEnseignements());
+        enseignantBuider.joursDisponibilite(editEnseignantParameters.getJoursDisponibles());
+        enseignantBuider.leMatricule(editEnseignantParameters.getLeMatricule());
+        enseignantBuider.horaireClasses(editEnseignantParameters.getHoraireClasses());
+        enseignantBuider.heureDebutDisponibilite(editEnseignantParameters.getHeureDebutDisponibilite());
+        enseignantBuider.etablissementScolaire(editEnseignantParameters.getEtablissement());
+        enseignantBuider.dateDeNaissance(editEnseignantParameters.getDateDeNaissance());
+        enseignantBuider.build();
+        enseignant = Enseignant.createEnseignatFromBuilder(enseignantBuider);
+        log.info("Mise à jour des informations de l'Enseignant {} ({})", enseignant.getUserName().getFullName(), enseignant.getEmail().asString());
+        editEnseignantParameters.updateEnseignant(enseignant);
         return Optional.of(enseignant);
     }
 }

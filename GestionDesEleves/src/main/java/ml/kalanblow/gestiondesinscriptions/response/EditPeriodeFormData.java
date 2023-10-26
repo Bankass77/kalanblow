@@ -1,0 +1,48 @@
+package ml.kalanblow.gestiondesinscriptions.response;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ml.kalanblow.gestiondesinscriptions.enums.TypeDeVacances;
+import ml.kalanblow.gestiondesinscriptions.model.Periode;
+import ml.kalanblow.gestiondesinscriptions.request.EditPeriodeParameters;
+
+import java.time.Duration;
+
+
+@Data
+@NoArgsConstructor
+public class EditPeriodeFormData {
+
+    private long version;
+
+    private int annee;
+
+    private Duration duree;
+
+    private TypeDeVacances typeDeVacances;
+
+    public static EditPeriodeFormData fromAnneeScolaireParameters(Periode anneeScolaire) {
+
+        EditPeriodeFormData editAnneeScolaireFormData = new EditPeriodeFormData();
+
+        editAnneeScolaireFormData.setAnnee(anneeScolaire.getAnnee());
+        editAnneeScolaireFormData.setDuree(anneeScolaire.getDuree());
+        editAnneeScolaireFormData.setTypeDeVacances(anneeScolaire.getTypeDeVacances());
+        editAnneeScolaireFormData.setVersion(anneeScolaire.getVersion());
+        return editAnneeScolaireFormData;
+
+    }
+
+    public EditPeriodeParameters toParameters(){
+
+        EditPeriodeParameters editAnneScolaireParameters= new EditPeriodeParameters();
+        editAnneScolaireParameters.setAnnee(getAnnee());
+        editAnneScolaireParameters.setVersion(version);
+        editAnneScolaireParameters.setDuree(getDuree());
+        editAnneScolaireParameters.setTypeDeVacances(getTypeDeVacances());
+        return  editAnneScolaireParameters;
+    }
+
+
+
+}

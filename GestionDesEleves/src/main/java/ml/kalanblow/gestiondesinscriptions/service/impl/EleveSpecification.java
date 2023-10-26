@@ -1,3 +1,4 @@
+/*
 package ml.kalanblow.gestiondesinscriptions.service.impl;
 
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
@@ -29,3 +30,4 @@ public class EleveSpecification {
 
 
 }
+*/
