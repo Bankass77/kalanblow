@@ -1,15 +1,12 @@
 package ml.kalanblow.gestiondesinscriptions.repository;
 
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
-import ml.kalanblow.gestiondesinscriptions.model.Email;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -31,7 +28,7 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
      * @param coursDEnseignement Le cours d'enseignement pour lequel compter les enseignants.
      * @return Une instance facultative (Optional) du nombre d'enseignants distincts associés au cours d'enseignement, ou une instance vide si aucun enseignant n'est associé au cours.
      */
-    Optional<Long> countDistinctByCoursDEnseignements(CoursDEnseignement coursDEnseignement);
+    Optional<Long> countDistinctByCoursDEnseignements(Cours coursDEnseignement);
 
     /**
      * Recherche des enseignants par adresse e-mail en utilisant une correspondance partielle.
@@ -47,7 +44,7 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
      * @param coursDEnseignement Le cours d'enseignement pour lequel rechercher l'enseignant.
      * @return Une instance facultative (Optional) de l'enseignant trouvé, ou une instance vide si aucun enseignant n'est associé au cours d'enseignement.
      */
-    Optional<Enseignant> getEnseignantByCoursDEnseignements(CoursDEnseignement coursDEnseignement);
+    Optional<Enseignant> getEnseignantByCoursDEnseignements(Cours coursDEnseignement);
 
     /**
      * Obtient un enseignant en fonction de la plage de dates de création.
@@ -65,7 +62,7 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
      * @param enseignant         L'enseignant dont les jours disponibles doivent correspondre.
      * @return Une instance facultative (Optional) de l'enseignant trouvé, ou une instance vide si aucun enseignant correspondant n'est trouvé.
      */
-    Optional<Enseignant> getEnseignantByCoursDEnseignementsAndJoursDisponibles(CoursDEnseignement coursDEnseignement, Enseignant enseignant);
+    Optional<Enseignant> getEnseignantByCoursDEnseignementsAndJoursDisponibles(Cours coursDEnseignement, Enseignant enseignant);
 
 
     /**

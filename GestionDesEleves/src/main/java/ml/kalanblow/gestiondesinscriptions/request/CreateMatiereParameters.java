@@ -3,7 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 
 import java.util.Set;
 
@@ -30,5 +30,5 @@ public class CreateMatiereParameters {
     @NotNull
     private String description;
 
-    private Set<CoursDEnseignement> coursDEnseignements;
+    private Set<Cours> coursDEnseignements;
 }

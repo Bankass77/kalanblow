@@ -9,7 +9,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Matiere;
 @Data
 public class EditMatiereParameters extends CreateMatiereParameters {
 
-
+    private  long version;
     public void updateMatiere(Matiere matiere) {
 
 

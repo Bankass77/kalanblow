@@ -1,7 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.repository;
 
 
-import jakarta.validation.constraints.NotNull;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +47,7 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * @param userName Le nom d'utilisateur à rechercher.
      * @return Un objet Optional contenant l'élève distinct correspondant à l'absence et au nom d'utilisateur (s'il existe).
      */
-    Optional<Eleve> findDistinctByAbsencesAndUserName(AbsenceEleve absenceEleve, UserName userName);
+    Optional<Eleve> findDistinctByAbsencesAndUserName(Absence absenceEleve, UserName userName);
 
     /**
      * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la casse).
@@ -77,7 +75,7 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * @param dateDeCreation La date de création à prendre en compte.
      * @return Un objet Optional contenant le nombre d'élèves correspondant aux critères de recherche (s'il existe).
      */
-    Optional<Eleve> countEleveByAbsencesAndCreatedDate( AbsenceEleve absenceEleve, LocalDate dateDeCreation);
+    Optional<Eleve> countEleveByAbsencesAndCreatedDate(Absence absenceEleve, LocalDate dateDeCreation);
 
     /**
      * Recherche un élève distinct par absence.
@@ -85,7 +83,41 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * @param absenceEleve L'absence de l'élève à rechercher.
      * @return Un objet Optional contenant l'élève distinct correspondant à l'absence (s'il existe).
      */
-    Optional<Eleve> findDistinctByAbsences( AbsenceEleve absenceEleve);
+    Optional<Eleve> findDistinctByAbsences( Absence absenceEleve);
+
+    /**
+     * Récupère une liste facultative (Optional) de tous les élèves.
+     *
+     * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève n'est trouvé.
+     */
+    Page<Eleve> findAll(Pageable pageable);
+
+    /**
+     * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
+     *
+     * @param salleDeClasse La salle de classe pour laquelle rechercher les élèves.
+     * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève ne correspond aux critères de recherche.
+     */
+    Optional<List<Eleve>> findDistinctBySalle_Etablissement (Salle salleDeClasse);
+
+
+    /**
+     * Récupère un élève en fonction de son numéro INE.
+     *
+     * @param ineNumber Le numéro INE de l'élève.
+     * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
+     */
+    Optional<Eleve> findByIneNumber(String ineNumber);
+
+
+    /**
+     * Récupère une liste d'élèves par leur prénom et nom de famille.
+     *
+     * @param prenom       Le prénom de l'élève.
+     * @param nomDeFamille Le nom de famille de l'élève.
+     * @return Une liste d'élèves correspondant aux critères de recherche.
+     */
+    Optional<User> findByUserName_PrenomAndUserName_NomDeFamille(String prenom, String nomDeFamille);
 
 
 }

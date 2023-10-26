@@ -4,24 +4,22 @@ import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
-import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.model.*;
+import ml.kalanblow.gestiondesinscriptions.model.Address;
+import ml.kalanblow.gestiondesinscriptions.model.Email;
+import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
+import ml.kalanblow.gestiondesinscriptions.model.UserName;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, EditUserParameters {
+public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, CreateParentParameters, EditParentParameters, EditUserParameters {
 
     private UserName userName;
     private Gender gender;
@@ -32,7 +30,7 @@ public sealed class CreateUserParameters permits CreateEleveParameters, CreateEn
     private Address address;
     private LocalDateTime createdDate = LocalDateTime.now();
     private LocalDateTime modifyDate = LocalDateTime.now();
-    private Set<Role> roles;
+
 
     @Nullable
     private MultipartFile avatar;
@@ -48,11 +46,10 @@ public sealed class CreateUserParameters permits CreateEleveParameters, CreateEn
      * @param address
      * @param createdDate
      * @param modifyDate
-     * @param roles
      */
     public CreateUserParameters(UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
                                 String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
-                                LocalDateTime modifyDate, Set<Role> roles) {
+                                LocalDateTime modifyDate) {
         super();
         this.userName = userName;
         this.gender = gender;
@@ -63,6 +60,5 @@ public sealed class CreateUserParameters permits CreateEleveParameters, CreateEn
         this.address = address;
         this.createdDate = createdDate;
         this.modifyDate = modifyDate;
-        this.roles = roles;
     }
 }

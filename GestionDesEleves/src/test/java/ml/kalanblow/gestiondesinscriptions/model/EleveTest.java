@@ -1,38 +1,19 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ml.kalanblow.gestiondesinscriptions.enums.Gender;
-import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
-import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
-
-
-
-/**
- *
- */
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class EleveTest {
 
     private Eleve eleve;

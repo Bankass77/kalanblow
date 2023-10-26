@@ -4,12 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
-import ml.kalanblow.gestiondesinscriptions.model.EtablissementScolaire;
-import ml.kalanblow.gestiondesinscriptions.model.HoraireClasse;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
+import ml.kalanblow.gestiondesinscriptions.model.Horaire;
 import ml.kalanblow.gestiondesinscriptions.model.UserName;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEnseignantParameters;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -19,15 +20,19 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class CreateEnseignantFormData extends  CreateUserFormData{
+
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private String leMatricule;
+
     @NotBlank
-    @NotNull
+    @NotNull(groups = ValidationGroupOne.class)
     private LocalDate dateDeNaissance;
+
     @NotBlank
-    @NotNull
-    private EtablissementScolaire etablissementScolaire;
+
+    @NotNull(groups = ValidationGroupOne.class)
+    private Etablissement etablissement;
 
     @NotBlank
     @NotNull
@@ -35,14 +40,17 @@ public class CreateEnseignantFormData extends  CreateUserFormData{
 
     @NotBlank
     @NotNull
-    private List<CoursDEnseignement> coursDEnseignements;
+    private List<Cours> coursDEnseignements;
 
+    @NotNull(groups = ValidationGroupOne.class)
     private LocalTime heureDebutDisponibilite;
+
 
     private List<DayOfWeek> joursDisponibles;
 
-    private List<HoraireClasse> horaireClasses;
+    private List<Horaire> horaireClasses;
 
+    @NotNull(groups = ValidationGroupOne.class)
     private LocalTime heureFinDisponibilite;
 
 
@@ -54,7 +62,7 @@ public class CreateEnseignantFormData extends  CreateUserFormData{
         createEnseignantParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
         createEnseignantParameters.setAge(CalculateUserAge.calculateAge(getDateDeNaissance()));
         createEnseignantParameters.setCreatedDate(getCreatedDate());
-        createEnseignantParameters.setEtablissementScolaire(getEtablissementScolaire());
+        createEnseignantParameters.setEtablissement(getEtablissement());
         createEnseignantParameters.setDateDeNaissance(getDateDeNaissance());
         createEnseignantParameters.setHeureDebutDisponibilite(getHeureDebutDisponibilite());
         createEnseignantParameters.setHeureFinDisponibilite(getHeureFinDisponibilite());

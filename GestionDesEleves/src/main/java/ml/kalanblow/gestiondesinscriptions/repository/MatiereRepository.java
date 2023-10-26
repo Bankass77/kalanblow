@@ -1,6 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.repository;
 
-import ml.kalanblow.gestiondesinscriptions.model.CoursDEnseignement;
+import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Matiere;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -26,7 +26,10 @@ public interface MatiereRepository  extends JpaRepository<Matiere, Long> {
      * @param coursDEnseignement Le cours d'enseignement pour lequel rechercher les matières.
      * @return Une instance facultative (Optional) des matières trouvées, triées par le nom de la matière, ou une instance vide si aucune matière n'est associée au cours d'enseignement.
      */
-    Optional<List<Matiere>> searchAllByCoursDEnseignementsOrderByNomMatiere(CoursDEnseignement coursDEnseignement);
+    Optional<List<Matiere>> searchAllByCoursDEnseignementsOrderByNomMatiere(Cours coursDEnseignement);
+
+    Optional<Matiere> findDistinctByIdOrAndAndNomMatiere(long id, String nomMatiere);
+
 
 
 }

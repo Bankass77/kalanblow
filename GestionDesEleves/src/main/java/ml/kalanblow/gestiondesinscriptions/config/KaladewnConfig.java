@@ -13,16 +13,13 @@ import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeReposi
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Description;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
@@ -31,7 +28,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
  * interface and defines various beans related to Thymeleaf template resolution,
  * template engines, request logging, and validation.
  */
-@EnableWebMvc
+
 @Configuration
 public class KaladewnConfig implements WebMvcConfigurer {
 
@@ -88,40 +85,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
     }
 
 
-    /**
-     * Configures a Thymeleaf template resolver for HTML 5 templates.
-     *
-     * @return The Thymeleaf template resolver for HTML 5 templates.
-     */
-    @Bean
-    @Description("Thymeleaf template resolver serving HTML 5")
-    public ClassLoaderTemplateResolver templateResolver() {
-
-        var templateResolver = new ClassLoaderTemplateResolver();
-
-        templateResolver.setPrefix("templates/");
-        templateResolver.setCacheable(false);
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode("HTML5");
-        templateResolver.setCharacterEncoding("UTF-8");
-
-        return templateResolver;
-    }
-
-    /**
-     * Configures a Thymeleaf template engine with Spring integration.
-     *
-     * @return The Thymeleaf template engine with Spring integration.
-     */
-    @Bean
-    @Description("Thymeleaf template engine with Spring integration")
-    public SpringTemplateEngine templateEngine() {
-
-        var templateEngine = new SpringTemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver());
-
-        return templateEngine;
-    }
 
     /**
      * Configures a local validator factory bean with a specified message source.
@@ -184,6 +147,20 @@ public class KaladewnConfig implements WebMvcConfigurer {
         return new InMemoryHttpExchangeRepository();
 
     }
+
+
+    @Bean
+    public LocaleChangeInterceptor localeInterceptor() {
+        LocaleChangeInterceptor localeInterceptor = new LocaleChangeInterceptor();
+        localeInterceptor.setParamName("lang");
+        return localeInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeInterceptor());
+    }
+
 
 }
 
