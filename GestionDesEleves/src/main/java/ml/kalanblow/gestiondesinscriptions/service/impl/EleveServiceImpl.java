@@ -8,16 +8,11 @@ import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
-import ml.kalanblow.gestiondesinscriptions.model.Eleve;
-import ml.kalanblow.gestiondesinscriptions.model.Email;
-import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
-import ml.kalanblow.gestiondesinscriptions.model.Role;
+import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
-import ml.kalanblow.gestiondesinscriptions.repository.UserRoleRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
-import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 import static ml.kalanblow.gestiondesinscriptions.service.impl.EleveSpecification.recupererEleveParSonNomePrenom;
@@ -45,13 +41,11 @@ public class EleveServiceImpl implements EleveService {
 
     private final EleveRepository eleveRepository;
 
-    private final UserRoleRepository userRoleRepository;
 
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository,UserRoleRepository userRoleRepository) {
+    public EleveServiceImpl(EleveRepository eleveRepository) {
 
         this.eleveRepository = eleveRepository;
-        this.userRoleRepository=userRoleRepository;
 
 
     }
@@ -111,43 +105,6 @@ public class EleveServiceImpl implements EleveService {
     }
 
 
-    private Eleve ajouterUnNouveauEleve(CreateEleveParameters createEleveParameters) {
-        Eleve eleve = new Eleve();
-        eleve.setEtablissementScolaire(createEleveParameters.getEtablissementScolaire());
-        eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
-        eleve.setMotherFirstName(createEleveParameters.getMotherFirstName());
-        eleve.setMotherLastName(createEleveParameters.getMotherLastName());
-        eleve.setFatherFirstName(createEleveParameters.getFatherFirstName());
-        eleve.setFatherLastName(createEleveParameters.getFatherLastName());
-        eleve.setUserName(createEleveParameters.getUserName());
-        eleve.setCreatedDate(createEleveParameters.getCreatedDate());
-        eleve.setGender(createEleveParameters.getGender());
-        eleve.setEmail(createEleveParameters.getEmail());
-        eleve.setPhoneNumber(createEleveParameters.getPhoneNumber());
-        eleve.setLastModifiedDate(createEleveParameters.getModifyDate());
-        eleve.setAddress(createEleveParameters.getAddress());
-        eleve.setPassword(createEleveParameters.getPassword());
-        Set<Role> userRoles= createEleveParameters.getRoles();
-        eleve.setRoles(userRoles);
-        ajouterPhotoSiPresent(createEleveParameters, eleve);
-        eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());
-        eleve.setAge(createEleveParameters.getAge());
-        eleve.setDateDeNaissance(createEleveParameters.getDateDeNaissance());
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<Eleve>> constraintViolations = validator.validate(eleve, ValidationGroupOne.class);
-        if (!constraintViolations.isEmpty()) {
-
-            constraintViolations.forEach(c -> KaladewnManagementException.throwException(c.getMessage()));
-        }
-        Eleve nouveauEleve = eleveRepository.save(eleve);
-        if (nouveauEleve != null) {
-
-            return nouveauEleve;
-        } else {
-            throw new IllegalStateException("L'objet Eleve n'a pas été sauvegardé.");
-        }
-    }
-
     /**
      * @param userId
      * @param parameters
@@ -162,11 +119,27 @@ public class EleveServiceImpl implements EleveService {
             throw new ObjectOptimisticLockingFailureException(Eleve.class, eleve.get().getId());
 
         }
-        parameters = new EditEleveParameters(eleve.get().getVersion(), eleve.get().getUserName(), eleve.get().getGender(),
-                eleve.get().getMaritalStatus(), eleve.get().getEmail(), eleve.get().getPassword(), eleve.get().getPhoneNumber(), eleve.get().getAddress(),
-                eleve.get().getCreatedDate(), eleve.get().getLastModifiedDate(), eleve.get().getDateDeNaissance(), eleve.get().getAge(),
-                eleve.get().getIneNumber(), eleve.get().getMotherFirstName(), eleve.get().getMotherLastName(), eleve.get().getPhoneNumber(),
-                eleve.get().getMotherFirstName(), eleve.get().getFatherLastName(), eleve.get().getPhoneNumber(), eleve.get().getRoles(), eleve.get().getEtablissementScolaire());
+        parameters = new EditEleveParameters();
+        parameters.setVersion(eleve.get().getVersion());
+        parameters.setUserName(eleve.get().getUserName());
+        parameters.setGender(eleve.get().getGender());
+        parameters.setMaritalStatus(eleve.get().getMaritalStatus());
+        parameters.setEmail(eleve.get().getEmail());
+        parameters.setPassword(eleve.get().getPassword());
+        parameters.setPhoneNumber(eleve.get().getPhoneNumber());
+        parameters.setAddress(eleve.get().getAddress());
+        parameters.setCreatedDate(eleve.get().getCreatedDate());
+        parameters.setModifyDate(eleve.get().getLastModifiedDate());
+        parameters.setDateDeNaissance(eleve.get().getDateDeNaissance());
+        parameters.setAge(eleve.get().getAge());
+        parameters.setStudentIneNumber(eleve.get().getIneNumber());
+        parameters.setMotherFirstName(eleve.get().getMotherFirstName());
+        parameters.setMotherLastName(eleve.get().getMotherLastName());
+        parameters.setPhoneNumber(eleve.get().getPhoneNumber());
+        parameters.setFatherMobile(eleve.get().getPhoneNumber());
+        parameters.setFatherLastName(eleve.get().getFatherLastName());
+        parameters.setEtablissement(eleve.get().getEtablissement());
+        parameters.setAbsences(eleve.get().getAbsences());
         parameters.updateStudent(eleve.get());
 
         return eleve.get();
@@ -235,6 +208,7 @@ public class EleveServiceImpl implements EleveService {
     public void deleteAllEleves() {
         log.debug("deleteAllEleves");
 
+
     }
 
     /**
@@ -258,7 +232,8 @@ public class EleveServiceImpl implements EleveService {
      * @return
      */
     @Override
-    public Eleve CreationUtilisateur(CreateEleveParameters createEleveParameters) {
+    public Eleve ajouterUnEleve(CreateEleveParameters createEleveParameters) {
+        log.debug("createEleveParameters", createEleveParameters);
         return ajouterUnNouveauEleve(createEleveParameters);
 
     }
@@ -316,5 +291,126 @@ public class EleveServiceImpl implements EleveService {
     public Optional<Eleve> recupererEleveParTelephone(String telephone) {
         return eleveRepository.findByPhoneNumber(new PhoneNumber(telephone));
     }
+
+    /**
+     * Recherche un élève distinct par absence et nom d'utilisateur.
+     *
+     * @param absenceEleve L'absence de l'élève à rechercher.
+     * @param userName     Le nom d'utilisateur à rechercher.
+     * @return Un objet Optional contenant l'élève distinct correspondant à l'absence et au nom d'utilisateur (s'il existe).
+     */
+    @Override
+    public Optional<Eleve> findDistinctByAbsencesAndUserName(Absence absenceEleve, UserName userName) {
+
+
+        return eleveRepository.findDistinctByAbsencesAndUserName(absenceEleve, userName);
+    }
+
+    /**
+     * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la casse).
+     *
+     * @param dateDeNaissance La date de naissance à rechercher.
+     * @param numeroIne       La chaîne de numéro INE à rechercher.
+     * @return Un objet Optional contenant l'élève correspondant aux critères de recherche (s'il existe).
+     */
+    @Override
+    public Optional<Eleve> searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(LocalDate dateDeNaissance, String numeroIne) {
+
+        Optional<Eleve> eleve = eleveRepository.searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(dateDeNaissance, numeroIne);
+        return eleve;
+    }
+
+    /**
+     * Recherche un élève par date de création se situant entre les dates spécifiées.
+     *
+     * @param debut La date de début de la période de création.
+     * @param fin   La date de fin de la période de création.
+     * @return Un objet Optional contenant l'élève correspondant à la période de création (s'il existe).
+     */
+    @Override
+    public Optional<Optional> findEleveByCreatedDateBetween(LocalDate debut, LocalDate fin) {
+        return eleveRepository.findEleveByCreatedDateBetween(debut, fin);
+    }
+
+    /**
+     * Compte le nombre d'élèves par absence et date de création.
+     *
+     * @param absenceEleve   L'absence de l'élève à prendre en compte.
+     * @param dateDeCreation La date de création à prendre en compte.
+     * @return Un objet Optional contenant le nombre d'élèves correspondant aux critères de recherche (s'il existe).
+     */
+    @Override
+    public Optional<Eleve> countEleveByAbsencesAndCreatedDate(Absence absenceEleve, LocalDate dateDeCreation) {
+        return eleveRepository.countEleveByAbsencesAndCreatedDate(absenceEleve, dateDeCreation);
+    }
+
+    /**
+     * Recherche un élève distinct par absence.
+     *
+     * @param absenceEleve L'absence de l'élève à rechercher.
+     * @return Un objet Optional contenant l'élève distinct correspondant à l'absence (s'il existe).
+     */
+    @Override
+    public Optional<Eleve> findDistinctByAbsences(Absence absenceEleve) {
+        return eleveRepository.findDistinctByAbsences(absenceEleve);
+    }
+
+    /**
+     * Récupère la liste complète des élèves inscrits dans le système.
+     *
+     * @return Une instance facultative (Optional) contenant la liste complète des élèves s'ils sont disponibles, ou Optional.empty() s'il n'y a aucun élève inscrit.
+     */
+    @Override
+    public Optional<List<Eleve>> recupererLaListeDesEleves() {
+        return eleveRepository.findAll();
+    }
+
+    /**
+     * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
+     *
+     * @param salleDeClasse La salle de classe pour laquelle rechercher les élèves.
+     * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève ne correspond aux critères de recherche.
+     */
+    @Override
+    public Optional<List<Eleve>> recupererElevesParClasse(Salle salleDeClasse) {
+        return eleveRepository.findDistinctBySalle_Etablissement(salleDeClasse);
+    }
+
+    private Eleve ajouterUnNouveauEleve(CreateEleveParameters createEleveParameters) {
+        Eleve eleve = new Eleve();
+        eleve.setEtablissement(createEleveParameters.getEtablissement());
+        eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
+        eleve.setMotherFirstName(createEleveParameters.getMotherFirstName());
+        eleve.setMotherLastName(createEleveParameters.getMotherLastName());
+        eleve.setFatherFirstName(createEleveParameters.getFatherFirstName());
+        eleve.setFatherLastName(createEleveParameters.getFatherLastName());
+        eleve.setUserName(createEleveParameters.getUserName());
+        eleve.setCreatedDate(createEleveParameters.getCreatedDate());
+        eleve.setGender(createEleveParameters.getGender());
+        eleve.setEmail(createEleveParameters.getEmail());
+        eleve.setPhoneNumber(createEleveParameters.getPhoneNumber());
+        eleve.setLastModifiedDate(createEleveParameters.getModifyDate());
+        eleve.setAddress(createEleveParameters.getAddress());
+        eleve.setPassword(createEleveParameters.getPassword());
+        ajouterPhotoSiPresent(createEleveParameters, eleve);
+        eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());
+        eleve.setAge(createEleveParameters.getAge());
+        eleve.setDateDeNaissance(createEleveParameters.getDateDeNaissance());
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        eleve.setRoles(Collections.singleton(UserRole.STUDENT));
+        Set<ConstraintViolation<Eleve>> constraintViolations = validator.validate(eleve, ValidationGroupOne.class);
+        if (!constraintViolations.isEmpty()) {
+
+            constraintViolations.forEach(c -> KaladewnManagementException.throwException(c.getMessage()));
+        }
+        Eleve nouveauEleve = eleveRepository.save(eleve);
+        if (nouveauEleve != null) {
+
+            return nouveauEleve;
+        } else {
+            throw new IllegalStateException("L'objet Eleve n'a pas été sauvegardé.");
+        }
+    }
+
 }
 

@@ -14,13 +14,22 @@ import java.util.Base64;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Getter
-@Setter
+/**
+ * Cette classe représente des données d'édition d'utilisateur. Elle étend les fonctionnalités de la classe AbstractUserFormData
+ * en ajoutant des propriétés spécifiques à un utilisateur.
+ */
 public non-sealed class EditUserFormData extends AbstractUserFormData {
+
     private Long id;
     private String avatarBase64Encoded;
     private long version;
 
+    /**
+     * Convertit un objet User en une instance d'EditUserFormData.
+     *
+     * @param user L'objet User à convertir.
+     * @return Une instance d'EditUserFormData contenant les données de l'objet User.
+     */
     public static EditUserFormData fromUser(User user) {
 
         EditUserFormData edit = new EditUserFormData();
@@ -33,10 +42,10 @@ public non-sealed class EditUserFormData extends AbstractUserFormData {
         edit.setGender(user.getGender());
         edit.setMaritalStatus(user.getMaritalStatus());
         edit.setModifyDate(user.getLastModifiedDate());
-        edit.setPhoneNumber(user.getPhoneNumber());
+        edit.setPhoneNumber(user.getPhoneNumber().asString());
         edit.setRoles(user.getRoles());
-
         edit.setVersion(user.getVersion());
+        edit.setId(user.getId());
 
         if (user.getAvatar() != null) {
 
@@ -48,11 +57,20 @@ public non-sealed class EditUserFormData extends AbstractUserFormData {
 
     }
 
+
+    /**
+     * Convertit cette instance d'EditUserFormData en une instance d'EditUserParameters.
+     *
+     * @return Une instance d'EditUserParameters contenant les données de cette instance d'EditUserFormData.
+     */
     public EditUserParameters toUserParameters() {
 
         EditUserParameters parameters = new EditUserParameters(version, new UserName(getPrenom(), getNomDeFamille()),
-                getGender(), getMaritalStatus(), new Email(getEmail()), new PhoneNumber(getPhoneNumber().asString()),
-                getAddress(), LocalDateTime.now(), LocalDateTime.now(), getRoles());
+                getGender(), getMaritalStatus(), new Email(getEmail()), new PhoneNumber(getPhoneNumber()),
+                getAddress(), LocalDateTime.now(), LocalDateTime.now());
+        parameters.setAddress(getAddress());
+        parameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
+
 
         if (getAvatarFile() != null && !getAvatarFile().isEmpty()) {
             parameters.setAvatar(getAvatarFile());
