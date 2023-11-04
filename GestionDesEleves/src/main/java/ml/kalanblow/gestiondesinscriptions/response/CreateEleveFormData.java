@@ -43,7 +43,6 @@ public class CreateEleveFormData extends CreateUserFormData {
 
 
     @NotNull(groups = ValidationGroupOne.class)
-
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
     private String passwordRepeated;
 

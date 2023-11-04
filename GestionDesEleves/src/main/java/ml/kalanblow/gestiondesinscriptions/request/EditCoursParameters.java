@@ -9,6 +9,8 @@ import ml.kalanblow.gestiondesinscriptions.model.Cours;
 @NoArgsConstructor
 public class EditCoursParameters extends CreateCoursParameters {
     private  long version;
+
+    // tag::update[]
     public void updateCoursDEnseignement(Cours coursDEnseignement) {
 
         coursDEnseignement.setEnseignant(getEnseignant());

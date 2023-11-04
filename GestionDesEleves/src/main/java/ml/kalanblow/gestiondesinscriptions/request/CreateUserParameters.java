@@ -35,30 +35,4 @@ public sealed class CreateUserParameters permits CreateEleveParameters, CreateEn
     @Nullable
     private MultipartFile avatar;
 
-    /**
-     *
-     * @param userName
-     * @param gender
-     * @param maritalStatus
-     * @param email
-     * @param password
-     * @param phoneNumber
-     * @param address
-     * @param createdDate
-     * @param modifyDate
-     */
-    public CreateUserParameters(UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
-                                String password, PhoneNumber phoneNumber, Address address, LocalDateTime createdDate,
-                                LocalDateTime modifyDate) {
-        super();
-        this.userName = userName;
-        this.gender = gender;
-        this.maritalStatus = maritalStatus;
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.createdDate = createdDate;
-        this.modifyDate = modifyDate;
-    }
 }

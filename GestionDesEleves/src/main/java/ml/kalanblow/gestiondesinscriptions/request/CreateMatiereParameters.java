@@ -14,6 +14,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class CreateMatiereParameters {
 
+    @NotBlank
+    @NotNull
     private double note;
 
     @NotBlank

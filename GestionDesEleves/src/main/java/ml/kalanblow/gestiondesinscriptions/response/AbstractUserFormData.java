@@ -46,7 +46,6 @@ public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFor
     private String phoneNumber;
 
     @NotNull
-    @NotNull
     private UserRole userRole;
 
     @NotNull

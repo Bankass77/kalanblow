@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -36,6 +38,8 @@ public class Etablissement {
 
     @Column
     @NotNull
+    @NotBlank
+    @Size(min = 2, max = 200)
     private String nomEtablissement;
 
     @NotNull(message = "Address is required")

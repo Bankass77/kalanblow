@@ -20,7 +20,7 @@
             <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
                 <form id="user-form"
                       th:object="${eleve}"
-                      th:action="${editMode?.name() == 'UPDATE'}? '@{/kalanden/eleve/{id}(id=${eleve.id})}:@{/kalanden/eleve/ajouter}'"
+                      th:action="${editMode?.name() == 'UPDATE'}?@{/kalanden/eleve/{id}(id=${eleve.id})}:@{/kalanden/eleve/ajouter}"
                       method="post"
                       enctype="multipart/form-data">
                     <div>
