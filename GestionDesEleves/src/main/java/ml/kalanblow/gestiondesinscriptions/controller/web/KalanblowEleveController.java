@@ -16,12 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
@@ -49,38 +51,40 @@ public class KalanblowEleveController {
      * @return Une chaîne représentant le nom de la vue à afficher.
      */
     @GetMapping
-    public String listDesEleves(Model model, @SortDefault.SortDefaults({@SortDefault("userName.prenom"),
+    public ModelAndView listDesEleves(Model model, @SortDefault.SortDefaults({@SortDefault("userName.prenom"),
             @SortDefault("userName.nomDeFamille")}) Pageable pageable) {
 
         Page<Eleve> elevesPage = eleveService.obtenirListeElevePage(pageable);
         boolean isFirstPage = elevesPage.getNumber() == 0;
 
-        model.addAttribute("eleves", elevesPage);
-        model.addAttribute("isFirstPage", isFirstPage);
-        model.addAttribute("eleves", eleveService.obtenirListeElevePage(pageable));
+        ModelAndView modelAndView= new ModelAndView("eleves/listeDesEleves");
+        modelAndView.addObject("eleves", elevesPage);
+        modelAndView.addObject("isFirstPage", isFirstPage);
 
-        return "eleves/listeDesEleves";
+        return  modelAndView;
     }
 
 
     /**
      * Affiche le formulaire d'ajout d'un nouvel élève.
      *
-     * @param model Le modèle à utiliser pour transmettre les données à la vue.
+     * @param modelAndView Le modèle à utiliser pour transmettre les données à la vue.
      * @return Une chaîne représentant le nom de la vue du formulaire d'ajout d'un nouvel élève.
      */
 
     // tag::create-get[]
     @GetMapping("eleve/ajouter")
-    public String ajouterNouvelEleve(Model model) {
+    @Secured("ROLE_ADMIN")
+    public ModelAndView ajouterNouvelEleve(ModelAndView modelAndView) {
 
-        model.addAttribute("eleve", new CreateEleveFormData());
-        model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
-        model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
-        model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
-        model.addAttribute("editMode", EditMode.CREATE);
+        modelAndView = new ModelAndView("eleves/editerEleve");
+        modelAndView.addObject("eleve", new CreateEleveFormData());
+        modelAndView.addObject("genders", List.of(Gender.MALE, Gender.FEMALE));
+        modelAndView.addObject("rolesPossibles", List.of(UserRole.STUDENT.values()));
+        modelAndView.addObject("possiblesMaritalStatus", List.of(MaritalStatus.values()));
+        modelAndView.addObject("editMode", EditMode.CREATE);
 
-        return "eleves/editerEleve";
+        return modelAndView;
     }
 
     // end::create-get[]
@@ -90,22 +94,26 @@ public class KalanblowEleveController {
      *
      * @param formData      Les données du nouvel élève à créer.
      * @param bindingResult Le résultat de la liaison des données et les erreurs éventuelles.
-     * @param model         Le modèle à utiliser pour transmettre les données à la vue.
+     * @param modelAndView  Le modèle à utiliser pour transmettre les données à la vue.
      * @return Une chaîne représentant le nom de la vue après la création de l'élève.
      */
     // tag::create-post[]
     @PostMapping("eleve/ajouter")
-    public String crerUnNouvelEleve(@Validated(CreateUserValidationGroupSequence.class) @ModelAttribute("eleve") CreateEleveFormData formData, BindingResult bindingResult, Model model) {
+    @Secured("ROLE_ADMIN")
+    public ModelAndView crerUnNouvelEleve(@Validated(CreateUserValidationGroupSequence.class) @ModelAttribute("eleve") CreateEleveFormData formData, BindingResult bindingResult, ModelAndView modelAndView) {
 
+        modelAndView = new ModelAndView("redirect:/eleves/listeDesEleves");
         if (bindingResult.hasErrors()) {
-            model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
-            model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
-            model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
-            model.addAttribute("editMode", EditMode.CREATE);
-            return "redirect: /eleves/editerEleve";
+            modelAndView.addObject("genders", List.of(Gender.MALE, Gender.FEMALE));
+            modelAndView.addObject("rolesPossibles", List.of(UserRole.STUDENT.values()));
+            modelAndView.addObject("possiblesMaritalStatus", List.of(MaritalStatus.values()));
+            modelAndView.addObject("editMode", EditMode.CREATE);
+            return new ModelAndView("redirect: /eleves/editerEleve");
         }
 
-        return String.valueOf(eleveService.ajouterUnEleve(formData.toEleveParameters()));
+        eleveService.ajouterUnEleve(formData.toEleveParameters());
+
+        return modelAndView;
     }
 
     // end::create-post[]
@@ -115,20 +123,22 @@ public class KalanblowEleveController {
      * Affiche le formulaire de mise à jour des informations d'un élève existant.
      *
      * @param id    L'identifiant de l'élève à mettre à jour.
-     * @param model Le modèle à utiliser pour transmettre les données à la vue.
+     * @param modelAndView Le modèle à utiliser pour transmettre les données à la vue.
      * @return Une chaîne représentant le nom de la vue du formulaire de mise à jour d'un élève.
      */
 // tag::edit-get[]
-    @GetMapping("eleve/{id}") //<.>
-    public String mettreAJourUnEleve(@PathVariable("id") long id, Model model) {
+    @GetMapping("eleve/{id}")
+    @Secured("ROLE_ADMIN")
+    public ModelAndView mettreAJourUnEleve(@PathVariable("id") long id, ModelAndView modelAndView) {
 
+        modelAndView = new ModelAndView("eleves/editerEleve");
         Optional<Eleve> eleve = eleveService.obtenirEleveParSonId(id);
-        model.addAttribute("eleve", EditEleveFormData.fromUser(eleve.get()));
-        model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
-        model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
-        model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
-        model.addAttribute("editMode", EditMode.UPDATE);
-        return "eleves/editerEleve";
+        modelAndView.addObject("eleve", EditEleveFormData.fromUser(eleve.get()));
+        modelAndView.addObject("genders", List.of(Gender.MALE, Gender.FEMALE));
+        modelAndView.addObject("rolesPossibles", List.of(UserRole.STUDENT.values()));
+        modelAndView.addObject("possiblesMaritalStatus", List.of(MaritalStatus.values()));
+        modelAndView.addObject("editMode", EditMode.UPDATE);
+        return  modelAndView;
     }
 
 
@@ -138,26 +148,28 @@ public class KalanblowEleveController {
      * @param id            L'identifiant de l'élève à mettre à jour.
      * @param formData      Les données de l'élève à mettre à jour.
      * @param bindingResult Le résultat de la liaison des données et les erreurs éventuelles.
-     * @param model         Le modèle à utiliser pour transmettre les données à la vue.
+     * @param modelAndView         Le modèle à utiliser pour transmettre les données à la vue.
      * @return Une chaîne représentant le nom de la vue après la mise à jour des informations de l'élève.
      */
     // tag::edit-post[]
     @PostMapping
-    public String aModifierElever(@PathVariable("id") long id, @Validated(EditUserValidationGroupSequence.class) @ModelAttribute("eleve") EditEleveFormData formData, BindingResult bindingResult, Model model) {
+    @Secured("ROLE_ADMIN")
+    public ModelAndView aModifierElever(@PathVariable("id") long id, @Validated(EditUserValidationGroupSequence.class) @ModelAttribute("eleve") EditEleveFormData formData, BindingResult bindingResult, ModelAndView modelAndView) {
 
+        modelAndView= new ModelAndView("eleves/editerEleve");
         if (bindingResult.hasErrors()) {
 
-            model.addAttribute("genders", List.of(Gender.MALE, Gender.FEMALE));
-            model.addAttribute("rolesPossibles", List.of(UserRole.STUDENT.values()));
-            model.addAttribute("possiblesMaritalStatus", List.of(MaritalStatus.values()));
-            model.addAttribute("editMode", EditMode.UPDATE);
+            modelAndView.addObject("genders", List.of(Gender.MALE, Gender.FEMALE));
+            modelAndView.addObject("rolesPossibles", List.of(UserRole.STUDENT.values()));
+            modelAndView.addObject("possiblesMaritalStatus", List.of(MaritalStatus.values()));
+            modelAndView.addObject("editMode", EditMode.UPDATE);
 
-            return "eleves/editerEleve";
+            return modelAndView;
         }
 
         eleveService.mettreAjourUtilisateur(id, formData.toEleveParameters());
 
-        return "redirect:/eleves/listeDesEleves";
+        return  new ModelAndView("redirect:/eleves/listeDesEleves");
     }
     // end::edit-post[]
 

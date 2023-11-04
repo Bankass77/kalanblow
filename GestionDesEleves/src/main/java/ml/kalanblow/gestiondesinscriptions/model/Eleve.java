@@ -27,6 +27,7 @@ public class Eleve extends User {
 
     private static final long serialVersionUID = 1L;
     @Column(name = "ine_number")
+    @NotNull
     private String ineNumber;
 
     @NotNull(message = "dateDeNaissance is required")
@@ -38,15 +39,18 @@ public class Eleve extends User {
     private LocalDate dateDeNaissance;
 
     @Column(name = "age")
+    @NotNull
     private int age;
 
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "pere_id")
+    @NotNull
     private Parent pere;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "mere_id")
+    @NotNull
     private Parent mere;
 
     @OneToMany(mappedBy = "eleve", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

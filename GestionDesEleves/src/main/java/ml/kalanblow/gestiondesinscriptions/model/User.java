@@ -58,6 +58,7 @@ public abstract class User implements Serializable {
     //@Enumerated(EnumType.STRING)
     @Column(name = "gender")
     @Convert(converter = GenderConverter.class)
+    @NotNull
     private Gender gender;
 
     @NotNull(message = "Marital Status is required")
@@ -70,6 +71,7 @@ public abstract class User implements Serializable {
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @NotNull
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
@@ -77,6 +79,7 @@ public abstract class User implements Serializable {
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @NotNull
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
     @Column(name = "telephone_utilisateur", insertable = true, updatable = true, nullable = false)

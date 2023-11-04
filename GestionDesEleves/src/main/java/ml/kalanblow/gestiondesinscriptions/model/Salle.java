@@ -43,6 +43,10 @@ public class Salle implements Serializable {
     private int nombreDePlace;
 
     @Column
+    private boolean isAvailable;
+
+
+    @Column
     @Enumerated(EnumType.STRING)
     private TypeDeClasse typeDeClasse;
 

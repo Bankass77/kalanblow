@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeDeClasse;
+import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Salle;
 import ml.kalanblow.gestiondesinscriptions.repository.SalleRepository;
@@ -13,7 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +28,8 @@ public class SalleServiceImpl implements SalleService {
 
 
     private final SalleRepository salleDeClasseRepository;
+
+    private final ConcurrentHashMap<Long, Lock> salleLocks = new ConcurrentHashMap<>();
 
     @Autowired
     public SalleServiceImpl(SalleRepository salleDeClasseRepository) {
@@ -74,19 +81,38 @@ public class SalleServiceImpl implements SalleService {
     @Override
     public Optional<Salle> createSalleDeClasse(CreateSalleParameters createSalleParameters) {
 
+        TypeDeClasse typeDeClasse = createSalleParameters.getTypeDeClasse();
+        LocalDateTime salleReservationDate = createSalleParameters.getSalleReservationDate();
+        LocalDateTime salleLibreDate = createSalleParameters.getSalleLibreDate();
 
-        Salle salle = new Salle();
 
-        salle.setNomDeLaSalle(createSalleParameters.getNomDeLaSalle());
-        salle.setEleves(createSalleParameters.getEtablissement().getEleves());
-        salle.setHoraires(createSalleParameters.getCoursPlanifies().stream().flatMap(cours -> cours.getHoraires().stream()).collect(Collectors.toSet()));
-        salle.setEtablissement(createSalleParameters.getEtablissement());
-        salle.setCoursPlanifies(createSalleParameters.getCoursPlanifies());
-        salle.setNombreDePlace(createSalleParameters.getNombreDePlace());
-        salle.setTypeDeClasse(createSalleParameters.getTypeDeClasse());
+        Optional<Salle> salle = salleDeClasseRepository.findSallesByTypeDeClasse(typeDeClasse);
 
-      return Optional.of(salleDeClasseRepository.save(salle));
+        if (salle.isPresent()) {
 
+            Lock salleLock = salleLocks.computeIfPresent(salle.get().getId(), (id , existingLock)-> new ReentrantLock());
+            salleLock.lock();
+
+            try {
+                if (salle.get().isAvailable()) {
+
+                    salle.get().setAvailable(false);
+                    salle.get().setNomDeLaSalle(createSalleParameters.getNomDeLaSalle());
+                    salle.get().setEleves(createSalleParameters.getEtablissement().getEleves());
+                    salle.get().setHoraires(createSalleParameters.getCoursPlanifies().stream().flatMap(cours -> cours.getHoraires().stream()).collect(Collectors.toSet()));
+                    salle.get().setEtablissement(createSalleParameters.getEtablissement());
+                    salle.get().setCoursPlanifies(createSalleParameters.getCoursPlanifies());
+                    salle.get().setNombreDePlace(createSalleParameters.getNombreDePlace());
+                    salle.get().setTypeDeClasse(createSalleParameters.getTypeDeClasse());
+                    return Optional.of(salleDeClasseRepository.save(salle.get()));
+                }
+            } finally {
+
+                salleLock.unlock();
+            }
+        }
+
+        throw new KaladewnManagementException.EntityNotFoundException("La salle de classe ne peut être ajouter.");
     }
 
     /**
@@ -100,14 +126,14 @@ public class SalleServiceImpl implements SalleService {
     public Optional<Salle> doEditSalleDeClasse(Long id, EditSalleParameters editSalleParameters) {
 
 
-        Optional<Salle> salle= salleDeClasseRepository.findById(id);
+        Optional<Salle> salle = salleDeClasseRepository.findById(id);
 
-        if (editSalleParameters.getVersion() != salle.get().getVersion()){
+        if (editSalleParameters.getVersion() != salle.get().getVersion()) {
 
-            throw  new ObjectOptimisticLockingFailureException( Salle.class, salle.get().getId());
+            throw new ObjectOptimisticLockingFailureException(Salle.class, salle.get().getId());
         }
-          editSalleParameters.updateSalleDeClasse(salle.get());
+        editSalleParameters.updateSalleDeClasse(salle.get());
 
-        return  salle;
+        return salle;
     }
 }

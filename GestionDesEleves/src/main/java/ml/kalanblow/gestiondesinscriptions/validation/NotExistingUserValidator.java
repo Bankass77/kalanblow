@@ -4,13 +4,13 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingUser;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
-import ml.kalanblow.gestiondesinscriptions.response.CreateEleveFormData;
+import ml.kalanblow.gestiondesinscriptions.response.AbstractUserFormData;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class NotExistingUserValidator implements ConstraintValidator<NotExistingUser, CreateEleveFormData> {
+public class NotExistingUserValidator implements ConstraintValidator<NotExistingUser, AbstractUserFormData> {
 
     private final EleveService eleveService;
 
@@ -26,7 +26,7 @@ public class NotExistingUserValidator implements ConstraintValidator<NotExisting
     }
 
     @Override
-    public boolean isValid(CreateEleveFormData value, ConstraintValidatorContext context) {
+    public boolean isValid(AbstractUserFormData value, ConstraintValidatorContext context) {
 
         if (!StringUtils.isEmpty(value.getEmail()) && eleveService.verifierExistenceEmail(new Email(value.getEmail()))) {
 
