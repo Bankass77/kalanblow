@@ -17,7 +17,7 @@ public  record KalanblowUserDetails(String username, String displayName, String 
 
 
     public KalanblowUserDetails(User user) {
-        this(user.getUserName().getFullName(), user.getUserName().getFullName(), user.getPassword(), convertRolesToAuthorities(user.getRoles()));
+        this(user.getEmail().asString(), user.getUserName().getFullName(), user.getPassword(), convertRolesToAuthorities(user.getRoles()));
     }
 
     private static Set<GrantedAuthority> convertRolesToAuthorities(Set<UserRole> roles) {
@@ -102,4 +102,7 @@ public  record KalanblowUserDetails(String username, String displayName, String 
     public boolean isEnabled() {
         return true;
     }
+
+
+
 }

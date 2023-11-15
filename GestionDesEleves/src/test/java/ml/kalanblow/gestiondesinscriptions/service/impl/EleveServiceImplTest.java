@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -42,7 +43,7 @@ class EleveServiceImplTest {
 
     private EtablissementService etablissementService;
 
-    private
+    private BCryptPasswordEncoder passwordEncoder;
 
 
     @BeforeEach
@@ -51,7 +52,7 @@ class EleveServiceImplTest {
         eleveRepository = mock(EleveRepository.class);
         parentService=mock(ParentService.class);
         etablissementService= mock(EtablissementService.class);
-        eleveService = new EleveServiceImpl(eleveRepository,parentService,etablissementService);
+        eleveService = new EleveServiceImpl(eleveRepository,parentService,etablissementService, passwordEncoder);
         Eleve eleve = new Eleve();
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         eleve.setDateDeNaissance(LocalDate.of(1980, 6, 23));
@@ -74,7 +75,7 @@ class EleveServiceImplTest {
         eleve.setAddress(address);
         eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
-        eleve.setPassword("Homeboarding2014&");
+        eleve.setPassword(passwordEncoder.encode("Homeboarding2014&"));
         eleve.setRoles(Collections.singleton(UserRole.STUDENT));
         Parent parent= new Parent();
         parent.setUserName(userName);

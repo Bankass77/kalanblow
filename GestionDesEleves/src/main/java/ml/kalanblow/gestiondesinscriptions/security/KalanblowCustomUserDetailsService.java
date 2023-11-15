@@ -1,12 +1,14 @@
 package ml.kalanblow.gestiondesinscriptions.security;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.EnseignantRepository;
+import ml.kalanblow.gestiondesinscriptions.repository.ParentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,17 +25,22 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CustomUserDetailsService implements UserDetailsService {
+@Slf4j
+public class KalanblowCustomUserDetailsService implements UserDetailsService {
 
 
     private final EleveRepository  eleveRepository;
 
     private final EnseignantRepository  enseignantRepository;
 
-    @Autowired
-    public CustomUserDetailsService(EleveRepository eleveRepository, EnseignantRepository enseignantRepository) {
-        this.eleveRepository = eleveRepository;
+    private final ParentRepository parentRepository;
 
+
+
+    @Autowired
+    public KalanblowCustomUserDetailsService(EleveRepository eleveRepository, EnseignantRepository enseignantRepository, ParentRepository parentRepository) {
+        this.eleveRepository = eleveRepository;
+        this.parentRepository=parentRepository;
         this.enseignantRepository= enseignantRepository;
     }
 
@@ -53,11 +60,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Eleve> eleve = eleveRepository.findElevesByEmail(new Email(username));
-        Optional<Enseignant> enseignant = enseignantRepository.searchAllByEmailIsLike(username);
+        Optional<Enseignant> enseignant = enseignantRepository.findEnseignantByEmail(new Email(username));
 
         if (eleve.isPresent()) {
+            log.debug("Found Eleve: {} with roles: {}", eleve.get().getEmail().asString(), eleve.get().getRoles());
             return loadEleve(eleve.get());
         } else if (enseignant.isPresent()) {
+            log.debug("Found Eleve: {} with roles: {}", enseignant.get().getEmail().asString(), enseignant.get().getRoles());
             return loadGeneralAdminOrEnseignant(enseignant.get());
         } else {
             throw new UsernameNotFoundException("Utilisateur non trouvé avec le nom d'utilisateur: " + username);
@@ -78,14 +87,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new KalanblowUserDetails(
                 eleve.getEmail().asString(),
+                eleve.getUserName().getFullName(),
                 eleve.getPassword(),
-                eleve.getIneNumber(),
                 authorities
         );
     }
 
     /**
-     * Charge les détails d'un utilisateur de type "Enseignant" et crée un objet UserDetails personnalisé.
+     * Charge les détails d'un Enseignant de type "Enseignant" et crée un objet UserDetails personnalisé.
      *
      * @param enseignant L'objet Enseignant à partir duquel extraire les détails.
      * @return Un objet UserDetails représentant l'utilisateur de type "Enseignant".
@@ -98,11 +107,29 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new KalanblowUserDetails(
                 enseignant.getEmail().asString(),
+                enseignant.getUserName().getFullName(),
                 enseignant.getPassword(),
-                enseignant.getLeMatricule(),
                 authorities
         );
     }
+
+    /**
+     * Charge les détails d'un Manager général et crée un objet UserDetails personnalisé.
+     *
+     * @param email L'adresse e-mail de l'administrateur général.
+     * @return Un objet UserDetails représentant l'administrateur général.
+     * @throws UsernameNotFoundException si l'administrateur général n'est pas trouvé.
+     */
+    private UserDetails loadGeneralManager(Email email) {
+        var manager = enseignantRepository.findEnseignantByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException(
+                        "'" + email + "' was not found as a general admin."));
+        var auths = new HashSet<GrantedAuthority>();
+        auths.add(new SimpleGrantedAuthority(UserRole.PARENT.getValue()));
+        return new KalanblowUserDetails(manager.getEmail().asString(), manager.getUserName().getFullName(), manager.getPassword(),
+                auths);
+    }
+
 
     /**
      * Charge les détails d'un administrateur général et crée un objet UserDetails personnalisé.
@@ -111,14 +138,13 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @return Un objet UserDetails représentant l'administrateur général.
      * @throws UsernameNotFoundException si l'administrateur général n'est pas trouvé.
      */
-    private UserDetails loadGeneralAdmin(String email) {
-        var admin = enseignantRepository.searchAllByEmailIsLike(email).orElseThrow(
+    private UserDetails loadGeneralParent(Email email) {
+        var parent = enseignantRepository.findEnseignantByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException(
                         "'" + email + "' was not found as a general admin."));
         var auths = new HashSet<GrantedAuthority>();
-        auths.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
-        return new KalanblowUserDetails(admin.getEmail().asString(), admin.getPassword(), admin.getUserName().getFullName(),
+        auths.add(new SimpleGrantedAuthority(UserRole.PARENT.getValue()));
+        return new KalanblowUserDetails(parent.getEmail().asString(), parent.getPassword(), parent.getUserName().getFullName(),
                 auths);
     }
-
 }

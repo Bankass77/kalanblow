@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.response;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.EditParentParameters;
@@ -11,7 +12,8 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
-public class EditParentFormData extends EditUserFormData {
+@EqualsAndHashCode(callSuper = false)
+public class EditParentFormData extends CreateParentFormData {
 
     private Long id;
     private long version;
@@ -20,7 +22,7 @@ public class EditParentFormData extends EditUserFormData {
 
     private Set<Eleve> enfantsMere = new HashSet<>();
 
-    public static EditParentFormData fromParentFormDat(Parent parent) {
+    public static EditParentFormData fromParent(Parent parent) {
 
         EditParentFormData editParentFormData = new EditParentFormData();
         editParentFormData.setVersion(editParentFormData.version);
@@ -28,7 +30,6 @@ public class EditParentFormData extends EditUserFormData {
         editParentFormData.setAddress(parent.getAddress());
         editParentFormData.setEmail(parent.getEmail().asString());
         editParentFormData.setGender(parent.getGender());
-        editParentFormData.setAvatarBase64Encoded(editParentFormData.getAvatarBase64Encoded());
         editParentFormData.setCreatedDate(parent.getCreatedDate());
         editParentFormData.setMaritalStatus(parent.getMaritalStatus());
         editParentFormData.setModifyDate(parent.getLastModifiedDate());
@@ -43,14 +44,22 @@ public class EditParentFormData extends EditUserFormData {
         return editParentFormData;
     }
 
-
     public EditParentParameters toParentParameters() {
 
-
-        EditParentParameters editParentParameters = new EditParentParameters(version, new UserName(getPrenom(),
-                getNomDeFamille()), getGender(), getMaritalStatus(), new Email(getEmail()),
-                new PhoneNumber(getPhoneNumber()), getAddress(), profession,enfantsPere, enfantsMere  ,getCreatedDate(), getModifyDate());
-
+      EditParentParameters editParentParameters= new EditParentParameters();
+      editParentParameters.setVersion(version);
+      editParentParameters.setAddress(getAddress());
+      editParentParameters.setProfession(getProfession());
+      editParentParameters.setEmail(new Email(getEmail()));
+      editParentParameters.setGender(getGender());
+      editParentParameters.setPassword(getPassword());
+      editParentParameters.setEnfantsPere(enfantsPere);
+      editParentParameters.setCreatedDate(getCreatedDate());
+      editParentParameters.setMaritalStatus(getMaritalStatus());
+      editParentParameters.setEnfantsMere(enfantsMere);
+      editParentParameters.setModifyDate(getModifyDate());
+      editParentParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
+      editParentParameters.setUserName(new UserName(getPrenom(),getNomDeFamille()));
         return  editParentParameters;
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Data
-public class EditEnseignantFormData extends EditUserFormData {
+public class EditEnseignantFormData extends CreateEnseignantFormData {
     private Long id;
     private long version;
     private String leMatricule;
@@ -27,8 +27,9 @@ public class EditEnseignantFormData extends EditUserFormData {
     private LocalTime heureFinDisponibilite;
     private String password;
     private String passwordRepeated;
+    private String avatarBase64Encoded;
 
-    public static EditEnseignantFormData formEnseignantFormData(Enseignant enseignant) {
+    public static EditEnseignantFormData formEnseignant(Enseignant enseignant) {
 
         EditEnseignantFormData editEnseignantFormData = new EditEnseignantFormData();
         editEnseignantFormData.setCoursDEnseignements(enseignant.getCoursDEnseignements());

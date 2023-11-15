@@ -15,7 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public final class CreateParentParameters extends CreateUserParameters {
+public sealed class CreateParentParameters extends CreateUserParameters permits EditParentParameters {
 
 
     private String profession;

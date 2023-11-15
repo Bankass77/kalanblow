@@ -2,26 +2,24 @@ package ml.kalanblow.gestiondesinscriptions.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ml.kalanblow.gestiondesinscriptions.enums.Gender;
-import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
-import ml.kalanblow.gestiondesinscriptions.model.*;
+import ml.kalanblow.gestiondesinscriptions.model.Eleve;
+import ml.kalanblow.gestiondesinscriptions.model.Parent;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public final class EditParentParameters extends CreateUserParameters {
+public final class EditParentParameters extends CreateParentParameters {
 
-    private final long version;
+    private long version;
 
     private String profession;
 
@@ -29,13 +27,8 @@ public final class EditParentParameters extends CreateUserParameters {
 
     private Set<Eleve> enfantsMere = new HashSet<>();
 
-    public EditParentParameters(long version, UserName userName, Gender gender, MaritalStatus maritalStatus, Email email,
-                                PhoneNumber phoneNumber, Address address, String profession, Set<Eleve> enfantsPere, Set<Eleve> enfantsMere ,LocalDateTime createdDate, LocalDateTime modifyDate) {
+    public EditParentParameters() {
 
-        this.profession = profession;
-        this.version = version;
-        this.enfantsMere=enfantsMere;
-        this.enfantsPere=enfantsPere;
     }
 
     // tag::update

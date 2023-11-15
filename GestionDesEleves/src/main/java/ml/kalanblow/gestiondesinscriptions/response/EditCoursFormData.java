@@ -10,7 +10,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
-public class EditCoursFormData {
+public class EditCoursFormData   extends  CreateCoursFormData{
     
     private long version;
     private String nomDuCours;

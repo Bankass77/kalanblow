@@ -11,7 +11,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
-public class EditMatiereFormData  {
+public class EditMatiereFormData extends  CreateMatiereFormData {
 
     private Long id;
     private long version;
