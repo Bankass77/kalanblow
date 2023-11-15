@@ -7,6 +7,7 @@ import ml.kalanblow.gestiondesinscriptions.request.CreateSalleParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditSalleParameters;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface SalleService {
     /**
@@ -54,4 +55,9 @@ public interface SalleService {
      */
     Optional<Salle> doEditSalleDeClasse(Long id, EditSalleParameters editSalleParameters);
 
+    Set<Salle> getAllSalles();
+
+    public void deleteSalleDeClasse(Long id);
+
+    Optional<Salle> getTimeslotById(Long id);
 }

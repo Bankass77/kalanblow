@@ -2,8 +2,8 @@
 FROM openjdk:17-jdk-slim-buster AS builder
 
 # Install Maven
-RUN apt-get update -y
-RUN apt-get install -y binutils maven
+RUN apk --no-cache add \
+      binutils maven
 
 # Define environment variables
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS JAVA_OPTS=""

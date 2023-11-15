@@ -15,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 public class CreatePresenceParameters {
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Cours cours;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Eleve eleve;
 

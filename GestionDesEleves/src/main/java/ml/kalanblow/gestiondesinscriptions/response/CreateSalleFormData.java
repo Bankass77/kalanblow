@@ -20,20 +20,20 @@ import java.util.Set;
 public class CreateSalleFormData {
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private String nomDeLaSalle;
 
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
     private int nombreDePlace;
 
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
     private TypeDeClasse typeDeClasse;
 
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Etablissement etablissement;
 
     private Set<Cours> coursPlanifies;

@@ -6,6 +6,7 @@ import ml.kalanblow.gestiondesinscriptions.request.EditVacancesParameters;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
 public interface VacancesService {
 
@@ -36,4 +37,9 @@ public interface VacancesService {
     Optional<Vacances> doEditVacances(Long id, EditVacancesParameters editVacancesParameters);
 
 
+    Set<Vacances> getAllVacances();
+
+    Optional<Vacances> getVacancesById(Long id);
+
+    void deleteVacances(Long id);
 }

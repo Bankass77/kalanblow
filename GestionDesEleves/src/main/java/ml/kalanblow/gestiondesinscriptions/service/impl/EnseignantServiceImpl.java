@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -183,5 +185,15 @@ public class EnseignantServiceImpl implements EnseignantService {
         log.info("Mise à jour des informations de l'Enseignant {} ({})", enseignant.getUserName().getFullName(), enseignant.getEmail().asString());
         editEnseignantParameters.updateEnseignant(enseignant);
         return Optional.of(enseignant);
+    }
+
+    @Override
+    public Set<Enseignant> getAllEnseignants() {
+        return  new HashSet<>(enseignantRepository.findAll());
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        enseignantRepository.deleteById(id);
     }
 }

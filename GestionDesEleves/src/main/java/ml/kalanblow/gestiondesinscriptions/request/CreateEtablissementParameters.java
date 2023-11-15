@@ -16,26 +16,26 @@ import java.util.Set;
 public class CreateEtablissementParameters {
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private String nomEtablissement;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Address address;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Email email;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private LocalDateTime createdDate = LocalDateTime.now();
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private PhoneNumber phoneNumber;
 
     private Set<Eleve> eleves;

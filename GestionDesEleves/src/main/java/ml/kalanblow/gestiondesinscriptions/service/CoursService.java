@@ -5,6 +5,7 @@ import ml.kalanblow.gestiondesinscriptions.request.CreateCoursParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditCoursParameters;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface CoursService {
     /**
@@ -54,4 +55,10 @@ public interface CoursService {
      * avec succès, ou Optional.empty() si le cours n'a pas pu être édité.
      */
     Optional<Cours> editerCoursDEnseignement(Long id, EditCoursParameters editCoursDEnseignementParameters);
+
+    Set<Cours> getAllCours();
+
+    Optional<Cours> getCoursById(Long id);
+
+    void deleteCours(Long id);
 }

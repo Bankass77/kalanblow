@@ -20,15 +20,15 @@ public sealed class CreateEnseignantParameters  extends CreateUserParameters per
 
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private String leMatricule;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private LocalDate dateDeNaissance;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private int age;
 
     private List<DayOfWeek> joursDisponibles;
@@ -38,7 +38,7 @@ public sealed class CreateEnseignantParameters  extends CreateUserParameters per
     private LocalTime heureFinDisponibilite;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Etablissement etablissement;
 
 

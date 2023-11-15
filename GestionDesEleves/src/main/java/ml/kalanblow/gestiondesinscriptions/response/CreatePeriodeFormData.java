@@ -19,17 +19,17 @@ public class CreatePeriodeFormData {
 
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private int annee;
 
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Duration duree;
 
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private TypeDeVacances typeDeVacances;
 
 

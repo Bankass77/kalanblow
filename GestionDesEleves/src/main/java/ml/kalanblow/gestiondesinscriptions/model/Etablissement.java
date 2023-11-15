@@ -30,19 +30,19 @@ public class Etablissement {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long etablisementScolaireId;
 
     @Version
     Long version;
 
     @Column
-    @NotNull
+    @NotNull(message = "{notnull.message}")
     @NotBlank
     @Size(min = 2, max = 200)
     private String nomEtablissement;
 
-    @NotNull(message = "Address is required")
+    @NotNull(message = "{notnull.message}")
     @Embedded
     @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
 
@@ -58,7 +58,7 @@ public class Etablissement {
     @Nullable
     private byte[] avatar;
 
-    @NotNull(message = "Please enter a valid address email.")
+    @NotNull(message = "{notnull.message}")
     @Column(unique = true, nullable = false, updatable = true, name = "email")
     @Embedded
     private Email email;

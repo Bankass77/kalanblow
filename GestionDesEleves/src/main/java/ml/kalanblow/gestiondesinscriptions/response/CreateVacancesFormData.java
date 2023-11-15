@@ -16,12 +16,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateVacancesFormData {
 
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
     private LocalDate dateDebut;
 
 
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
     private LocalDate dateFin;
 

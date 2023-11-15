@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,13 +22,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public sealed class CreateUserParameters permits CreateEleveParameters, CreateEnseignantParameters, CreateParentParameters,  EditUserParameters {
 
+    @NotNull(message = "{notnull.message}")
     private UserName userName;
+
+    @NotNull(message = "{notnull.message}")
     private Gender gender;
+
+    @NotNull(message = "{notnull.message}")
     private MaritalStatus maritalStatus;
+
+    @NotNull(message = "{notnull.message}")
     private Email email;
+
+    @NotNull(message = "{notnull.message}")
     private String password;
+
+    @NotNull(message = "{notnull.message}")
     private PhoneNumber phoneNumber;
+
+    @NotNull(message = "{notnull.message}")
     private Address address;
+
     private LocalDateTime createdDate = LocalDateTime.now();
     private LocalDateTime modifyDate = LocalDateTime.now();
 

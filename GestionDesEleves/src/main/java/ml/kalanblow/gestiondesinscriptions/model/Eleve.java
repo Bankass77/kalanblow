@@ -27,10 +27,10 @@ public class Eleve extends User {
 
     private static final long serialVersionUID = 1L;
     @Column(name = "ine_number")
-    @NotNull
+    @NotNull(message = "{notnull.message}")
     private String ineNumber;
 
-    @NotNull(message = "dateDeNaissance is required")
+    @NotNull(message = "{notnull.message}")
     @Column(name = "birthDate")
     @Past
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -39,18 +39,18 @@ public class Eleve extends User {
     private LocalDate dateDeNaissance;
 
     @Column(name = "age")
-    @NotNull
+    @NotNull(message = "{notnull.message}")
     private int age;
 
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "pere_id")
-    @NotNull
+    @NotNull(message = "{notnull.message}")
     private Parent pere;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "mere_id")
-    @NotNull
+    @NotNull(message = "{notnull.message}")
     private Parent mere;
 
     @OneToMany(mappedBy = "eleve", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,10 +69,10 @@ public class Eleve extends User {
         this.ineNumber = eleveBuilder.ineNumber;
         this.dateDeNaissance = eleveBuilder.dateDeNaissance;
         this.age = eleveBuilder.age;
-        this.pere= eleveBuilder.pere;
-        this.mere=eleveBuilder.mere;
-        this.etablissement =eleveBuilder.etablissement;
-        this.absences=eleveBuilder.absences;
+        this.pere = eleveBuilder.pere;
+        this.mere = eleveBuilder.mere;
+        this.etablissement = eleveBuilder.etablissement;
+        this.absences = eleveBuilder.absences;
 
     }
 
@@ -91,41 +91,42 @@ public class Eleve extends User {
         private Etablissement etablissement;
         private List<Absence> absences;
 
-        public EleveBuilder ineNumber(String  ineNumber){
+        public EleveBuilder ineNumber(String ineNumber) {
 
-            this.ineNumber= ineNumber;
-            return  this;
+            this.ineNumber = ineNumber;
+            return this;
         }
 
 
-        public EleveBuilder pere (Parent pere){
+        public EleveBuilder pere(Parent pere) {
 
-            this.pere=pere;
+            this.pere = pere;
 
             return this;
         }
 
-        public  EleveBuilder mere (Parent mere){
+        public EleveBuilder mere(Parent mere) {
 
-            this.mere=mere;
-            return  this;
-        }
-        public  EleveBuilder dateDeNaissance (LocalDate dateDeNaissance){
-
-            this.dateDeNaissance=dateDeNaissance;
+            this.mere = mere;
             return this;
         }
 
-        public EleveBuilder etablissementScolaire (Etablissement etablissement){
+        public EleveBuilder dateDeNaissance(LocalDate dateDeNaissance) {
+
+            this.dateDeNaissance = dateDeNaissance;
+            return this;
+        }
+
+        public EleveBuilder etablissementScolaire(Etablissement etablissement) {
 
             this.etablissement = etablissement;
 
-            return  this;
+            return this;
         }
 
-        public EleveBuilder absences  (List<Absence> absences){
+        public EleveBuilder absences(List<Absence> absences) {
 
-            this.absences=absences;
+            this.absences = absences;
             return this;
         }
 

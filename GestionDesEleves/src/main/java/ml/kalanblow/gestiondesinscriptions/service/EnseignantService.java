@@ -9,6 +9,7 @@ import ml.kalanblow.gestiondesinscriptions.request.EditEnseignantParameters;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.util.Set;
 
 public interface EnseignantService {
 
@@ -93,4 +94,7 @@ public interface EnseignantService {
     Optional<Enseignant> editerEnseignant(Long id, EditEnseignantParameters enseignantParameters);
 
 
+    Set<Enseignant> getAllEnseignants();
+
+    void deleteById(Long id);
 }
