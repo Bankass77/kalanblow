@@ -20,19 +20,19 @@ import java.util.Set;
 public class CreateSalleParameters {
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private String nomDeLaSalle;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private int nombreDePlace;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private TypeDeClasse typeDeClasse;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Etablissement etablissement;
 
     private LocalDateTime  salleReservationDate;

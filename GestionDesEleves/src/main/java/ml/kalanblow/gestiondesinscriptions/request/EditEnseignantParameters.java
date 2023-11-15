@@ -20,7 +20,7 @@ private long version;
         enseignant.setCoursDEnseignements(getCoursDEnseignements());
         enseignant.setAge(getAge());
         enseignant.setDateDeNaissance(getDateDeNaissance());
-        enseignant.setHoraireClasses(getHoraireClasses());
+        enseignant.setDisponibilites(getHoraireClasses());
         enseignant.setEtablissement(getEtablissement());
         enseignant.setJoursDisponibles(getJoursDisponibles());
         enseignant.setLeMatricule(getLeMatricule());

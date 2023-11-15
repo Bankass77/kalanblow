@@ -45,13 +45,13 @@ import java.util.Set;
 public abstract class User implements Serializable {
     @Id
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Version()
     private Long version;
 
-    @NotNull(message = "Username is required")
+
     @Embedded
     private UserName userName;
 

@@ -103,7 +103,7 @@ public class CoursServiceImp implements CoursService {
         if (verifierConflitsHoraireDeClasse(coursDEnseignement) && matiere.isPresent()) {
 
             Cours coursDEnseignement1 = coursDEnseignementRepository.save(coursDEnseignement);
-            return Optional.of(coursDEnseignement);
+            return Optional.of(coursDEnseignement1);
 
         }
 
@@ -136,6 +136,23 @@ public class CoursServiceImp implements CoursService {
 
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Set<Cours> getAllCours() {
+        return new HashSet<>(coursDEnseignementRepository.findAll());
+    }
+
+    @Override
+    public Optional<Cours> getCoursById(Long id) {
+        return coursDEnseignementRepository.findById(id);
+    }
+
+    @Override
+    public void deleteCours(Long id) {
+
+        coursDEnseignementRepository.deleteById(id);
+
     }
 
 

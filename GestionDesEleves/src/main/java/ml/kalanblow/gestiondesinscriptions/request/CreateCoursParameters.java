@@ -13,34 +13,34 @@ import java.util.Set;
 @AllArgsConstructor
 public class CreateCoursParameters {
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private String nomDuCours;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private String niveau;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Periode anneeScolaire;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Matiere matiere;
 
 
     private Set<Absence> absenceEleves;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Set<Horaire> horaireClasses;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Enseignant enseignant;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Salle salleDeClasse;
 }

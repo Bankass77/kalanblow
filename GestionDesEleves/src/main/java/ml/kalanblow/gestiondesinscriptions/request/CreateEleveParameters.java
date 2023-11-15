@@ -20,27 +20,27 @@ import java.util.List;
 public sealed class CreateEleveParameters extends CreateUserParameters permits EditEleveParameters {
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private LocalDate dateDeNaissance;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private int age;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private String studentIneNumber;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Parent pere;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Parent mere;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private Etablissement etablissement;
 
     private List<Absence> absences;

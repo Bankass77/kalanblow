@@ -13,15 +13,15 @@ import java.time.Duration;
 @AllArgsConstructor
 public class CreatePeriodeParameters {
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private int annee;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private Duration duree;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private TypeDeVacances typeDeVacances;
 }

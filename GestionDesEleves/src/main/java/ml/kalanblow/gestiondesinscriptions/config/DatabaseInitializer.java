@@ -44,6 +44,8 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     private  final BCryptPasswordEncoder passwordEncoder;
 
+    String TELEPHONE_REGEX = "(\\+223|00223)?[67]\\d{7}";
+
 
     public DatabaseInitializer(EtablissementService etablissementScolaireService, ParentService parentService, EleveService eleveService,BCryptPasswordEncoder passwordEncoder) {
         this.etablissementScolaireService = etablissementScolaireService;
@@ -78,7 +80,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             etablissementScolaireBuilder.lastModiedDate(LocalDateTime.now());
             etablissementScolaireBuilder.email(new Email("collegedujeunefille@exemple.com"));
             etablissementScolaireBuilder.nomEtablissement("Amical Kabral");
-            PhoneNumber phoneNumber = new PhoneNumber("+22367890123");
+             PhoneNumber phoneNumber = new PhoneNumber(faker.regexify(TELEPHONE_REGEX));
             etablissementScolaireBuilder.phoneNumber(phoneNumber);
 
             etablissementScolaireBuilder.build();
@@ -87,7 +89,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             Etablissement newEtablissement = etablissementScolaireService.creerEtablissementScolaire(etablissementScolaireParameters);*/
 
 
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 2; i++) {
                 Parent mere = parentService.saveParent(createParentParametersForMere()).orElse(null);
                 Parent pere = parentService.saveParent(createParentParametersForPere()).orElse(null);
 
@@ -113,7 +115,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         Gender gender = faker.bool().bool() ? Gender.MALE : Gender.FEMALE;
         LocalDate dateDeNaissance = LocalDate.ofInstant(faker.date().birthday(6, 14).toInstant(), ZoneId.systemDefault());
         Email email = new Email(faker.internet().emailAddress(generateEmailLocalPart(userName)));
-        PhoneNumber phoneNumber = new PhoneNumber(faker.phoneNumber().phoneNumber());
+        PhoneNumber phoneNumber = new PhoneNumber(faker.regexify(TELEPHONE_REGEX));
         MaritalStatus maritalStatus = faker.bool().bool() ? MaritalStatus.MARRIED : MaritalStatus.SINGLE;
         Address address = new Address();
         address.setStreetNumber(Integer.parseInt(faker.address().streetAddressNumber()));
@@ -128,7 +130,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         LocalDateTime createdDate = LocalDateTime.now();
         LocalDateTime modifyDate = LocalDateTime.now();
 
-        Etablissement etablissement = etablissementScolaireService.trouverEtablissementScolaireParSonIdentifiant(4002);
+        Etablissement etablissement = etablissementScolaireService.trouverEtablissementScolaireParSonIdentifiant(1);
 
         CreateEleveParameters createEleveParameters = new CreateEleveParameters();
 
@@ -175,7 +177,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     @NotNull
     private CreateParentParameters getCreateParentParameters(UserName userName, Gender gender) throws NoSuchAlgorithmException {
         Email email = new Email(faker.internet().emailAddress(generateEmailLocalPart(userName)));
-        PhoneNumber phoneNumber = new PhoneNumber(faker.phoneNumber().phoneNumber());
+        PhoneNumber phoneNumber = new PhoneNumber(faker.regexify(TELEPHONE_REGEX));
         MaritalStatus maritalStatus = MaritalStatus.MARRIED; // Vous pouvez définir le statut matrimonial du père ici.
         Address address = new Address();
         address.setStreetNumber(Integer.parseInt(faker.address().streetAddressNumber()));

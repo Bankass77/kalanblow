@@ -19,34 +19,34 @@ import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 @AllArgsConstructor
 public class CreateAbsenceFormData {
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
     private Horaire horaireClasse;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
     @NotBlank
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String motif;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private boolean estJustifiee;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Cours cours;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Presence presence;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Eleve eleve;
 
 

@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import java.util.Set;
 @JsonDeserialize(builder = Parent.ParentBuilder.class)
 public class Parent extends  User{
 
+    @NotNull(message = "{notnull.message}")
     private String profession;
 
     @JsonManagedReference

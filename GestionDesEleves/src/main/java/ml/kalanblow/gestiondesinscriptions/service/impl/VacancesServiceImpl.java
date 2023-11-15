@@ -11,7 +11,9 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -75,5 +77,20 @@ public class VacancesServiceImpl implements VacancesService {
 
         editVacancesParameters.updatePeriodeDeVacances(vacances.get());
         return vacances;
+    }
+
+    @Override
+    public Set<Vacances> getAllVacances() {
+        return new HashSet<>(periodeDeVacancesRepository.findAll());
+    }
+
+    @Override
+    public Optional<Vacances> getVacancesById(Long id) {
+        return periodeDeVacancesRepository.findById(id);
+    }
+
+    @Override
+    public void deleteVacances(Long id) {
+        periodeDeVacancesRepository.deleteById(id);
     }
 }

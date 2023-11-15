@@ -19,17 +19,17 @@ public class CreateMatiereFormData {
     private double note;
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private double coefficient;
 
     private double moyenne;
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private String nomMatiere;
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private String description;
 
     private Set<Cours> coursDEnseignements;

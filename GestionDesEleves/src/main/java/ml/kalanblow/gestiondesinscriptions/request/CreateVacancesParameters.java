@@ -12,12 +12,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateVacancesParameters {
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private LocalDate dateDebut;
 
 
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     @NotBlank
     private LocalDate dateFin;
 }

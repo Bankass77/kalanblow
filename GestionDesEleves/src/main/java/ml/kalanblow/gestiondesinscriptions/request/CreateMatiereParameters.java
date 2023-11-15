@@ -15,21 +15,21 @@ import java.util.Set;
 public class CreateMatiereParameters {
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private double note;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private double coefficient;
 
     private double moyenne;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private String nomMatiere;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}")
     private String description;
 
     private Set<Cours> coursDEnseignements;

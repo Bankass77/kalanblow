@@ -22,12 +22,12 @@ public class CreatePresenceFormData {
 
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Cours cours;
 
 
     @NotBlank
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Eleve eleve;
 
     private List<Absence> absences;

@@ -56,7 +56,7 @@ public class CreateEtablissementFormData {
 
     @NotBlank
     @NotNull
-    @Pattern(regexp = "^(00223|\\+223)[67]\\d{6}$")
+    @Pattern(regexp = "^(\\+223|00223)?[67]\\d{7}$")
     private PhoneNumber phoneNumber;
 
     private Set<Eleve> eleves;

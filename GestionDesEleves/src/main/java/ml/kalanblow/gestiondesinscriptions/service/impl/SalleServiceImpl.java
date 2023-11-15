@@ -15,7 +15,9 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -136,4 +138,25 @@ public class SalleServiceImpl implements SalleService {
 
         return salle;
     }
+
+    @Override
+    public Set<Salle> getAllSalles() {
+        return new HashSet<>(salleDeClasseRepository.findAll());
+    }
+    @Override
+    public void deleteSalleDeClasse(Long id) {
+        Optional<Salle> salleOpt = salleDeClasseRepository.findById(id);
+
+        salleOpt.ifPresent(salle -> {
+            salleDeClasseRepository.deleteById(id);
+            // Vous pouvez également effectuer d'autres opérations liées à la suppression si nécessaire
+        });
+    }
+
+    @Override
+    public Optional<Salle> getTimeslotById(Long id) {
+        return  salleDeClasseRepository.findById(id);
+    }
+
+
 }

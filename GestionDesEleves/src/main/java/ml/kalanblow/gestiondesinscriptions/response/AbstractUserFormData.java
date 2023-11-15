@@ -32,36 +32,37 @@ import java.util.Set;
 public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFormData {
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String prenom;
 
     @NotBlank
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String nomDeFamille;
 
-    @NotNull
-    @Pattern(regexp = "^(00223|\\+223)[67]\\d{6}$")
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @Pattern(regexp = "^(\\+223|00223)?[67]\\d{7}$")
     private String phoneNumber;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private UserRole userRole;
 
-    @NotNull
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Gender gender;
 
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private MaritalStatus maritalStatus;
 
     @NotBlank
     @Email(groups = ValidationGroupOne.class)
     private String email;
 
-    @NotNull(groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Address address;
 
-    @NotNull(message = "Create Date  is required!", groups = ValidationGroupOne.class)
+   
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
@@ -69,7 +70,7 @@ public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFor
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
-    @NotNull(message = " Modify Date is required!", groups = ValidationGroupOne.class)
+     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @JsonDeserialize(using = InstantDeserializer.class)
