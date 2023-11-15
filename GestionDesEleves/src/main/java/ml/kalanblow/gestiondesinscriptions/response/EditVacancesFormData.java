@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @NoArgsConstructor
 @Data
-public class EditVacancesFormData {
+public class EditVacancesFormData extends CreateVacancesFormData{
 
     private Long id;
     private long version;

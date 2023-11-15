@@ -21,6 +21,7 @@ public class KaladewnManagementException extends Exception {
     @Autowired
     private static KaladewnPropertiesConfig propertiesConfig;
 
+
     /**
      * Returns new RuntimeException based on template and args
      *

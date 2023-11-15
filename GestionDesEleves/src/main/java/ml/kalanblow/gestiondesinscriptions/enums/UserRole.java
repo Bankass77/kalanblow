@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 public enum UserRole implements Serializable {
-    STUDENT ("Elève"), TEACHER ("Enseignant"), MANAGER("Gestionnaire"), ADMIN("Administrateur"), USER("Utilisateur");
+    STUDENT ("Elève"), TEACHER ("Enseignant"), MANAGER("Gestionnaire"), ADMIN("Administrateur"), USER("Utilisateur"), PARENT("Parent");
 
     private String value;
     public static Set<UserRole> valueAsSet() {

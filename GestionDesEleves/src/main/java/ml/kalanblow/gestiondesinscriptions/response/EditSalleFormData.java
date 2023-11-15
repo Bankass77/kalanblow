@@ -13,7 +13,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
-public class EditSalleFormData {
+public class EditSalleFormData extends  CreateSalleFormData{
 
     private Long id;
     private long version;

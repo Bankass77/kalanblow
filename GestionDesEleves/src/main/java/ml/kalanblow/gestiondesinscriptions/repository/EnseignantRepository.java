@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.repository;
 
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -36,7 +37,7 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
      * @param email L'adresse e-mail à rechercher partiellement.
      * @return Une instance facultative (Optional) des enseignants trouvés, ou une instance vide si aucun enseignant correspondant n'est trouvé.
      */
-    Optional<Enseignant> searchAllByEmailIsLike(String email);
+    Optional<Enseignant> findEnseignantByEmail(Email email);
 
     /**
      * Obtient un enseignant en fonction du cours d'enseignement spécifié.

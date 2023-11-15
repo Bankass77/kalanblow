@@ -73,7 +73,7 @@ public class KalanblowEleveController {
      */
 
     // tag::create-get[]
-    @GetMapping("eleve/ajouter")
+    @GetMapping("/eleve/ajouter")
     @Secured("ROLE_ADMIN")
     public ModelAndView ajouterNouvelEleve(ModelAndView modelAndView) {
 
@@ -98,7 +98,7 @@ public class KalanblowEleveController {
      * @return Une chaîne représentant le nom de la vue après la création de l'élève.
      */
     // tag::create-post[]
-    @PostMapping("eleve/ajouter")
+    @PostMapping("/eleve/ajouter")
     @Secured("ROLE_ADMIN")
     public ModelAndView crerUnNouvelEleve(@Validated(CreateUserValidationGroupSequence.class) @ModelAttribute("eleve") CreateEleveFormData formData, BindingResult bindingResult, ModelAndView modelAndView) {
 
@@ -127,9 +127,8 @@ public class KalanblowEleveController {
      * @return Une chaîne représentant le nom de la vue du formulaire de mise à jour d'un élève.
      */
 // tag::edit-get[]
-    @GetMapping("eleve/{id}")
-    @Secured("ROLE_ADMIN")
-    public ModelAndView mettreAJourUnEleve(@PathVariable("id") long id, ModelAndView modelAndView) {
+    @GetMapping("/eleve/{id}")
+    public ModelAndView editEleveForm(@PathVariable("id") long id, ModelAndView modelAndView) {
 
         modelAndView = new ModelAndView("eleves/editerEleve");
         Optional<Eleve> eleve = eleveService.obtenirEleveParSonId(id);
@@ -152,7 +151,7 @@ public class KalanblowEleveController {
      * @return Une chaîne représentant le nom de la vue après la mise à jour des informations de l'élève.
      */
     // tag::edit-post[]
-    @PostMapping
+    @PostMapping("/eleve/{id}")
     @Secured("ROLE_ADMIN")
     public ModelAndView aModifierElever(@PathVariable("id") long id, @Validated(EditUserValidationGroupSequence.class) @ModelAttribute("eleve") EditEleveFormData formData, BindingResult bindingResult, ModelAndView modelAndView) {
 
@@ -182,6 +181,7 @@ public class KalanblowEleveController {
      */
     // tag::delete-post[]
     @PostMapping("/eleve/{id}/delete")
+    @Secured("ROLE_ADMIN")
     public String aSupprimerEleve(@PathVariable("id") long id, RedirectAttributes redirectAttributes) {
 
         Optional<Eleve> eleve = eleveService.obtenirEleveParSonId(id);

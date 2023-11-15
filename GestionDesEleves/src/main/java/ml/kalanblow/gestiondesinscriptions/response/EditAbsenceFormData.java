@@ -8,7 +8,7 @@ import ml.kalanblow.gestiondesinscriptions.request.EditAbsenceParameters;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditAbsenceFormData {
+public class EditAbsenceFormData  extends  CreateAbsenceFormData{
 
     private long version;
 

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class EditPresenceFormData {
+public class EditPresenceFormData  extends CreatePresenceFormData {
     
     private long version;
     private Cours cours;

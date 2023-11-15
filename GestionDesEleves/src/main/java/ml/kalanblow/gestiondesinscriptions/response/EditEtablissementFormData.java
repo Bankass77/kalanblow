@@ -12,7 +12,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Data
-public class EditEtablissementFormData {
+public class EditEtablissementFormData extends  CreateEtablissementFormData{
 
     private Long id;
     private long version;

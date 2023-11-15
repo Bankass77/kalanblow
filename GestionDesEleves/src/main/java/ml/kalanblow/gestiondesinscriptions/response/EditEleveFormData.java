@@ -18,7 +18,7 @@ import java.util.Base64;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditEleveFormData extends EditUserFormData {
+public class EditEleveFormData extends CreateEleveFormData {
 
     private Long id;
     private long version;
@@ -30,6 +30,7 @@ public class EditEleveFormData extends EditUserFormData {
     private Parent pere;
     private Parent mere;
     private String ineNumber;
+    private String avatarBase64Encoded;
 
 
     /**

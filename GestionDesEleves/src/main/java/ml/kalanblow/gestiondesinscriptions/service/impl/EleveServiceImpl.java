@@ -21,8 +21,8 @@ import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,13 +48,16 @@ public class EleveServiceImpl implements EleveService {
 
     private final EtablissementService etablissementService;
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService) {
+    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService,BCryptPasswordEncoder passwordEncoder) {
 
         this.eleveRepository = eleveRepository;
         this.parentService = parentService;
         this.etablissementService = etablissementService;
+        this.passwordEncoder=passwordEncoder;
 
 
     }
@@ -127,7 +130,7 @@ public class EleveServiceImpl implements EleveService {
         parameters.setGender(eleve.get().getGender());
         parameters.setMaritalStatus(eleve.get().getMaritalStatus());
         parameters.setEmail(eleve.get().getEmail());
-        parameters.setPassword(eleve.get().getPassword());
+        parameters.setPassword(passwordEncoder.encode(eleve.get().getPassword()));
         parameters.setPhoneNumber(eleve.get().getPhoneNumber());
         parameters.setAddress(eleve.get().getAddress());
         parameters.setCreatedDate(eleve.get().getCreatedDate());

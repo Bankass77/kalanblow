@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
+import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.repository.EnseignantRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEnseignantParameters;
@@ -10,6 +11,7 @@ import ml.kalanblow.gestiondesinscriptions.request.EditEnseignantParameters;
 import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,10 +27,14 @@ public class EnseignantServiceImpl implements EnseignantService {
     private final EnseignantRepository enseignantRepository;
 
 
+
+    private  BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
     public EnseignantServiceImpl(EnseignantRepository enseignantRepository) {
 
         this.enseignantRepository = enseignantRepository;
+
     }
 
     /**
@@ -63,9 +69,9 @@ public class EnseignantServiceImpl implements EnseignantService {
      * @return Une instance facultative (Optional) des enseignants trouvés, ou une instance vide si aucun enseignant correspondant n'est trouvé.
      */
     @Override
-    public Optional<Enseignant> searchAllByEmailIsLike(String email) {
+    public Optional<Enseignant> searchAllByEmailIsLike(Email email) {
         log.info("Un enseignat a été trouvé par cet email: {}", email);
-        return enseignantRepository.searchAllByEmailIsLike(email);
+        return enseignantRepository.findEnseignantByEmail(email);
     }
 
     /**

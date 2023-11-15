@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeDeVacances;
 import ml.kalanblow.gestiondesinscriptions.model.Periode;
+import ml.kalanblow.gestiondesinscriptions.request.CreatePeriodeParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditPeriodeParameters;
 
 import java.time.Duration;
@@ -11,7 +12,7 @@ import java.time.Duration;
 
 @Data
 @NoArgsConstructor
-public class EditPeriodeFormData {
+public class EditPeriodeFormData extends CreatePeriodeParameters {
 
     private long version;
 
