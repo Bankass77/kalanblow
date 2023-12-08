@@ -1,7 +1,9 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
@@ -52,17 +54,20 @@ public class Salle implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
+    @JsonBackReference
     private Etablissement etablissement;
 
     @ElementCollection
     @CollectionTable(name = "horaires_classe", joinColumns = @JoinColumn(name = "classe_id"))
     @OrderColumn(name = "jour_semaine")
+    @JsonManagedReference
     private Set<Horaire> horaires;
 
     @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Cours> coursPlanifies;
 
     @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Eleve> eleves;
 
 

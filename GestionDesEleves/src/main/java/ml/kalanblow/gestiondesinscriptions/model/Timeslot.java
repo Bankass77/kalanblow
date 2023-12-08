@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +35,7 @@ public class Timeslot  implements Serializable {
     private String timeslot;
 
     @OneToMany(mappedBy = "timeslot", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<Cours> coursList = new HashSet<>();
 
     @Embedded

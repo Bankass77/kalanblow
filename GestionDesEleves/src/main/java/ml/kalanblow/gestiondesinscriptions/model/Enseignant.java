@@ -1,7 +1,9 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
@@ -45,11 +47,13 @@ public class Enseignant extends User {
     private int age;
 
     @OneToMany(mappedBy = "enseignant", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Cours> coursDEnseignements;
 
     @ElementCollection
     @CollectionTable(name = "disponibilites", joinColumns = @JoinColumn(name = "enseignant_id"))
     @Column(name = "jour_semaine")
+    @JsonManagedReference
     private List<DayOfWeek> joursDisponibles;
 
     @Column(name = "heure_debut_disponibilite")
@@ -60,6 +64,7 @@ public class Enseignant extends User {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
+    @JsonBackReference
     private Etablissement etablissement;
 
 
@@ -67,6 +72,7 @@ public class Enseignant extends User {
     @ElementCollection
     @CollectionTable(name = "horaires_enseignant", joinColumns = @JoinColumn(name = "enseignant_id"))
     @OrderColumn(name = "jour_semaine")
+    @JsonManagedReference
     private List<Horaire> disponibilites;
 
     @NotNull(message = "{notnull.message}")

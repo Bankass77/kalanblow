@@ -1,7 +1,9 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -45,27 +47,33 @@ public class Cours implements Serializable {
     private String niveau;
 
     @OneToMany(mappedBy = "cours", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Absence> absenceEleves;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "matiere_id")
+    @JsonBackReference
     private Matiere matiere;
 
     @ElementCollection
     @CollectionTable(name = "horaire_cours", joinColumns = @JoinColumn(name = "cours_id"))
+    @JsonManagedReference
     @OrderColumn(name = "jour_semaine")
     private Set<Horaire> horaires;
 
     @JoinColumn(name = "enseignant_id")
     @ManyToOne
+    @JsonBackReference
     private Enseignant enseignant;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_id")
+    @JsonBackReference
     private Salle salle;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "annee_scolaire_id")
+    @JsonBackReference
     private Periode anneeScolaire;
 
     @ManyToMany
@@ -74,20 +82,24 @@ public class Cours implements Serializable {
             joinColumns = @JoinColumn(name = "cours_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
+    @JsonManagedReference
     private Set<Group> groups;
 
 
     @ManyToOne
     @JoinColumn(name = "timeslot_id")
+    @JsonBackReference
     private Timeslot timeslot;
 
     @ManyToOne
     @JoinColumn(name = "individual_id")
+    @JsonBackReference
     private Individual individual;
 
     private TypeCours typeCours;
 
     @ManyToMany( cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<Timetable> timetables;
 
 

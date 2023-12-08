@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -31,26 +32,32 @@ public class ScheduleClass implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "coursId")
+    @JsonBackReference
     private Cours cours;
 
     @ManyToOne
     @JoinColumn(name = "teacherId")
+    @JsonBackReference
     private Enseignant enseignant;
 
     @ManyToOne
     @JoinColumn(name = "timeslotId")
+    @JsonBackReference
     private Timeslot timeslot;
 
     @ManyToOne
     @JoinColumn(name = "salleId")
+    @JsonBackReference
     private Salle salle;
 
     @ManyToOne
     @JoinColumn(name = "groupId")
+    @JsonBackReference
     private Group group;
 
     @ManyToOne
     @JoinColumn(name = "timetableId")
+    @JsonBackReference
     private Timetable timetable;
 
 }

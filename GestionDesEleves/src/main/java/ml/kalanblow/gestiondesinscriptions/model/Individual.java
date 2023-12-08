@@ -1,10 +1,14 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeCours;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,20 +34,24 @@ public class Individual implements Serializable {
     private Long id;
 
     @OneToMany(mappedBy = "individual", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Cours> emploiDuTemps;
 
     private double fitness;
 
     @ManyToOne
     @JoinColumn(name = "population_id")
+    @JsonBackReference
     private Population population;
 
     @ManyToOne
     @JoinColumn(name = "geneticPopulation_id")
+    @JsonBackReference
     GeneticPopulation geneticPopulation;
 
     @ElementCollection
     @CollectionTable(name = "individual_gene", joinColumns = @JoinColumn(name = "individual_id"))
+    @JsonManagedReference
     private  Set<Gene> genes;
 
     public Individual(List<Gene> genes) {

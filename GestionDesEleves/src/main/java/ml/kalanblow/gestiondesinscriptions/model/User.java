@@ -1,9 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.annotation.Nullable;
@@ -62,7 +59,6 @@ public abstract class User implements Serializable {
 
     @Column(name = "gender")
     @Convert(converter = GenderConverter.class)
-    
     private Gender gender;
 
     
@@ -116,6 +112,7 @@ public abstract class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles")
     @Column(name = "role")
+    @JsonManagedReference
     private Set<UserRole> roles;
 
     @NotNull

@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,5 +33,6 @@ public class Group  implements Serializable {
     private  Long groupId;
 
     @ManyToMany(mappedBy = "groups")
+    @JsonManagedReference
     private Set<Cours> cours;
 }

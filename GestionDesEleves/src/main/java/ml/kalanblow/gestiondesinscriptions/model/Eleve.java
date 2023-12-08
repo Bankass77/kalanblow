@@ -1,14 +1,14 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import lombok.*;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -45,21 +45,26 @@ public class Eleve extends User implements Serializable {
 
     @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name = "pere_id")
+    @JsonBackReference
     private Parent pere;
 
     @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name = "mere_id")
+    @JsonBackReference
     private Parent mere;
 
     @OneToMany(mappedBy = "eleve", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Absence> absences;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
+    @JsonBackReference
     private Etablissement etablissement;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_Id")
+    @JsonBackReference
     private Salle salle;
 
     private Eleve(EleveBuilder eleveBuilder) {
