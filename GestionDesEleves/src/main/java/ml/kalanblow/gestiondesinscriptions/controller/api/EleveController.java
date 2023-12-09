@@ -187,8 +187,7 @@ public class EleveController {
 
             String successMessage = "Elève récupéré avec  Email : " + email + "succès";
 
-            ResponseEntity<ApiResponse<Eleve>> response = ResponseEntity.ok(new ApiResponse<Eleve>(eleve1, successMessage));
-            return response;
+            return ResponseEntity.ok(new ApiResponse<Eleve>(eleve1, successMessage));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -225,8 +224,7 @@ public class EleveController {
 
             String successMessage = "Elève récupéré avec le numéro de téléphone suivant: " + telephone + " avec succès";
 
-            ResponseEntity<ApiResponse<Eleve>> response = ResponseEntity.ok(new ApiResponse<Eleve>(telephoneEleve, successMessage));
-            return response;
+            return ResponseEntity.ok(new ApiResponse<Eleve>(telephoneEleve, successMessage));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -264,7 +262,6 @@ public class EleveController {
             return ResponseEntity.ok(new ApiResponse<Optional<Eleve>>(eleveService.recupererEleveParPrenomEtNom(prenom, nomDeFamille), "Eleve récupéré par son prénom et nom de famille."));
         } catch (KaladewnManagementException.EntityNotFoundException e) {
 
-            //TODO  à finir
             return null;
         }
     }

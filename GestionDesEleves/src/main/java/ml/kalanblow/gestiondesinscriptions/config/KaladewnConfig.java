@@ -154,7 +154,8 @@ public class KaladewnConfig implements WebMvcConfigurer {
 
         return new OpenAPI().info(new Info().title(apiTitle).description(apiDescription)
                 .version(apiVersion).contact(new Contact().name(apiContactName).url(apiContactUrl))
-                .termsOfService(apiTermsOfService).license(new License().name(apiLicense).url(apiLicenseUrl))).externalDocs(new ExternalDocumentation().description(apiDescription).url(apiExternalDocUrl));
+                .termsOfService(apiTermsOfService).license(new License().name(apiLicense).url(apiLicenseUrl)))
+                .externalDocs(new ExternalDocumentation().description(apiDescription).url(apiExternalDocUrl));
 
     }
 

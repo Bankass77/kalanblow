@@ -1,4 +1,4 @@
-/*
+
 package ml.kalanblow.gestiondesinscriptions.controller.api;
 
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
@@ -32,7 +32,7 @@ public class PresenceController {
         this.coursService=coursService;
     }
 
-    @GetMapping("/eleves/{eleveId}")
+    @GetMapping("/kalendew/{eleveId}")
     public ResponseEntity<?> getPresenceByEleveId(@PathVariable Long eleveId) {
         Optional<Eleve> eleveOpt = eleveService.obtenirEleveParSonId(eleveId);
 
@@ -44,7 +44,7 @@ public class PresenceController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/cours/{coursId}")
+    @GetMapping("/kalendew/{coursId}")
     public ResponseEntity<?> getPresenceByCoursId(@PathVariable Long coursId) {
         Optional<Cours> coursOpt = coursService.getCoursById(coursId);
 
@@ -56,7 +56,7 @@ public class PresenceController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/effectuer-appel")
+    @PostMapping("/effectuerAppel")
     public ResponseEntity<?> effectuerAppel(@RequestParam String dateActuelle, @PageableDefault(size = 20) Pageable pageable) {
         LocalDate date = LocalDate.parse(dateActuelle);
         presenceService.effectuerAppelDesEleves(date, pageable);
@@ -65,4 +65,4 @@ public class PresenceController {
 
 
 }
-*/
+
