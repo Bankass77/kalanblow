@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +16,9 @@ import java.io.IOException;
 @Slf4j
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserForbiddenErrorHandler implements AccessDeniedHandler {
 
-    private  ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Handles an access denied failure.

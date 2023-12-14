@@ -37,7 +37,12 @@ public class KalanblowLoginSuccessHandler extends SavedRequestAwareAuthenticatio
             // TO DO le lien de redirection doit être modifier par le dashbord elève
             contextPath+= "/kalanden";
 
-        } else if (isTeacher(kalanblowUserDetails)) {
+        } else if (!isTeacher(kalanblowUserDetails)) {
+            if (isAdmin(kalanblowUserDetails)){
+
+                contextPath+= "/kalanden";
+            }
+        } else {
 
             // TO DO le lien de redirection doit être modifier par le dashbord enseignant
             contextPath +="/kalanden";
@@ -69,5 +74,17 @@ public class KalanblowLoginSuccessHandler extends SavedRequestAwareAuthenticatio
     private boolean isTeacher(KalanblowUserDetails userDetails) {
         return userDetails.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equalsIgnoreCase(UserRole.TEACHER.getValue()));
+    }
+
+
+    /**
+     * Vérifie si l'utilisateur est un enseignant.
+     *
+     * @param userDetails Les détails de l'utilisateur.
+     * @return {@code true} si l'utilisateur est un Admin, sinon {@code false}.
+     */
+    private boolean isAdmin(KalanblowUserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equalsIgnoreCase(UserRole.ADMIN.getValue()));
     }
 }

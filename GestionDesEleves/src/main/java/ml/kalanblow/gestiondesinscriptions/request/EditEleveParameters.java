@@ -33,7 +33,6 @@ public final class EditEleveParameters extends CreateEleveParameters {
         eleve.setMaritalStatus(getMaritalStatus());
         eleve.setIneNumber(getStudentIneNumber());
         eleve.setAge(getAge());
-        eleve.setCreatedDate(LocalDateTime.now());
         eleve.setLastModifiedDate(LocalDateTime.now());
         eleve.setPere(getPere());
         eleve.setMere(getMere());
@@ -52,4 +51,11 @@ public final class EditEleveParameters extends CreateEleveParameters {
 
     }
     // end::update[]
+
+    public void applyEleveVesrionModifications(EditEleveParameters parameters) {
+        // Apply modifications...
+        // Increment version even if no significant changes are made.
+        this.version++;
+    }
+
 }

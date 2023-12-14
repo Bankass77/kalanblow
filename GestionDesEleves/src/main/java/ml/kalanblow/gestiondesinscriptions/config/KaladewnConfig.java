@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import ml.kalanblow.gestiondesinscriptions.util.PhoneNumberPropertyEditor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
@@ -119,6 +120,10 @@ public class KaladewnConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public PhoneNumberPropertyEditor phoneNumberPropertyEditor() {
+        return new PhoneNumberPropertyEditor();
+    }
 
     @Bean
     public RoleHierarchy roleHierarchy() {

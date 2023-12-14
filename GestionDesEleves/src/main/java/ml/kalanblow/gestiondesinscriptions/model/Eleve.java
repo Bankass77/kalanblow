@@ -147,6 +147,6 @@ public class Eleve extends User implements Serializable {
     @JsonDeserialize(builder = User.UserBuilder.class)
     public static Eleve createEleveFromBuilder(EleveBuilder builder) {
 
-        return builder().build();
+        return builder.build();
     }
 }

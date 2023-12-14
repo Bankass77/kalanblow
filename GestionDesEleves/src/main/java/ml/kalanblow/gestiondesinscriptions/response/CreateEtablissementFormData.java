@@ -1,13 +1,12 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingEtablissement;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEtablissementParameters;
@@ -40,6 +39,7 @@ public class CreateEtablissementFormData {
     @NotNull
     @NotBlank
     @NotNull(groups = ValidationGroupOne.class)
+    @Valid
     private Email email;
 
 
@@ -56,7 +56,8 @@ public class CreateEtablissementFormData {
 
     @NotBlank
     @NotNull
-    @Pattern(regexp = "^(\\+223|00223)?[67]\\d{7}$")
+   // @Pattern(regexp = "^(\\+223|00223)?[67]\\d{7}$")
+    @Valid
     private PhoneNumber phoneNumber;
 
     private Set<Eleve> eleves;

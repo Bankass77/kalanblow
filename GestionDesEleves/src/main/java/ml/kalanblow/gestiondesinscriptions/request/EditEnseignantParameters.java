@@ -28,7 +28,6 @@ private long version;
         enseignant.setHeureDebutDisponibilite(getHeureDebutDisponibilite());
         enseignant.setHeureFinDisponibilite(getHeureFinDisponibilite());
         enseignant.setEtablissement(getEtablissement());
-        enseignant.setCreatedDate(getCreatedDate());
         enseignant.setEmail(getEmail());
         enseignant.setGender(getGender());
         enseignant.setUserName(getUserName());

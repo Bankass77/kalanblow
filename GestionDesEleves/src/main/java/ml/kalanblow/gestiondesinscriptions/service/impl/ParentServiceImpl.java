@@ -44,7 +44,7 @@ public class ParentServiceImpl implements ParentService {
 
     @Override
     public Parent getParentById(Long id) {
-        return parentRepository.findById(id).orElse(null);
+        return parentRepository.findParentById(id);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public Optional<Parent> editParent(Long id, EditParentParameters editParentParameters) {
 
-        Optional<Parent> parent = parentRepository.findById(id);
+        Optional<Parent> parent = Optional.ofNullable(parentRepository.findParentById(id));
 
         if (parent.get().getVersion() != editParentParameters.getVersion()) {
 
@@ -115,7 +115,7 @@ public class ParentServiceImpl implements ParentService {
 
     @Override
     public void deleteParent(Long id) {
-        parentRepository.deleteById(id);
+        parentRepository.deleteParentById(id);
     }
 
     @Override

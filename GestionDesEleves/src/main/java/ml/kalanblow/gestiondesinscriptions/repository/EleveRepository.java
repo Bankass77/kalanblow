@@ -5,6 +5,7 @@ import ml.kalanblow.gestiondesinscriptions.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecificationExecutor<Eleve> {
+public interface EleveRepository extends JpaRepository<Eleve, Long>,  JpaSpecificationExecutor<Eleve> , UserBaseRepository<Eleve>{
 
     /**
      * Recherche un élève par numéro de téléphone.
@@ -92,7 +93,7 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève n'est trouvé.
      */
     @EntityGraph(attributePaths = {"pere", "mere"})
-    Page<Eleve> findAll(Pageable pageable);
+    Page<Eleve> findAllBy(Pageable pageable);
 
     /**
      * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
@@ -112,6 +113,7 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
     Optional<Eleve> findByIneNumber(String ineNumber);
 
 
+    Optional<Eleve> findEleveById(Long id);
     /**
      * Récupère une liste d'élèves par leur prénom et nom de famille.
      *

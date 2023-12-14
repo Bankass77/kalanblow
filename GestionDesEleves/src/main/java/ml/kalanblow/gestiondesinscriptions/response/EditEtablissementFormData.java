@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
 
+import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.*;
@@ -18,9 +19,13 @@ public class EditEtablissementFormData extends  CreateEtablissementFormData{
     private long version;
     private String nomEtablissement;
     private Address address;
+
+    @Valid
     private Email email;
     private LocalDateTime createdDate = LocalDateTime.now();
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
+
+    @Valid
     private PhoneNumber phoneNumber;
     private Set<Eleve> eleves;
     private Set<Enseignant> enseignants;
@@ -35,7 +40,6 @@ public class EditEtablissementFormData extends  CreateEtablissementFormData{
         editEtablissementScolaireFormData.setEnseignants(etablissement.getEnseignants());
         editEtablissementScolaireFormData.setEleves(etablissement.getEleves());
         editEtablissementScolaireFormData.setEmail(etablissement.getEmail());
-        editEtablissementScolaireFormData.setCreatedDate(etablissement.getCreatedDate());
         editEtablissementScolaireFormData.setSalleDeClasses(etablissement.getSalles());
         editEtablissementScolaireFormData.setPhoneNumber(etablissement.getPhoneNumber());
         editEtablissementScolaireFormData.setLastModifiedDate(etablissement.getLastModifiedDate());
@@ -44,8 +48,6 @@ public class EditEtablissementFormData extends  CreateEtablissementFormData{
 
         return editEtablissementScolaireFormData;
     }
-
-
     public EditEtablissementParameters toEtablissementScolaire() {
 
         EditEtablissementParameters editEtablissementScolaireParameters = new EditEtablissementParameters();
@@ -55,7 +57,6 @@ public class EditEtablissementFormData extends  CreateEtablissementFormData{
         editEtablissementScolaireParameters.setEleves(getEleves());
         editEtablissementScolaireParameters.setAvatar(getAvatar());
         editEtablissementScolaireParameters.setEmail(getEmail());
-        editEtablissementScolaireParameters.setCreatedDate(getCreatedDate());
         editEtablissementScolaireParameters.setLastModifiedDate(getLastModifiedDate());
         editEtablissementScolaireParameters.setEnseignants(getEnseignants());
         editEtablissementScolaireParameters.setPhoneNumber(getPhoneNumber());

@@ -7,6 +7,8 @@ import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.request.CreateParentParameters;
+import ml.kalanblow.gestiondesinscriptions.security.jwt.JwtHelper;
+import ml.kalanblow.gestiondesinscriptions.service.RefreshTokenService;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
 import ml.kalanblow.gestiondesinscriptions.service.ParentService;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
@@ -45,14 +48,18 @@ class EleveServiceImplTest {
 
     private BCryptPasswordEncoder passwordEncoder;
 
+    private  AuthenticationManager authenticationManager;
 
+    private  JwtHelper helper;
+
+    private  RefreshTokenService refreshTokenService;
     @BeforeEach
     void initialisationService() throws IOException {
 
         eleveRepository = mock(EleveRepository.class);
         parentService=mock(ParentService.class);
         etablissementService= mock(EtablissementService.class);
-        eleveService = new EleveServiceImpl(eleveRepository,parentService,etablissementService, passwordEncoder);
+        eleveService = new EleveServiceImpl(eleveRepository,parentService,etablissementService, passwordEncoder,helper,authenticationManager, refreshTokenService);
         Eleve eleve = new Eleve();
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         eleve.setDateDeNaissance(LocalDate.of(1980, 6, 23));

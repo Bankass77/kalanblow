@@ -67,6 +67,23 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 			<!-- Temporary explicit version to fix Thymeleaf bug -->
@@ -199,6 +216,25 @@
 			<artifactId>swagger-models</artifactId>
 			<version>2.2.9</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.itextpdf/itext7-core -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext7-core</artifactId>
+			<version>8.0.2</version>
+			<type>pom</type>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.20</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.9</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -212,17 +248,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
-	<!--	<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>**/*.html</exclude>
-					<exclude>**/*.css</exclude>
-					<exclude>**/*.js</exclude>
-					<exclude>**/*.svg</exclude>
-				</excludes>
-			</resource>
-		</resources>-->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -268,15 +293,6 @@
 								<goal>npm</goal>
 							</goals>
 						</execution>
-					<!--	<execution>
-							<id>run-npm-build</id>
-							<goals>
-								<goal>npm</goal>
-							</goals>
-							<configuration>
-								<arguments>run build</arguments>
-							</configuration>
-						</execution>-->
 					</executions>
 				</plugin>
 				<plugin>

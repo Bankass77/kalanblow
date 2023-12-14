@@ -6,12 +6,12 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import ml.kalanblow.gestiondesinscriptions.constraint.CustomValidation;
 import ml.kalanblow.gestiondesinscriptions.constraint.NotExistingUser;
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
@@ -37,35 +37,25 @@ public sealed class AbstractUserFormData permits  CreateUserFormData, EditEleveF
 
     @NotBlank
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
-    @CustomValidation
     private String prenom;
 
     @NotBlank
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
-    @CustomValidation
     private String nomDeFamille;
 
-    @NotBlank(message= "{notnull.message}")
-    @CustomValidation
+    @Pattern(regexp = "^(\\+223|00223)?[67]\\d{7}$")
     private String phoneNumber;
 
-
-    @CustomValidation
     private UserRole userRole;
 
-
-    @CustomValidation
     private Gender gender;
 
-
-     @CustomValidation
     private MaritalStatus maritalStatus;
 
-    @CustomValidation
     @Email(groups = ValidationGroupOne.class,message = "{NotBlank.eleve.email}")
     private String email;
 
-    @CustomValidation
+    
     private Address address;
 
     @CreatedDate

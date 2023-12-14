@@ -12,16 +12,16 @@ import java.util.Optional;
 
 
 @Repository
-public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
+public interface EnseignantRepository extends JpaRepository<Enseignant, Long> , UserBaseRepository<Enseignant>  {
 
-    @Override
+
 /**
  * Recherche un enseignant par son identifiant unique.
  *
  * @param aLong L'identifiant unique de l'enseignant à rechercher.
  * @return Une instance facultative (Optional) de l'enseignant trouvé, ou une instance vide si aucun enseignant correspondant n'est trouvé.
  */
-    Optional<Enseignant> findById(Long aLong);
+    Optional<Enseignant> findEnseignantById(Long aLong);
 
     /**
      * Compte le nombre d'enseignants distincts associés à un cours d'enseignement spécifique.
@@ -78,6 +78,9 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
     Optional<Enseignant> getEnseignantByCoursDEnseignementsAndHeureDebutDisponibiliteAndAndHeureFinDisponibilite(
             Enseignant enseignant, LocalTime heureDebutDisponibilite,
             LocalTime HeureFinDisponibilite);
+
+
+    Optional<Enseignant> deleteEnseignantsById( long id);
 
 
 }

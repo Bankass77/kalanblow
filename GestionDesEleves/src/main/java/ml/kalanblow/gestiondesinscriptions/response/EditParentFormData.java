@@ -29,7 +29,6 @@ public final class EditParentFormData extends CreateParentFormData {
         editParentFormData.setAddress(parent.getAddress());
         editParentFormData.setEmail(parent.getEmail().asString());
         editParentFormData.setGender(parent.getGender());
-        editParentFormData.setCreatedDate(parent.getCreatedDate());
         editParentFormData.setMaritalStatus(parent.getMaritalStatus());
         editParentFormData.setModifyDate(parent.getLastModifiedDate());
         editParentFormData.setRoles(parent.getRoles());
@@ -38,8 +37,6 @@ public final class EditParentFormData extends CreateParentFormData {
         editParentFormData.setEnfantsPere(parent.getEnfantsPere());
         editParentFormData.setEnfantsMere(parent.getEnfantsMere());
         editParentFormData.setProfession(parent.getProfession());
-
-
         return editParentFormData;
     }
 
@@ -53,7 +50,6 @@ public final class EditParentFormData extends CreateParentFormData {
       editParentParameters.setEmail(new Email(getEmail()));
       editParentParameters.setGender(getGender());
       editParentParameters.setEnfantsPere(enfantsPere);
-      editParentParameters.setCreatedDate(getCreatedDate());
       editParentParameters.setMaritalStatus(getMaritalStatus());
       editParentParameters.setEnfantsMere(enfantsMere);
       editParentParameters.setModifyDate(getModifyDate());

@@ -24,4 +24,5 @@ public class GlobalAdviceController {
         modelAndView.addObject("url", request.getRequestURL());
         return modelAndView;
     }
+
 }

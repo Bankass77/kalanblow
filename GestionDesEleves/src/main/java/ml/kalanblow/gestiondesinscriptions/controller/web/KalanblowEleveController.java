@@ -2,15 +2,18 @@ package ml.kalanblow.gestiondesinscriptions.controller.web;
 
 
 import lombok.extern.slf4j.Slf4j;
-import ml.kalanblow.gestiondesinscriptions.enums.EditMode;
-import ml.kalanblow.gestiondesinscriptions.enums.Gender;
-import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
-import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
+import ml.kalanblow.gestiondesinscriptions.enums.*;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
+import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
+import ml.kalanblow.gestiondesinscriptions.response.AuthenticationResponse;
 import ml.kalanblow.gestiondesinscriptions.response.CreateEleveFormData;
 import ml.kalanblow.gestiondesinscriptions.response.EditEleveFormData;
+import ml.kalanblow.gestiondesinscriptions.security.jwt.JwtHelper;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
+import ml.kalanblow.gestiondesinscriptions.service.RefreshTokenService;
+import ml.kalanblow.gestiondesinscriptions.service.impl.EleveServiceImpl;
+import ml.kalanblow.gestiondesinscriptions.util.PhoneNumberPropertyEditor;
 import ml.kalanblow.gestiondesinscriptions.validation.CreateUserValidationGroupSequence;
 import ml.kalanblow.gestiondesinscriptions.validation.EditUserValidationGroupSequence;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -38,9 +45,14 @@ public class KalanblowEleveController {
 
     private final EleveService eleveService;
 
+    private final JwtHelper jwtHelper;
+    private final RefreshTokenService refreshTokenService;
+
     @Autowired
-    public KalanblowEleveController(EleveService eleveService) {
+    public KalanblowEleveController(EleveService eleveService, JwtHelper jwtHelper, RefreshTokenService refreshTokenService) {
         this.eleveService = eleveService;
+        this.jwtHelper = jwtHelper;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @GetMapping
@@ -71,22 +83,40 @@ public class KalanblowEleveController {
     @PostMapping("/eleve/ajouter")
     @Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.CREATED)
-    public void crerUnNouvelEleve(@Validated(CreateUserValidationGroupSequence.class) @RequestBody CreateEleveFormData formData,
-                                  BindingResult bindingResult) {
+    public AuthenticationResponse crerUnNouvelEleve(@Validated(CreateUserValidationGroupSequence.class) @RequestBody CreateEleveFormData formData,
+                                                    BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new KaladewnManagementException.EntityNotFoundException("Invalid form data");
         }
 
-        eleveService.ajouterUnEleve(formData.toEleveParameters());
+        Eleve nouveauEleve = eleveService.ajouterUnEleve(formData.toEleveParameters());
+
+        // Explicitly generate a token for the newly created student
+        String jwt = jwtHelper.generateToken((UserDetails) nouveauEleve);
+        String refreshToken = refreshTokenService.createRefreshToken(nouveauEleve.getId()).getToken();
+
+        // Return the authentication response containing the generated tokens
+        return AuthenticationResponse.builder()
+                .accessToken(jwt)
+                .refreshToken(refreshToken)
+                .tokenType(TokenType.BEARER.name())
+                .roles(nouveauEleve.getRoles().stream()
+                        .flatMap(role -> EleveServiceImpl.mapUserRoleToAuthorities.apply(role).stream())
+                        .map(SimpleGrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()))
+                .email(nouveauEleve.getEmail().asString())
+                .id(nouveauEleve.getId())
+                .build();
     }
+
 
     @GetMapping("/eleve/{id}")
     public ModelAndView editEleveForm(@PathVariable("id") long id, ModelAndView modelAndView) {
 
         Optional<Eleve> eleve = eleveService.obtenirEleveParSonId(id);
         modelAndView = new ModelAndView("eleves/editerEleve");
-        modelAndView.addObject("editEleveFormData", EditEleveFormData.fromUser(eleve.get()));
+        modelAndView.addObject("eleve", EditEleveFormData.fromUser(eleve.get()));
         modelAndView.addObject("genders", List.of(Gender.MALE, Gender.FEMALE));
         modelAndView.addObject("rolesPossibles", List.of(UserRole.STUDENT.values()));
         modelAndView.addObject("possiblesMaritalStatus", List.of(MaritalStatus.values()));
@@ -98,7 +128,7 @@ public class KalanblowEleveController {
     @PostMapping("/eleve/{id}")
     @Secured("ROLE_ADMIN")
     public ModelAndView aModifierEleve(@PathVariable("id") long id,
-                                       @Validated(EditUserValidationGroupSequence.class) @ModelAttribute("editEleveFormData") EditEleveFormData formData,
+                                       @Validated(EditUserValidationGroupSequence.class) @ModelAttribute("eleve") EditEleveFormData formData,
                                        BindingResult bindingResult, ModelAndView modelAndView) {
 
             if (bindingResult.hasErrors()) {
@@ -143,5 +173,10 @@ public class KalanblowEleveController {
     public List<MaritalStatus> possibleStatusMarital() {
 
         return List.of(MaritalStatus.SINGLE, MaritalStatus.DIVORCED, MaritalStatus.MARRIED);
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(PhoneNumber.class, new PhoneNumberPropertyEditor());
     }
 }

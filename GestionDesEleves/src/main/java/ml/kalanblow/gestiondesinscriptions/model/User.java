@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -52,10 +53,8 @@ public abstract class User implements Serializable {
     @Version()
     private Long version;
 
-
     @Embedded
     private UserName userName;
-
 
     @Column(name = "gender")
     @Convert(converter = GenderConverter.class)
@@ -83,17 +82,16 @@ public abstract class User implements Serializable {
     @Column(name = "telephone_utilisateur", insertable = true, updatable = true, nullable = false)
     @Nullable
     @Embedded
+    @Valid
     private PhoneNumber phoneNumber;
 
     @Column
     @Nullable
     private byte[] avatar;
-
     
     @Column(unique = true, nullable = false, updatable = true, name = "email")
     @Embedded
     private Email email;
-
     
     @Embedded
     @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
@@ -105,8 +103,6 @@ public abstract class User implements Serializable {
             @AttributeOverride(name = "city", column = @Column(name = "city")),
             @AttributeOverride(name = "country", column = @Column(name = "country"))})
     private Address address;
-
-
 
     @ElementCollection(targetClass = UserRole.class)
     @Enumerated(EnumType.STRING)
@@ -122,25 +118,80 @@ public abstract class User implements Serializable {
     @JsonPOJOBuilder(withPrefix = "")
     public static class UserBuilder {
 
-        private UserName userName;
+        UserName userName;
 
-        private Gender gender;
+        Gender gender;
 
         private MaritalStatus maritalStatus;
 
-        private LocalDateTime createdDate = LocalDateTime.now();
+        LocalDateTime createdDate = LocalDateTime.now();
 
-        private LocalDateTime lastModifiedDate = LocalDateTime.now();
+        LocalDateTime lastModifiedDate = LocalDateTime.now();
         private PhoneNumber phoneNumber;
-        private byte[] avatar;
+        byte[] avatar;
 
-        private Email email;
+        Email email;
 
-        private Address address;
+        Address address;
 
-        private Set<UserRole> roles;
+        Set<UserRole> roles;
 
-        private String password;
+        String password;
+
+        public UserBuilder userName(UserName userName) {
+            this.userName = userName;
+            return this;
+        }
+
+        public UserBuilder gender(Gender gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        public UserBuilder maritalStatus(MaritalStatus maritalStatus) {
+            this.maritalStatus = maritalStatus;
+            return this;
+        }
+
+        public UserBuilder createdDate(LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public UserBuilder lastModifiedDate(LocalDateTime lastModifiedDate) {
+            this.lastModifiedDate = lastModifiedDate;
+            return this;
+        }
+
+        public UserBuilder phoneNumber(PhoneNumber phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public UserBuilder avatar(byte[] avatar) {
+            this.avatar = avatar;
+            return this;
+        }
+
+        public UserBuilder email(Email email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserBuilder address(Address address) {
+            this.address = address;
+            return this;
+        }
+
+        public UserBuilder roles(Set<UserRole> roles) {
+            this.roles = roles;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
 
     }
 

@@ -1,5 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.security;
 
+import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,13 +12,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-
+@Slf4j
 public  record KalanblowUserDetails(String username, String displayName, String password,
                                    Set<GrantedAuthority> authorities) implements UserDetails {
-
-
     public KalanblowUserDetails(User user) {
+
         this(user.getEmail().asString(), user.getUserName().getFullName(), user.getPassword(), convertRolesToAuthorities(user.getRoles()));
+        log.info("Email: {}", user.getEmail().asString());
+        log.info("UserName: {}", user.getUserName().getFullName());
+        log.info("Password: {}", user.getPassword());
+        log.info("Roles: {}", user.getRoles());
     }
 
     private static Set<GrantedAuthority> convertRolesToAuthorities(Set<UserRole> roles) {
@@ -102,7 +106,5 @@ public  record KalanblowUserDetails(String username, String displayName, String 
     public boolean isEnabled() {
         return true;
     }
-
-
 
 }

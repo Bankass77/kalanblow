@@ -40,8 +40,6 @@ public non-sealed class EditEleveFormData extends AbstractUserFormData {
 
     private Etablissement etablissement;
 
-
-
     /**
      * Convertit un objet Eleve en un objet EditEleveFormData.
      *
@@ -67,7 +65,6 @@ public non-sealed class EditEleveFormData extends AbstractUserFormData {
            edit.setEtablissement(eleve.getEtablissement());
            edit.setPhoneNumber(eleve.getPhoneNumberAsString());
            edit.setModifyDate(eleve.getLastModifiedDate());
-           edit.setCreatedDate(eleve.getCreatedDate());
            edit.setPere(eleve.getPere());
            edit.setMere(eleve.getMere());
 
@@ -94,14 +91,13 @@ public non-sealed class EditEleveFormData extends AbstractUserFormData {
         editEleveParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
         editEleveParameters.setEtablissement(etablissement);
         editEleveParameters.setDateDeNaissance(dateDeNaissance);
-        editEleveParameters.setVersion(version);
+        editEleveParameters.setVersion(getVersion());
         editEleveParameters.setEmail(new Email(getEmail()));
         editEleveParameters.setMaritalStatus(getMaritalStatus());
         editEleveParameters.setStudentIneNumber(ineNumber);
         editEleveParameters.setGender(getGender());
         editEleveParameters.setAddress(getAddress());
         editEleveParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
-        editEleveParameters.setCreatedDate(getCreatedDate());
         editEleveParameters.setModifyDate(getModifyDate());
         editEleveParameters.setPere(pere);
         editEleveParameters.setMere(mere);

@@ -3,17 +3,22 @@ package ml.kalanblow.gestiondesinscriptions.service.impl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ml.kalanblow.gestiondesinscriptions.enums.TokenType;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
-import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
-import ml.kalanblow.gestiondesinscriptions.request.CreateParentParameters;
-import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
-import ml.kalanblow.gestiondesinscriptions.request.EditParentParameters;
+import ml.kalanblow.gestiondesinscriptions.request.*;
+import ml.kalanblow.gestiondesinscriptions.response.AuthenticationResponse;
+import ml.kalanblow.gestiondesinscriptions.security.KalanblowUserDetails;
+import ml.kalanblow.gestiondesinscriptions.security.jwt.AuthenticationService;
+import ml.kalanblow.gestiondesinscriptions.security.jwt.JwtHelper;
+import ml.kalanblow.gestiondesinscriptions.service.RefreshTokenService;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
 import ml.kalanblow.gestiondesinscriptions.service.ParentService;
@@ -24,9 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +44,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Service pour la gestion des élèves.
@@ -43,24 +53,29 @@ import java.util.Set;
 @Service
 @Slf4j
 @Transactional
-public class EleveServiceImpl implements EleveService {
-
+@AllArgsConstructor
+public class EleveServiceImpl implements EleveService , AuthenticationService {
     private final EleveRepository eleveRepository;
-
+    private final JwtHelper jwtHelper;
     private final ParentService parentService;
-
     private final EtablissementService etablissementService;
-
+    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
     private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService,BCryptPasswordEncoder passwordEncoder) {
+    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService
+            ,BCryptPasswordEncoder passwordEncoder,JwtHelper jwtHelper,AuthenticationManager authenticationManager,
+                            RefreshTokenService refreshTokenService) {
 
         this.eleveRepository = eleveRepository;
         this.parentService = parentService;
         this.etablissementService = etablissementService;
         this.passwordEncoder=passwordEncoder;
+        this.jwtHelper=jwtHelper;
+        this.authenticationManager=authenticationManager;
+        this.refreshTokenService=refreshTokenService;
 
     }
 
@@ -119,7 +134,7 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public Eleve mettreAjourUtilisateur(Long userId, EditEleveParameters parameters) {
 
-        Optional<Eleve> eleveOptional = eleveRepository.findById(userId);
+        Optional<Eleve> eleveOptional = eleveRepository.findEleveById(userId);
         Eleve eleve = eleveOptional.orElseThrow(() ->
                 new KaladewnManagementException()
                         .throwException(EntityType.USER, ExceptionType.ENTITY_EXCEPTION, "Utilisateur non trouvé avec l'identifiant : " + userId)
@@ -153,7 +168,7 @@ public class EleveServiceImpl implements EleveService {
     public Optional<Eleve> obtenirEleveParSonId(Long userId) {
         log.debug("obtenirEleveParSonId {}", userId);
 
-        return eleveRepository.findById(userId);
+        return eleveRepository.findEleveById(userId);
     }
 
     /**
@@ -227,7 +242,6 @@ public class EleveServiceImpl implements EleveService {
         createPereParameters.setCreatedDate(createEleveParameters.getPere().getCreatedDate());
         createPereParameters.setEnfantsPere(createEleveParameters.getPere().getEnfantsPere());
 
-
         //  création à jour les informations de la mère
         CreateParentParameters createMereParameters = new CreateParentParameters();
         createMereParameters.setUserName(createEleveParameters.getMere().getUserName());
@@ -241,6 +255,7 @@ public class EleveServiceImpl implements EleveService {
         createPereParameters.setCreatedDate(createEleveParameters.getMere().getCreatedDate());
         createPereParameters.setModifyDate(createEleveParameters.getMere().getLastModifiedDate());
         createPereParameters.setEnfantsMere(createEleveParameters.getPere().getEnfantsMere());
+
 
 
         return ajouterUnNouveauEleve(createEleveParameters, createPereParameters, createMereParameters);
@@ -295,7 +310,7 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public void supprimerUtilisateurParId(Long userId) {
-        eleveRepository.deleteById(userId);
+        eleveRepository.deleteEleveById(userId);
     }
 
     /**
@@ -442,8 +457,25 @@ public class EleveServiceImpl implements EleveService {
 
             constraintViolations.forEach(c -> KaladewnManagementException.throwException(c.getMessage()));
         }
+
+
         Eleve nouveauEleve = eleveRepository.save(eleve);
         if (nouveauEleve != null) {
+            var jwt = jwtHelper.generateToken( new KalanblowUserDetails(nouveauEleve));
+            var  refreshToken = refreshTokenService.createRefreshToken(nouveauEleve.getId());
+            var roles = nouveauEleve.getRoles().stream().iterator().next().getAuthorities()
+                    .stream()
+                    .map(SimpleGrantedAuthority::getAuthority)
+                    .toList();
+
+            AuthenticationResponse.builder()
+                    .accessToken(jwt)
+                    .email(nouveauEleve.getEmail().asString())
+                    .id(nouveauEleve.getId())
+                    .refreshToken(refreshToken.getToken())
+                    .roles(roles)
+                    .tokenType( TokenType.BEARER.name())
+                    .build();
             return nouveauEleve;
         } else {
             throw new IllegalStateException("L'objet Eleve n'a pas été sauvegardé.");
@@ -477,6 +509,7 @@ public class EleveServiceImpl implements EleveService {
 
     private EditParentParameters createEditParentParametersFromCreateParentParameters(Parent parent) {
         EditParentParameters editParentParameters = new EditParentParameters();
+        editParentParameters.setVersion(parent.getVersion());
         editParentParameters.setEmail(parent.getEmail());
         editParentParameters.setCreatedDate(parent.getCreatedDate());
         editParentParameters.setModifyDate(parent.getLastModifiedDate());
@@ -492,6 +525,40 @@ public class EleveServiceImpl implements EleveService {
 
         return editParentParameters;
     }
+
+    @Override
+    public AuthenticationResponse register(RegisterRequest request) {
+        return null;
+    }
+
+    // Function to map UserRole to a list of SimpleGrantedAuthority
+    public static final Function<? super UserRole, ? extends List<SimpleGrantedAuthority>> mapUserRoleToAuthorities =
+            userRole -> userRole.getPrivileges()
+                    .stream()
+                    .map(privilege -> new SimpleGrantedAuthority(privilege.name()))
+                    .collect(Collectors.toList());
+    @Override
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
+
+        var eleve = eleveRepository.findElevesByEmail(new Email(request.getEmail())).orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+        var roles = eleve.getRoles().stream()
+                .flatMap(role -> mapUserRoleToAuthorities.apply(role).stream())
+                .map(SimpleGrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        var jwt = jwtHelper.generateToken((UserDetails) eleve);
+        var refreshToken = refreshTokenService.createRefreshToken(eleve.getId());
+        return AuthenticationResponse.builder()
+                .accessToken(jwt)
+                .roles(roles)
+                .email(eleve.getEmail().asString())
+                .id(eleve.getId())
+                .refreshToken(refreshToken.getToken())
+                .tokenType( TokenType.BEARER.name())
+                .build();
+    }
+
 
 }
 

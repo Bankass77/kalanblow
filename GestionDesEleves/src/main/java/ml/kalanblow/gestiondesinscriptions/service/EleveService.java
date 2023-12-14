@@ -4,6 +4,7 @@ package ml.kalanblow.gestiondesinscriptions.service;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
+import ml.kalanblow.gestiondesinscriptions.security.jwt.AuthenticationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface EleveService {
+public interface EleveService  extends AuthenticationService {
 
 
     /**

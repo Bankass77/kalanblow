@@ -40,6 +40,7 @@ public final class EditParentParameters extends CreateParentParameters {
         parent.setLastModifiedDate(getModifyDate());
         parent.setPhoneNumber(getPhoneNumber());
         parent.setUserName(getUserName());
+        parent.setVersion(getVersion());
         // Assuming each collection has only one element, if not, handle accordingly
         if (!getEnfantsMere().isEmpty()) {
             Eleve mereEleve = getEnfantsMere().iterator().next();
@@ -77,4 +78,5 @@ public final class EditParentParameters extends CreateParentParameters {
     }
 
     // end::remove[]
+
 }

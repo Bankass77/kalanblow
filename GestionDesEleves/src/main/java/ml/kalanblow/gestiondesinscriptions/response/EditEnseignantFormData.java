@@ -36,7 +36,6 @@ public class EditEnseignantFormData extends CreateEnseignantFormData {
         editEnseignantFormData.setEtablissement(enseignant.getEtablissement());
         editEnseignantFormData.setHoraireClasses(enseignant.getDisponibilites());
         editEnseignantFormData.setAddress(enseignant.getAddress());
-        editEnseignantFormData.setCreatedDate(enseignant.getCreatedDate());
         editEnseignantFormData.setEmail(enseignant.getEmail().asString());
         editEnseignantFormData.setGender(enseignant.getGender());
         editEnseignantFormData.setHeureDebutDisponibilite(enseignant.getHeureDebutDisponibilite());
@@ -65,7 +64,6 @@ public class EditEnseignantFormData extends CreateEnseignantFormData {
         editEnseignantParameters.setAddress(getAddress());
         editEnseignantParameters.setAge(getAge());
         editEnseignantParameters.setCoursDEnseignements(getCoursDEnseignements());
-        editEnseignantParameters.setCreatedDate(getCreatedDate());
         editEnseignantParameters.setDateDeNaissance(getDateDeNaissance());
         editEnseignantParameters.setEmail(new Email(getEmail()));
         editEnseignantParameters.setEtablissement(getEtablissement());

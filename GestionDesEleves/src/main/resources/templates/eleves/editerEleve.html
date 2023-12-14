@@ -3,14 +3,16 @@
 <html
         xmlns:th="http://www.thymeleaf.org"
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+        xmlns:x-on="http://www.w3.org/1999/xhtml"
         layout:decorate="~{layout/layout}"
         th:with="activeMenuItem='eleves'"
-lang="fr">
+        lang="fr">
 
 <head>
     <title th:text="#{title.kalanblow}">kalanden</title>
 </head>
-<body>
+<body x-data="eleveFormData()" >
+
 <div layout:fragment="page-content">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         <h1 class="text-2xl font-semibold text-gray-900"
@@ -20,10 +22,10 @@ lang="fr">
         <div class="py-5">
             <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
                 <form id="user-form"
-                      th:object="${editEleveFormData}"
-                      th:action="${editMode?.name() == 'UPDATE'}?@{/kalanden/eleve/{id}(id=${editEleveFormData.id})}:@{/kalanden/eleve/ajouter}"
+                      th:object="${eleve}"
+                      th:action="${editMode?.name() == 'UPDATE'}?@{/kalanden/eleve/{id}(id=${eleve.id})}:@{/kalanden/eleve/ajouter}"
                       method="post"
-                      enctype="multipart/form-data">
+                      enctype="multipart/form-data" >
                     <div>
                         <div th:replace="~{fragments/forms :: fielderrors}"></div>
                         <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
@@ -31,9 +33,9 @@ lang="fr">
                             <!-- tag::avatar[] -->
                             <div class="sm:col-span-6 flex flex-col items-center sm:flex-row sm:justify-start">
                                 <img id="avatarImage"
-                                     th:src="${editMode?.name() == 'UPDATE' && editEleveFormData.avatarBase64Encoded != null}?${'data:image/jpeg;base64,' + editEleveFormData.avatarBase64Encoded}:'/svg/user.svg'"
+                                     th:src="${editMode?.name() == 'UPDATE' && eleve.avatarBase64Encoded != null}?${'data:image/jpeg;base64,' + eleve.avatarBase64Encoded}:'/svg/user.svg'"
                                      class="inline-block object-cover w-32 h-32 rounded-full overflow-hidden bg-gray-100 cursor-pointer"
-                                     th:classappend="${editMode?.name() == 'UPDATE' && editEleveFormData.avatarBase64Encoded != null}?'':'p-6'"> <!--.-->
+                                     th:classappend="${editMode?.name() == 'UPDATE' && eleve.avatarBase64Encoded != null}?'':'p-6'"> <!--.-->
                                 <input id="avatarFile" type="file" name="avatarFile" class="hidden"> <!--.-->
                                 <button id="selectAvatarButton"
                                         type="button"
@@ -172,31 +174,138 @@ lang="fr">
 <!-- tag::avatar-js[] -->
 <th:block layout:fragment="page-scripts">
     <script>
-        document.querySelector('#selectAvatarButton').addEventListener('click', evt => { // <.>
+        document.addEventListener('DOMContentLoaded', function () {
+            attachEventListeners();
+        });
+
+        function attachEventListeners() {
+            document.querySelector('#selectAvatarButton').addEventListener('click', handleAvatarButtonClick);
+            document.querySelector('#avatarImage').addEventListener('click', handleAvatarImageClick);
+            document.querySelector('#avatarFile').addEventListener('change', handleAvatarFileChange);
+            document.querySelector('#user-form').addEventListener('submit', function (event) {
+                submitForm(event);
+            });
+        }
+        function submitForm(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            // Obtain your form data using FormData
+            const formData = new FormData(document.getElementById('user-form'));
+
+            // Assuming the form submission is successful, call genererPdf
+            // with the formData
+            genererPdf(formData);
+        }
+
+
+        function handleAvatarButtonClick(evt) {
             document.querySelector('#selectAvatarButton').blur();
             document.querySelector('#avatarFile').click();
-        });
+        }
 
-        document.querySelector('#avatarImage').addEventListener('click', evt => { // <.>
+        function handleAvatarImageClick(evt) {
             document.querySelector('#avatarImage').blur();
             document.querySelector('#avatarFile').click();
-        });
+        }
 
-
-        document.querySelector('#avatarFile').addEventListener('change', evt => { // <.>
+        function handleAvatarFileChange(evt) {
             previewImage();
-        });
+        }
 
         function previewImage() {
             var uploader = document.querySelector('#avatarFile');
             if (uploader.files && uploader.files[0]) {
-                document.querySelector('#avatarImage').src = window.URL.createObjectURL(uploader.files[0]); // <.>
-                document.querySelector('#avatarImage').classList.remove('p-6'); //<.>
+                const avatarImage = document.querySelector('#avatarImage');
+                avatarImage.src = window.URL.createObjectURL(uploader.files[0]);
+                avatarImage.classList.remove('p-6');
             }
         }
+            function eleveFormData() {
+            return {
+            avatarFile: null,
+            avatarUrl: '',
+            nomDeFamille: '',
+            prenom: '',
+            dateDeNaissance: '',
+            age: '',
+            gender: '',
+            maritalStatus: '',
+            phoneNumber: '',
+            email: '',
+            ineNumber: '',
+            pere: '',
+            mere: '',
+            address: '',
+            etablissement: '',
+            createdDate: '',
+
+            updateAvatarUrl() {
+            if (this.avatarFile) {
+            this.avatarUrl = URL.createObjectURL(this.avatarFile);
+        }
+        },
+
+            selectAvatar() {
+            this.$refs.avatarFile.click();
+        },
+
+            resetForm() {
+            this.avatarFile = null;
+            this.avatarUrl = '';
+            this.nomDeFamille = '';
+            this.prenom = '';
+            this.dateDeNaissance = '';
+            this.age = '';
+            this.gender = '';
+            this.maritalStatus = '';
+            this.phoneNumber = '';
+            this.email = '';
+            this.ineNumber = '';
+            this.pere = '';
+            this.mere = '';
+            this.address = '';
+            this.etablissement = '';
+            this.createdDate = '';
+
+            this.$refs.avatarImage.classList.add('p-6');
+            this.$refs.avatarFile.value = '';
+        },
+            init() {
+            this.setDefaultValues();
+        },
+
+            setDefaultValues() {
+            this.gender = 'M';
+            this.maritalStatus = 'Celibataire';
+        }
+        };
+        }
+        function genererPdf(formData) {
+            return fetch('/kalanden/pdf/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    const link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "inscription.pdf";
+                    link.click();
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la génération du PDF:', error);
+                });
+        }
+
     </script>
+
 </th:block>
 <!-- end::avatar-js[] -->
+<script  th:src="@{/js/eleveFormData.js}"></script>
+<script  th:src="@{/js/genererPdf.js}"></script>
 </body>
 </html>
 <!-- end::full[] -->

@@ -29,7 +29,7 @@ public non-sealed class EditUserParameters extends CreateUserParameters {
 
     // tag::update
     public void update(User user) {
-        user.setCreatedDate(getCreatedDate());
+
         user.setEmail(getEmail());
         user.setGender(getGender());
         user.setLastModifiedDate(getCreatedDate());

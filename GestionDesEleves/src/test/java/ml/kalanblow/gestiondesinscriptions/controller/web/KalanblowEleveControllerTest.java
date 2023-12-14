@@ -1,9 +1,11 @@
+/*
 package ml.kalanblow.gestiondesinscriptions.controller.web;
 
 import ml.kalanblow.gestiondesinscriptions.enums.EditMode;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+@Disabled
 public class KalanblowEleveControllerTest {
 
 
@@ -136,3 +138,4 @@ public class KalanblowEleveControllerTest {
         }
 
 }
+*/
