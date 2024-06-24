@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "creneaux")
+@PlageHoraire
 public class Timeslot  implements Serializable {
 
     @Id

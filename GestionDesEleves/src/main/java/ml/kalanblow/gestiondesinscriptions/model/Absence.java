@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(builder = Absence.AbsenceBuilder.class)
 @Data
+@PlageHoraire
 public class Absence implements Serializable {
 
     @Id

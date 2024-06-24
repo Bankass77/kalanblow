@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeCours;
+import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@PlageHoraire
 public class Cours implements Serializable {
 
     @Id

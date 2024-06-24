@@ -6,8 +6,8 @@ import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.CoursRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.EnseignantRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.MatiereRepository;
-import ml.kalanblow.gestiondesinscriptions.request.CreateCoursDEnseignementParameters;
-import ml.kalanblow.gestiondesinscriptions.request.EditCoursDEnseignementParameters;
+import ml.kalanblow.gestiondesinscriptions.request.CreateCoursParameters;
+import ml.kalanblow.gestiondesinscriptions.request.EditCoursParameters;
 import ml.kalanblow.gestiondesinscriptions.service.CoursDEnseignementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +77,10 @@ public class CoursDEnseignementServiceImp implements CoursDEnseignementService {
         return coursDEnseignementRepository.findDistinctByEnseignantOrSalleAndAndHoraires(enseignant, salleDeClasse, obtenirUnHoraireDeClasse(horaireClasses));
     }
 
+    @Override
+    public Optional<Cours> creerCoursDEnseignement(EditCoursParameters nouveauCoursDEnseignement) {
+        return Optional.empty();
+    }
 
     /**
      * Crée un nouveau cours d'enseignement et le stocke dans le système.
@@ -86,7 +90,7 @@ public class CoursDEnseignementServiceImp implements CoursDEnseignementService {
      * avec succès, ou Optional.empty() si le cours n'a pas pu être ajouté.
      */
     @Override
-    public Optional<Cours> creerCoursDEnseignement(CreateCoursDEnseignementParameters nouveauCoursDEnseignement) {
+    public Optional<Cours> creerCoursDEnseignement(CreateCoursParameters nouveauCoursDEnseignement) {
 
         Optional<Matiere> matiere = matiereRepository.getMatieresByNomMatiereContainsIgnoreCase(nouveauCoursDEnseignement.getMatiere().getNomMatiere());
 
@@ -118,7 +122,7 @@ public class CoursDEnseignementServiceImp implements CoursDEnseignementService {
      * avec succès, ou Optional.empty() si le cours n'a pas pu être édité.
      */
     @Override
-    public Optional<Cours> editerCoursDEnseignement(Long id, EditCoursDEnseignementParameters editCoursDEnseignementParameters) {
+    public Optional<Cours> editerCoursDEnseignement(Long id, EditCoursParameters editCoursDEnseignementParameters) {
 
         Optional<Cours> coursDEnseignement = coursDEnseignementRepository.findById(id);
 

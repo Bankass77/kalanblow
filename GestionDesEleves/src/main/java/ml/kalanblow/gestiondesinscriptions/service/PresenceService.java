@@ -1,14 +1,12 @@
 package ml.kalanblow.gestiondesinscriptions.service;
 
-import ml.kalanblow.gestiondesinscriptions.model.Presence;
-import ml.kalanblow.gestiondesinscriptions.model.Cours;
-import ml.kalanblow.gestiondesinscriptions.model.Eleve;
-import ml.kalanblow.gestiondesinscriptions.model.Horaire;
+import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.CreatePresenceParameters;
 import ml.kalanblow.gestiondesinscriptions.request.EditPresenceParameters;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +44,7 @@ public interface PresenceService {
      * @param dateActuelle La date pour laquelle l'appel des élèves doit être effectué.
      * @Param  pageable
      */
-    public void effectuerAppelDesEleves(LocalDate dateActuelle, Pageable pageable);
+    void effectuerAppelDesEleves(LocalDate dateActuelle, Salle salleDeClasse, LocalTime heureDebut, LocalTime heureFin);
 
     /**
      * Enregistre la présence de l'élève pour une date spécifiée.
@@ -54,7 +52,7 @@ public interface PresenceService {
      * @param eleve L'élève dont la présence doit être enregistrée.
      * @param date La date pour laquelle la présence de l'élève est enregistrée.
      */
-    public void enregistrerPresenceEleve(Eleve eleve, LocalDate date);
+    void enregistrerPresenceEleve(Eleve eleve, LocalDate date, Cours cours);
 
     List<Presence> findByDateAppel(LocalDate dateAppel);
 

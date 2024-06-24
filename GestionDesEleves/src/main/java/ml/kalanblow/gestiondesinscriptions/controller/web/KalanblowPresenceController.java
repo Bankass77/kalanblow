@@ -1,19 +1,25 @@
 package ml.kalanblow.gestiondesinscriptions.controller.web;
 
+import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
+import ml.kalanblow.gestiondesinscriptions.model.Salle;
 import ml.kalanblow.gestiondesinscriptions.service.CoursService;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.service.PresenceService;
+import ml.kalanblow.gestiondesinscriptions.service.SalleDeClasseService;
+import ml.kalanblow.gestiondesinscriptions.service.impl.SalleDeClasseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Controller
@@ -25,11 +31,15 @@ public class KalanblowPresenceController {
 
     private final CoursService coursService;
 
+    private final SalleDeClasseService salleDeClasseService;
+
     @Autowired
-    public KalanblowPresenceController(PresenceService presenceService, EleveService eleveService, CoursService coursService) {
+    public KalanblowPresenceController(PresenceService presenceService, EleveService eleveService, CoursService coursService,
+            SalleDeClasseService salleDeClasseService) {
         this.presenceService = presenceService;
         this.eleveService = eleveService;
         this.coursService = coursService;
+        this.salleDeClasseService = salleDeClasseService;
     }
 
     @GetMapping("/eleves/{eleveId}")
@@ -60,9 +70,15 @@ public class KalanblowPresenceController {
     }
 
     @PostMapping("/effectuer-appel")
-    public String effectuerAppel(@RequestParam String dateActuelle, @PageableDefault(size = 20) Pageable pageable) {
-        LocalDate date = LocalDate.parse(dateActuelle);
-        presenceService.effectuerAppelDesEleves(date, pageable);
+    public String effectuerAppel( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateActuelle,
+            @RequestParam Long salleId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDebut,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureFin,
+            @PageableDefault(size = 20) Pageable pageable) {
+        Salle salleDeClasse = salleDeClasseService.findById(salleId)
+                .orElseThrow(() -> new KaladewnManagementException.EntityNotFoundException("Salle de classe non trouvée"));
+
+        presenceService.effectuerAppelDesEleves(dateActuelle, salleDeClasse, heureDebut, heureFin);
         return "appelEffectue";
     }
 

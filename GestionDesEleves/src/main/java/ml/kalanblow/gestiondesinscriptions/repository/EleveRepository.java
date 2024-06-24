@@ -5,6 +5,8 @@ import ml.kalanblow.gestiondesinscriptions.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,5 +121,7 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      */
     Optional<User> findByUserName_PrenomAndUserName_NomDeFamille(String prenom, String nomDeFamille);
 
+    @Query("SELECT e FROM Eleve e WHERE e.salle = :salle AND e.dateInscription <= :dateActuelle")
+    Page<Eleve> findAllBySalleAndDate(@Param("salle") Salle salle, @Param("dateActuelle") LocalDate dateActuelle, Pageable pageable);
 
 }

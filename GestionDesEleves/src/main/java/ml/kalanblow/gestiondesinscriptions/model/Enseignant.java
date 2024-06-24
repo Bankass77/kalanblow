@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.*;
+import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.DayOfWeek;
@@ -26,6 +27,7 @@ import java.util.List;
 @Setter
 @Entity
 @JsonDeserialize(builder = Enseignant.EnseignantBuider.class)
+@PlageHoraire
 public class Enseignant extends User {
 
     @NotBlank

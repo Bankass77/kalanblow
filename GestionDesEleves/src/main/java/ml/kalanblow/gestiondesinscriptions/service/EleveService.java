@@ -162,16 +162,6 @@ public interface EleveService {
      */
     Optional<Eleve> findDistinctByAbsences(Absence absenceEleve);
 
-
-
-    /**
-     * Récupère la liste complète des élèves inscrits dans le système.
-     *
-     * @return Une instance facultative (Optional) contenant la liste complète des élèves s'ils sont disponibles, ou Optional.empty() s'il n'y a aucun élève inscrit.
-     */
-   Page<Eleve> recupererLaListeDesEleves(Pageable pageable);
-
-
     /**
      * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
      *
@@ -180,5 +170,5 @@ public interface EleveService {
      */
     Optional<List<Eleve>> recupererElevesParClasse (Salle salleDeClasse);
 
-
+    Page<Eleve> recupererLaListeDesElevesParClasseEtDate(Salle salleDeClasse, LocalDate dateActuelle, Pageable pageable);
 }

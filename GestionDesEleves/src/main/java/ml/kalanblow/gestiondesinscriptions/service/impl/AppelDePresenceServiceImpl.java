@@ -5,14 +5,16 @@ import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.repository.PresenceRepository;
 import ml.kalanblow.gestiondesinscriptions.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @Transactional
@@ -20,19 +22,25 @@ import java.util.Optional;
 public class AppelDePresenceServiceImpl implements AppelDePresenceService {
 
     private final PresenceRepository appelDePresenceRepository;
+
     private final EleveService eleveService;
+
     private final SalleDeClasseService salleDeClasseService;
+
     private final AbsenceEleveService absenceEleveService;
+
     private final AnneeScolaireService anneeScolaireService;
+
     private final EnseignantService enseignantService;
+
     private final MatiereService matiereService;
+
     private final CoursDEnseignementService coursDEnseignementService;
 
     @Autowired
-    public AppelDePresenceServiceImpl(PresenceRepository appelDePresenceRepository, EleveService eleveService,
-                                      SalleDeClasseService salleDeClasseService, AbsenceEleveService absenceEleveService,
-                                      AnneeScolaireService anneeScolaireService, EnseignantService enseignantService,
-                                      MatiereService matiereService, CoursDEnseignementService coursDEnseignementService) {
+    public AppelDePresenceServiceImpl(PresenceRepository appelDePresenceRepository, EleveService eleveService, SalleDeClasseService salleDeClasseService,
+            AbsenceEleveService absenceEleveService, AnneeScolaireService anneeScolaireService, EnseignantService enseignantService,
+            MatiereService matiereService, CoursDEnseignementService coursDEnseignementService) {
         this.appelDePresenceRepository = appelDePresenceRepository;
         this.eleveService = eleveService;
         this.salleDeClasseService = salleDeClasseService;
@@ -43,12 +51,13 @@ public class AppelDePresenceServiceImpl implements AppelDePresenceService {
         this.coursDEnseignementService = coursDEnseignementService;
     }
 
-
     /**
      * Recherche un appel de présence distinct en fonction du cours d'enseignement et de l'élève, trié par le nom de l'élève.
      *
-     * @param coursDEnseignement Le cours d'enseignement pour lequel rechercher l'appel de présence.
-     * @param eleve              L'élève pour lequel rechercher l'appel de présence.
+     * @param coursDEnseignement
+     *         Le cours d'enseignement pour lequel rechercher l'appel de présence.
+     * @param eleve
+     *         L'élève pour lequel rechercher l'appel de présence.
      * @return Une instance facultative (Optional) de l'appel de présence trouvé, ou une instance vide si aucun appel de présence correspondant n'est trouvé.
      */
     @Override
@@ -59,7 +68,8 @@ public class AppelDePresenceServiceImpl implements AppelDePresenceService {
     /**
      * Recherche un appel de présence en fonction du cours d'enseignement et de l'enseignant spécifiés.
      *
-     * @param coursDEnseignement Le cours d'enseignement pour lequel rechercher l'appel de présence.
+     * @param coursDEnseignement
+     *         Le cours d'enseignement pour lequel rechercher l'appel de présence.
      * @return Une instance facultative (Optional) de l'appel de présence trouvé, ou une instance vide si aucun appel de présence correspondant n'est trouvé.
      */
     @Override
@@ -70,7 +80,8 @@ public class AppelDePresenceServiceImpl implements AppelDePresenceService {
     /**
      * Recherche un appel de présence en fonction du cours d'enseignement et de l'horaire de classe spécifiés.
      *
-     * @param horaireClasse L'horaire de classe pour lequel rechercher l'appel de présence.
+     * @param horaireClasse
+     *         L'horaire de classe pour lequel rechercher l'appel de présence.
      * @return Une instance facultative (Optional) de l'appel de présence trouvé, ou une instance vide si aucun appel de présence correspondant n'est trouvé.
      */
     @Override
@@ -81,45 +92,48 @@ public class AppelDePresenceServiceImpl implements AppelDePresenceService {
     /**
      * Effectue l'appel des élèves pour une date donnée.
      *
-     * @param dateActuelle La date pour laquelle l'appel des élèves doit être effectué.
+     * @param dateActuelle
+     *         La date pour laquelle l'appel des élèves doit être effectué.
      */
     @Override
-    public void effectuerAppelDesEleves(LocalDate dateActuelle) {
+    public void effectuerAppelDesEleves(LocalDate dateActuelle, Salle salleDeClasse, LocalTime heureDebut, LocalTime heureFin) {
+        Pageable pageable = PageRequest.of(0, 100);
+        Page<Eleve> pageDesEleves = eleveService.recupererLaListeDesElevesParClasseEtDate(salleDeClasse, dateActuelle, pageable);
 
-        Optional<List<Eleve>> elevesPresents = eleveService.recupererLaListeDesEleves();
-
-        Periode anneeScolaire = anneeScolaireService.findAnneeScolairesByAnnee(dateActuelle.getYear()).get();
-
-        if (elevesPresents.isPresent()) {
-
-            List<Eleve> listeEleve = elevesPresents.get();
-
+        if (pageDesEleves.hasContent()) {
+            List<Eleve> listeEleve = pageDesEleves.getContent();
             for (Eleve eleve : listeEleve) {
+                // Filtrer les cours par plage horaire
+                Optional<Cours> coursOpt = eleve.getSalle().getCoursPlanifies().stream()
+                        .filter(cours -> cours.getTimeslot().getHoraire().isWithin(heureDebut, heureFin))
+                        .findFirst();
 
-                Presence presence = new Presence();
-                presence.setDateAppel(LocalDateTime.from(dateActuelle));
-                presence.setCours(eleve.getSalle().getCoursPlanifies().stream().findFirst().get());
-                presence.setEleve(eleve);
-                presence.setAbsences(eleve.getAbsences());
-                appelDePresenceRepository.save(presence);
+                if (coursOpt.isPresent()) {
+                    Cours cours = coursOpt.get();
+                    enregistrerPresenceEleve(eleve, dateActuelle, cours);
+                } else {
+                    log.warn("Aucun cours trouvé pour l'élève {} dans la plage horaire spécifiée", eleve.getUserName());
+                }
             }
+        } else {
+            log.warn("Aucun élève trouvé pour la date : {} et la salle de classe : {}", dateActuelle, salleDeClasse.getNomDeLaSalle());
         }
-
     }
 
-    /**
-     * Enregistre la présence de l'élève pour une date spécifiée.
-     *
-     * @param eleve L'élève dont la présence doit être enregistrée.
-     * @param date  La date pour laquelle la présence de l'élève est enregistrée.
-     */
-    @Override
-    public void enregistrerPresenceEleve(Eleve eleve, LocalDate date) {
 
-    }
 
     @Override
     public List<Presence> findByDateAppel(LocalDate dateAppel) {
         return null;
+    }
+
+    @Override
+    public void enregistrerPresenceEleve(Eleve eleve, LocalDate dateActuelle, Cours cours) {
+        Presence presence = new Presence();
+        presence.setDateAppel(dateActuelle.atStartOfDay());
+        presence.setCours(cours);
+        presence.setEleve(eleve);
+        presence.setAbsences(eleve.getAbsences());
+        appelDePresenceRepository.save(presence);
     }
 }

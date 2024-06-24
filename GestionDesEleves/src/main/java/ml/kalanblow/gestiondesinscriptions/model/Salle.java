@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import ml.kalanblow.gestiondesinscriptions.enums.TypeDeClasse;
+import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(builder = Salle.SalleBuilder.class)
 @Data
+@PlageHoraire
 public class Salle implements Serializable {
 
     @Id

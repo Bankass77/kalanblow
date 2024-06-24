@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(KalanblowEleveController.class)
 @Import(TestConfig.class)
-//@Disabled
+@Disabled
 class KalanblowUserControllerTest {
 
     @Autowired

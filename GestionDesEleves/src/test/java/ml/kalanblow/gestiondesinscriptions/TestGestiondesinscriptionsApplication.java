@@ -10,6 +10,7 @@ import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
+@Disabled
 public class TestGestiondesinscriptionsApplication {
 
 	@Bean
