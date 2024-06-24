@@ -11,6 +11,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @PrimaryKeyJoinColumn(name = "id")
@@ -63,6 +64,9 @@ public class Eleve extends User {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "classe_Id")
     private Salle salle;
+
+
+    private LocalDateTime dateInscription = LocalDateTime.now();
 
     private Eleve(EleveBuilder eleveBuilder) {
 

@@ -3,12 +3,14 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Embeddable
 @Data
+@PlageHoraire
 public class Horaire implements Comparable<Horaire> {
 
     private DayOfWeek dayOfWeek;
@@ -24,5 +26,9 @@ public class Horaire implements Comparable<Horaire> {
         }
 
         return this.heureDebut.compareTo(horaire.getHeureDebut());
+    }
+
+    public boolean isWithin(LocalTime start, LocalTime end) {
+        return !heureDebut.isBefore(start) && !heureFin.isAfter(end);
     }
 }

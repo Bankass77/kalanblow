@@ -8,12 +8,13 @@ import ml.kalanblow.gestiondesinscriptions.request.EditPresenceParameters;
 import ml.kalanblow.gestiondesinscriptions.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class PresenceServiceImpl implements PresenceService {
     private final PresenceRepository appelDePresenceRepository;
     private final EleveService eleveService;
     private final SalleService salleDeClasseService;
-    private final AbsenceService absenceEleveService;
+    private final AbsenceEleveService absenceEleveService;
     private final PeriodeService anneeScolaireService;
     private final EnseignantService enseignantService;
     private final MatiereService matiereService;
@@ -34,7 +35,7 @@ public class PresenceServiceImpl implements PresenceService {
 
     @Autowired
     public PresenceServiceImpl(PresenceRepository appelDePresenceRepository, EleveService eleveService,
-                               SalleService salleDeClasseService, AbsenceService absenceEleveService,
+                               SalleService salleDeClasseService, AbsenceEleveService absenceEleveService,
                                PeriodeService anneeScolaireService, EnseignantService enseignantService,
                                MatiereService matiereService, CoursService coursDEnseignementService) {
         this.appelDePresenceRepository = appelDePresenceRepository;
@@ -89,27 +90,28 @@ public class PresenceServiceImpl implements PresenceService {
      * @Param  pageable
      */
     @Override
-    public void effectuerAppelDesEleves(LocalDate dateActuelle, Pageable pageable) {
+    public void effectuerAppelDesEleves(LocalDate dateActuelle, Salle salleDeClasse, LocalTime heureDebut, LocalTime heureFin) {
+        Pageable pageable = PageRequest.of(0, 100);
+        Page<Eleve> pageDesEleves = eleveService.recupererLaListeDesElevesParClasseEtDate(salleDeClasse, dateActuelle, pageable);
 
-        Page<Eleve> elevesPresents = eleveService.recupererLaListeDesEleves(pageable);
-
-        Periode anneeScolaire = anneeScolaireService.findAnneeScolairesByAnnee(dateActuelle.getYear()).get();
-
-        if (! elevesPresents.isEmpty()) {
-
-            Page<Eleve> listeEleve = elevesPresents;
-
+        if (pageDesEleves.hasContent()) {
+            List<Eleve> listeEleve = pageDesEleves.getContent();
             for (Eleve eleve : listeEleve) {
+                // Filtrer les cours par plage horaire
+                Optional<Cours> coursOpt = eleve.getSalle().getCoursPlanifies().stream()
+                        .filter(cours -> cours.getHoraires().stream().findFirst().get().isWithin(heureDebut, heureFin))
+                        .findFirst();
 
-                Presence presence = new Presence();
-                presence.setDateAppel(LocalDateTime.from(dateActuelle));
-                presence.setCours(eleve.getSalle().getCoursPlanifies().stream().findFirst().get());
-                presence.setEleve(eleve);
-                presence.setAbsences(eleve.getAbsences());
-                appelDePresenceRepository.save(presence);
+                if (coursOpt.isPresent()) {
+                    Cours cours = coursOpt.get();
+                    enregistrerPresenceEleve(eleve, dateActuelle, cours);
+                } else {
+                    log.warn("Aucun cours trouvé pour l'élève {} dans la plage horaire spécifiée", eleve.getUserName());
+                }
             }
+        } else {
+            log.warn("Aucun élève trouvé pour la date : {} et la salle de classe : {}", dateActuelle, salleDeClasse.getNomDeLaSalle());
         }
-
     }
 
     /**
@@ -119,13 +121,18 @@ public class PresenceServiceImpl implements PresenceService {
      * @param date  La date pour laquelle la présence de l'élève est enregistrée.
      */
     @Override
-    public void enregistrerPresenceEleve(Eleve eleve, LocalDate date) {
-
+    public void enregistrerPresenceEleve(Eleve eleve, LocalDate date, Cours cours) {
+        Presence presence = new Presence();
+        presence.setDateAppel(date.atStartOfDay());
+        presence.setCours(cours);
+        presence.setEleve(eleve);
+        presence.setAbsences(eleve.getAbsences());
+        appelDePresenceRepository.save(presence);
     }
 
     @Override
     public List<Presence> findByDateAppel(LocalDate dateAppel) {
-        return null;
+        return appelDePresenceRepository.findByDateAppel(dateAppel);
     }
 
     /**

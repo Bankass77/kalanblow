@@ -344,16 +344,6 @@ public class EleveServiceImpl implements EleveService {
     }
 
     /**
-     * Récupère la liste complète des élèves inscrits dans le système.
-     *
-     * @return Une instance facultative (Optional) contenant la liste complète des élèves s'ils sont disponibles, ou Optional.empty() s'il n'y a aucun élève inscrit.
-     */
-    @Override
-    public Page<Eleve> recupererLaListeDesEleves( Pageable pageable) {
-        return eleveRepository.findAll(pageable);
-    }
-
-    /**
      * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
      *
      * @param salleDeClasse La salle de classe pour laquelle rechercher les élèves.
@@ -362,6 +352,11 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public Optional<List<Eleve>> recupererElevesParClasse(Salle salleDeClasse) {
         return eleveRepository.findDistinctBySalle_Etablissement(salleDeClasse);
+    }
+
+    @Override
+    public Page<Eleve> recupererLaListeDesElevesParClasseEtDate(Salle salleDeClasse, LocalDate dateActuelle, Pageable pageable) {
+        return eleveRepository.findAllBySalleAndDate(salleDeClasse, dateActuelle, pageable);
     }
 
     private Eleve ajouterUnNouveauEleve(CreateEleveParameters createEleveParameters) {

@@ -34,7 +34,8 @@ public class SalleDeClasseServiceImpl implements SalleDeClasseService {
      * @return Une instance facultative (Optional) de la salle de classe trouvée, ou une instance vide si aucune salle de classe correspondante n'est trouvée.
      */
     @Override
-    public Optional<Salle> findDistinctByCoursPlanifiesAndAndNomDeLaSalleOrTypeDeClasse(Cours coursDEnseignement, Salle salleDeClasse, TypeDeClasse typeDeClasse) {
+    public Optional<Salle> findDistinctByCoursPlanifiesAndAndNomDeLaSalleOrTypeDeClasse(Cours coursDEnseignement, Salle salleDeClasse,
+            TypeDeClasse typeDeClasse) {
         return  salleDeClasseRepository.findDistinctByCoursPlanifiesAndAndNomDeLaSalleOrTypeDeClasse(coursDEnseignement,salleDeClasse,typeDeClasse);
     }
 
@@ -59,5 +60,10 @@ public class SalleDeClasseServiceImpl implements SalleDeClasseService {
     @Override
     public Optional<Salle> getSalleDeClasseByCoursPlanifies(Cours coursDEnseignement) {
         return salleDeClasseRepository.getSalleDeClasseByCoursPlanifies(coursDEnseignement);
+    }
+
+    @Override
+    public Optional<Salle> findById(long salleId) {
+        return salleDeClasseRepository.findById(salleId);
     }
 }
