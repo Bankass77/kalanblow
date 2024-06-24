@@ -3,7 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ml.kalanblow.gestiondesinscriptions.model.Horaire;
-import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
+import ml.kalanblow.gestiondesinscriptions.constraint.PlageHoraire;
 
 public class PlageHoraireValidator implements ConstraintValidator<PlageHoraire, Horaire> {
 

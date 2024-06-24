@@ -3,7 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
+import ml.kalanblow.gestiondesinscriptions.constraint.PlageHoraire;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;

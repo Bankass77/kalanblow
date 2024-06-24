@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.service.PlageHoraire;
+import ml.kalanblow.gestiondesinscriptions.constraint.PlageHoraire;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.DayOfWeek;

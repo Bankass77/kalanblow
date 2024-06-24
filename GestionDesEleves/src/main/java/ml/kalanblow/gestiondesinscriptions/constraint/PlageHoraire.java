@@ -1,4 +1,4 @@
-package ml.kalanblow.gestiondesinscriptions.service;
+package ml.kalanblow.gestiondesinscriptions.constraint;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
