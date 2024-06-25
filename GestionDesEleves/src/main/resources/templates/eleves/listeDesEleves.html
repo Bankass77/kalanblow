@@ -7,10 +7,13 @@
         layout:decorate="~{layout/layout.html}"
         th:with="activeMenuItem='eleves'">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Elèves</title>
 </head>
 <body>
-<div layout:fragment="page-content" >
+<div layout:fragment="page-content">
     <!-- tag::create-button[] -->
     <div th:replace="~{fragments/titles :: title-with-button(#{eleves.title}, 'user-add', #{eleves.add}, @{/kalanden/eleve/ajouter},  'add-user-button')}"
          sec:authorize="hasRole('ADMIN')"></div>
@@ -21,15 +24,15 @@
     </div>
     <!-- end::alert[] -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-       <!-- <h1 class="text-2xl font-semibold text-gray-900"
-            th:text="#{eleves.title}">Elèves</h1>-->
+        <!-- <h1 class="text-2xl font-semibold text-gray-900"
+             th:text="#{eleves.title}">Elèves</h1>-->
     </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         <div class="py-4">
             <div class="flex flex-col">
                 <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                     <div class="align-middle inline-block min-w-full shadow overflow-hidden rounded-md sm:rounded-lg border-b border-gray-200">
-                        <table class="min-w-full">
+                        <table id="users-table" class="min-w-full">
                             <thead>
                             <!-- tag::tr[] -->
                             <tr>
@@ -41,8 +44,10 @@
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.email},hideOnMobile=true)}"></th>
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.phoneNumber},hideOnMobile=true)}"></th>
                                 <th th:replace="~{fragments/table :: header(title=#{eleve.address},hideOnMobile=true)}"></th>
-                                <th th:replace="~{fragments/table :: header('')}"></th>
-                                <th th:replace="~{fragments/table :: header('')}"></th>
+                                <th:block sec:authorize="hasRole('ADMIN')"> <!--.-->
+                                    <th th:replace="~{fragments/table :: header('')}"></th>
+                                    <th th:replace="~{fragments/table :: header('')}"></th>
+                                </th:block>
                             </tr>
                             <!-- end::tr[] -->
                             </thead>
@@ -50,7 +55,8 @@
                             <!-- tag::tr-body[] -->
                             <tr class="bg-white" th:each="eleve : ${eleves}">
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.etablissement.nomEtablissement},hideOnMobile=true)}"></td>
-                                <td th:replace="~{fragments/table :: data(contents=${eleve.userName.fullName},primary=true)}"></td> <!--.-->
+                                <td th:replace="~{fragments/table :: data(contents=${eleve.userName.fullName},primary=true)}"></td>
+                                <!--.-->
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.gender},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.maritalStatus},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.dateDeNaissance},hideOnMobile=true)}"></td>
@@ -59,15 +65,16 @@
                                 <td th:replace="~{fragments/table :: data(contents=${eleve.address.getFullAdresse()},hideOnMobile=true)}"></td>
                                 <td th:replace="~{fragments/table :: dataWithLink(#{edit}, @{'/kalanden/eleve/'+ ${eleve.id}})}"></td>
                                 <!-- tag::td-admin[] -->
-                                <th:block sec:authorize="hasRole('ADMIN')">
-                                <!-- tag::delete-td[] -->
-                                <td th:x-data="|{name: '${eleve.userName.fullName}', deleteUrl: '/kalanden/eleve/'+${eleve.id}+'/delete'}|"
-                                    class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                    <a href="javascript:void(0)"
-                                       class="text-green-600 hover:text-green-900"
-                                       @click="$dispatch('open-delete-modal', {name, deleteUrl})">Delete</a>
-                                </td>
-                                <!-- end::delete-td[] -->
+                                <th:block sec:authorize="hasRole('STUDENT')">
+                                    <td th:replace="~{fragments/table :: dataWithLink(#{edit}, @{'/kalanden/eleve/{id}'+ ${eleve.id}})}"></td>
+                                    <!-- tag::delete-td[] -->
+                                    <td th:x-data="|{name: '${eleve.userName.fullName}', deleteUrl: '/kalanden/eleve/'+${eleve.id}+'/delete'}|"
+                                        class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
+                                        <a href="javascript:void(0)"
+                                           class="text-green-600 hover:text-green-900"
+                                           @click="$dispatch('open-delete-modal', {name, deleteUrl})">Delete</a>
+                                    </td>
+                                    <!-- end::delete-td[] -->
                                 </th:block>
                             </tr>
                             <!-- end::tr-body[] -->
@@ -133,16 +140,16 @@
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500"> <!--.-->
                                     Etes-vous sûr de vouloir suprimer cet élève <span class="italic"
-                                                                               x-text="getName()"></span>?
+                                                                                      x-text="getName()"></span>?
                                 </p>
                             </div>
                         </div>
                     </div>
                     <form id="deleteForm" enctype="multipart/form-data" method="post"
                           x-bind:action="getDeleteUrl()"> <!--.-->
-                       <<input type="hidden"
-                               th:name="${_csrf.parameterName}"
-                               th:value="${_csrf.token}"/>
+                        <<input type="hidden"
+                                th:name="${_csrf.parameterName}"
+                                th:value="${_csrf.token}"/>
                         <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
        <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
           <button type="submit"

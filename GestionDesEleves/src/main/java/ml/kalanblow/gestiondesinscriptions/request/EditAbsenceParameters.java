@@ -2,11 +2,13 @@ package ml.kalanblow.gestiondesinscriptions.request;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Absence;
 
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class EditAbsenceParameters extends CreateAbsenceParameters {
 
     private  long version;

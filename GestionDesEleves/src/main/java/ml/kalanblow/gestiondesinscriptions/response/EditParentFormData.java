@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class EditParentFormData extends CreateParentFormData {
+public non-sealed class EditParentFormData extends CreateParentFormData {
 
     private Long id;
     private long version;
@@ -48,18 +48,13 @@ public class EditParentFormData extends CreateParentFormData {
 
       EditParentParameters editParentParameters= new EditParentParameters();
       editParentParameters.setVersion(version);
-      editParentParameters.setAddress(getAddress());
+
       editParentParameters.setProfession(getProfession());
-      editParentParameters.setEmail(new Email(getEmail()));
-      editParentParameters.setGender(getGender());
-      editParentParameters.setPassword(getPassword());
+
       editParentParameters.setEnfantsPere(enfantsPere);
-      editParentParameters.setCreatedDate(getCreatedDate());
-      editParentParameters.setMaritalStatus(getMaritalStatus());
+
       editParentParameters.setEnfantsMere(enfantsMere);
-      editParentParameters.setModifyDate(getModifyDate());
-      editParentParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
-      editParentParameters.setUserName(new UserName(getPrenom(),getNomDeFamille()));
+
         return  editParentParameters;
     }
 }

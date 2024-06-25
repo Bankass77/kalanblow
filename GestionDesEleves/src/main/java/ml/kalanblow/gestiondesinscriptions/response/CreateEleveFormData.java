@@ -1,10 +1,12 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
-
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ml.kalanblow.gestiondesinscriptions.enums.Gender;
+import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
@@ -16,12 +18,10 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class CreateEleveFormData extends CreateUserFormData {
-
+public final class CreateEleveFormData extends AbstractUserFormData {
 
     @NotNull(groups = ValidationGroupOne.class)
     private String ineNumber;
-
 
     @NotNull(groups = ValidationGroupOne.class)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -36,35 +36,24 @@ public class CreateEleveFormData extends CreateUserFormData {
     @NotNull(groups = ValidationGroupOne.class)
     private Parent mere;
 
-
-    @NotNull(groups = ValidationGroupOne.class)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
-    private String password;
-
-
-    @NotNull(groups = ValidationGroupOne.class)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
-    private String passwordRepeated;
-
-
-    @NotNull(groups = ValidationGroupOne.class)
-    private Address address;
-
-
     @NotNull(groups = ValidationGroupOne.class)
     private Etablissement etablissement;
+
+    @NotBlank
+    private String password;
+    @NotBlank
+    private String passwordRepeated;
+
 
 
     // tag::toParameters[]
     public CreateEleveParameters toEleveParameters() {
-
         CreateEleveParameters createEleveParameters = new CreateEleveParameters();
         createEleveParameters.setDateDeNaissance(getDateDeNaissance());
         createEleveParameters.setStudentIneNumber(getIneNumber());
         createEleveParameters.setAge(CalculateUserAge.calculateAge(getDateDeNaissance()));
         createEleveParameters.setModifyDate(LocalDateTime.now());
         createEleveParameters.setMaritalStatus(getMaritalStatus());
-
         createEleveParameters.setCreatedDate(getCreatedDate());
         createEleveParameters.setPhoneNumber(new PhoneNumber(getPhoneNumber()));
         createEleveParameters.setGender(getGender());
@@ -76,13 +65,11 @@ public class CreateEleveFormData extends CreateUserFormData {
         createEleveParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
         createEleveParameters.setEtablissement(getEtablissement());
         createEleveParameters.setPassword(getPassword());
-
-        if (getAvatarFile() != null && !getAvatarFile().isEmpty()) {
-
+        if(getAvatarFile() != null && !getAvatarFile().isEmpty()) {
             createEleveParameters.setAvatar(getAvatarFile());
         }
-
         return createEleveParameters;
     }
+
     // end::toParameters[]
 }

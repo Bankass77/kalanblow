@@ -141,14 +141,6 @@ public class EleveController {
 
         try {
             String successMessage = "Elève a été mise à jour avec succès. Eleve ID : " + id;
-            Eleve eleve = new Eleve();
-            eleve.setIneNumber(parameters.getStudentIneNumber());
-            eleve.setDateDeNaissance(parameters.getDateDeNaissance());
-            eleve.setAge(parameters.getAge());
-             eleve.setPere(parameters.getPere());
-             eleve.setMere(parameters.getMere());
-            eleve.setAbsences(parameters.getAbsences());
-            eleve.setEtablissement(parameters.getEtablissement());
             return ResponseEntity.ok(new ApiResponse<Eleve>(eleveService.mettreAjourUtilisateur(id, parameters), successMessage));
         } catch (KaladewnManagementException.DuplicateEntityException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @JsonDeserialize(builder = Parent.ParentBuilder.class)
 public class Parent extends  User{
@@ -24,10 +25,12 @@ public class Parent extends  User{
     private String profession;
 
     @JsonManagedReference
+    @Builder.Default
     @OneToMany(mappedBy = "pere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> enfantsPere = new HashSet<>();
 
     @JsonManagedReference
+    @Builder.Default
     @OneToMany(mappedBy = "mere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> enfantsMere = new HashSet<>();
 

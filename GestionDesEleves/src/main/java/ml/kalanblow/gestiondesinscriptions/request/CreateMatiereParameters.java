@@ -14,22 +14,14 @@ import java.util.Set;
 @AllArgsConstructor
 public class CreateMatiereParameters {
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private double note;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private double coefficient;
 
     private double moyenne;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private String nomMatiere;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private String description;
 
     private Set<Cours> coursDEnseignements;

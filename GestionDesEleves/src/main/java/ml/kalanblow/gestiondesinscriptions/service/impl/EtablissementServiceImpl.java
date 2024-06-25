@@ -31,7 +31,8 @@ public class EtablissementServiceImpl implements EtablissementService {
     /**
      * Crée un nouvel établissement scolaire en utilisant les paramètres fournis.
      *
-     * @param createEtablissementScolaireParameters Les paramètres de création de l'établissement scolaire.
+     * @param createEtablissementScolaireParameters
+     *         Les paramètres de création de l'établissement scolaire.
      * @return L'établissement scolaire créé et enregistré dans la base de données.
      */
     @Override
@@ -42,8 +43,10 @@ public class EtablissementServiceImpl implements EtablissementService {
     /**
      * Met à jour un établissement scolaire existant en fonction de son identifiant et des paramètres de mise à jour.
      *
-     * @param id                                  L'identifiant de l'établissement scolaire à mettre à jour.
-     * @param editEtablissementScolaireParameters Les paramètres de mise à jour de l'établissement scolaire.
+     * @param id
+     *         L'identifiant de l'établissement scolaire à mettre à jour.
+     * @param editEtablissementScolaireParameters
+     *         Les paramètres de mise à jour de l'établissement scolaire.
      * @return L'établissement scolaire mis à jour.
      */
     @Override
@@ -52,9 +55,9 @@ public class EtablissementServiceImpl implements EtablissementService {
         Etablissement etablissement = etablissementScolaireRepository.findByEtablisementScolaireId(id);
 
         // Vérifie si l'établissement scolaire existe
-        if (etablissement.getVersion() != editEtablissementScolaireParameters.getVersion()) {
+        if(etablissement.getVersion() != editEtablissementScolaireParameters.getVersion()) {
 
-            throw  new ObjectOptimisticLockingFailureException(Etablissement.class, etablissement.getEmail());
+            throw new ObjectOptimisticLockingFailureException(Etablissement.class, etablissement.getEmail());
         }
 
         // Mise à jour de l'établissement scolaire avec les paramètres de mise à jour
@@ -65,53 +68,63 @@ public class EtablissementServiceImpl implements EtablissementService {
     /**
      * Recherche un établissement scolaire par son nom.
      *
-     * @param nom Le nom de l'établissement scolaire à rechercher.
+     * @param nom
+     *         Le nom de l'établissement scolaire à rechercher.
      * @return L'établissement scolaire trouvé, ou null si aucun établissement correspondant n'est trouvé.
      */
     @Override
     public Etablissement trouverEtablissementScolaireParSonNom(String nom) {
+        if(etablissementScolaireRepository.findByNomEtablissement(nom) == null){
+            throw KaladewnManagementException.throwException("Aucun établissement avec cet nom: %s n'a été trouvé.", nom);
+        }
         return etablissementScolaireRepository.findByNomEtablissement(nom);
     }
 
     /**
      * Recherche un établissement scolaire par son identifiant.
      *
-     * @param id L'identifiant de l'établissement scolaire à rechercher.
+     * @param id
+     *         L'identifiant de l'établissement scolaire à rechercher.
      * @return L'établissement scolaire trouvé, ou null si aucun établissement correspondant n'est trouvé.
      */
     @Override
     public Etablissement trouverEtablissementScolaireParSonIdentifiant(long id) {
+        if( etablissementScolaireRepository.findByEtablisementScolaireId(id) == null){
+            throw KaladewnManagementException.throwException("Aucun établissement avec cet id: %s n'a pas été trouvé", String.valueOf(id));
+        }
         return etablissementScolaireRepository.findByEtablisementScolaireId(id);
     }
-
 
     /**
      * Cette méthode permet d'ajouter une photo au profil d'un élève s'il est fourni dans les paramètres.
      *
-     * @param parameters            Les paramètres de création de l'établissement scolaire.
-     * @param etablissement L'élève auquel la photo doit être associée.
-     * @throws KaladewnManagementException Si une erreur survient lors de la récupération ou de la sauvegarde de la photo.
+     * @param parameters
+     *         Les paramètres de création de l'établissement scolaire.
+     * @param etablissement
+     *         L'élève auquel la photo doit être associée.
+     * @throws KaladewnManagementException
+     *         Si une erreur survient lors de la récupération ou de la sauvegarde de la photo.
      */
     private static void ajouterPhotoSiPresent(CreateEtablissementParameters parameters, Etablissement etablissement) {
         // Récupère le fichier de profil de l'élève depuis les paramètres.
         MultipartFile profileEleve = parameters.getAvatar();
 
-        if (profileEleve != null) {
+        if(profileEleve != null) {
             try {
                 // Convertit le contenu du fichier en tableau de bytes et l'associe à l'élève.
                 etablissement.setAvatar(profileEleve.getBytes());
-            } catch (IOException e) {
+            } catch(IOException e) {
                 // En cas d'erreur lors de la récupération des bytes du fichier, lance une exception personnalisée.
                 throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
             }
         }
     }
 
-
     /**
      * Crée un nouvel établissement scolaire en utilisant les paramètres fournis et l'ajoute à la base de données.
      *
-     * @param createEtablissementScolaireParameters Les paramètres de création de l'établissement scolaire.
+     * @param createEtablissementScolaireParameters
+     *         Les paramètres de création de l'établissement scolaire.
      * @return L'établissement scolaire créé et enregistré dans la base de données.
      */
     private Etablissement ajouterEtablissementScolaire(CreateEtablissementParameters createEtablissementScolaireParameters) {
@@ -125,7 +138,6 @@ public class EtablissementServiceImpl implements EtablissementService {
         etablissement.setEnseignants(createEtablissementScolaireParameters.getEnseignants());
         etablissement.setLastModifiedDate(createEtablissementScolaireParameters.getLastModifiedDate());
         etablissement.setCreatedDate(createEtablissementScolaireParameters.getCreatedDate());
-        etablissement.setAddress(createEtablissementScolaireParameters.getAddress());
         etablissement.setSalles(createEtablissementScolaireParameters.getSalleDeClasses());
         ajouterPhotoSiPresent(createEtablissementScolaireParameters, etablissement);
 
@@ -135,44 +147,54 @@ public class EtablissementServiceImpl implements EtablissementService {
     /**
      * Recherche un établissement scolaire par son nom.
      *
-     * @param nomEtablissement Le nom de l'établissement à rechercher.
+     * @param nomEtablissement
+     *         Le nom de l'établissement à rechercher.
      * @return L'établissement scolaire correspondant au nom spécifié, s'il existe.
      */
     @Override
     public Etablissement findByNomEtablissement(String nomEtablissement) {
-        return null;
+        return etablissementScolaireRepository.findByNomEtablissement(nomEtablissement);
     }
 
     /**
      * Recherche un établissement scolaire par son adresse e-mail.
      *
-     * @param email L'adresse e-mail associée à l'établissement à rechercher.
+     * @param email
+     *         L'adresse e-mail associée à l'établissement à rechercher.
      * @return Une instance optionnelle contenant l'établissement scolaire correspondant à l'adresse e-mail, si elle existe.
      */
     @Override
     public Optional<Etablissement> findEtablissementScolaireByEmail(Email email) {
-        return Optional.empty();
+        return Optional.ofNullable(etablissementScolaireRepository.findEtablissementScolaireByEmail(email)
+                .orElseThrow(() -> KaladewnManagementException.throwException("L'établissement avec cet %s n'a pas été trouvé.", email.asString())));
     }
 
     /**
      * Recherche un établissement scolaire par son numéro de téléphone.
      *
-     * @param phoneNumber Le numéro de téléphone associé à l'établissement à rechercher.
+     * @param phoneNumber
+     *         Le numéro de téléphone associé à l'établissement à rechercher.
      * @return Une instance optionnelle contenant l'établissement scolaire correspondant au numéro de téléphone, si il existe.
      */
     @Override
     public Optional<Etablissement> findEtablissementScolaireByPhoneNumber(PhoneNumber phoneNumber) {
-        return Optional.empty();
+        return Optional.ofNullable(etablissementScolaireRepository.findEtablissementScolaireByPhoneNumber(phoneNumber))
+                .orElseThrow(() -> new KaladewnManagementException().throwException("L'établissement avec cet %s n'a pas été trouvé", phoneNumber.asString()));
     }
 
     /**
      * Recherche un établissement scolaire par son adresse postale.
      *
-     * @param address L'adresse postale associée à l'établissement à rechercher.
+     * @param address
+     *         L'adresse postale associée à l'établissement à rechercher.
      * @return Une instance optionnelle contenant l'établissement scolaire correspondant à l'adresse postale, si elle existe.
      */
     @Override
     public Optional<Etablissement> findEtablissementScolaireByAddress(Address address) {
-        return Optional.empty();
+        return Optional.ofNullable(etablissementScolaireRepository.findEtablissementScolaireByAddress(address))
+                .orElseThrow(() -> KaladewnManagementException.throwException(
+                        "Aucun établissement scolaire avec cette adresse: %s n'a été trouvé",
+                        address.toString()
+                ));
     }
 }

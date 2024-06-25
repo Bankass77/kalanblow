@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.response;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Vacances;
 import ml.kalanblow.gestiondesinscriptions.request.EditVacancesParameters;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class EditVacancesFormData extends CreateVacancesFormData{
 
     private Long id;

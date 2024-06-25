@@ -110,7 +110,7 @@ public abstract class User implements Serializable {
 
 
 
-    @ElementCollection(targetClass = UserRole.class)
+    @ElementCollection(targetClass = UserRole.class,fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles")
     @Column(name = "role")

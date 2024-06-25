@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.response;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Absence;
 import ml.kalanblow.gestiondesinscriptions.model.Presence;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class EditPresenceFormData  extends CreatePresenceFormData {
     
     private long version;

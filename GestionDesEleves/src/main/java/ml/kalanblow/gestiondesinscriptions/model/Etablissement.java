@@ -1,6 +1,5 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -44,14 +43,13 @@ public class Etablissement {
 
     @NotNull(message = "{notnull.message}")
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
+    @AttributeOverrides({ @AttributeOverride(name = "street", column = @Column(name = "street")),
 
             @AttributeOverride(name = "streetNumber", column = @Column(name = "streetNumber")),
 
             @AttributeOverride(name = "codePostale", column = @Column(name = "codePostale")),
 
-            @AttributeOverride(name = "city", column = @Column(name = "city")),
-            @AttributeOverride(name = "country", column = @Column(name = "country"))})
+            @AttributeOverride(name = "city", column = @Column(name = "city")), @AttributeOverride(name = "country", column = @Column(name = "country")) })
     private Address address;
 
     @Column
@@ -101,84 +99,90 @@ public class Etablissement {
         this.nomEtablissement = builder.nomEtablissement;
     }
 
-
     @JsonPOJOBuilder(withPrefix = "")
     public static class EtablissementBuilder {
+
         private String nomEtablissement;
+
         private Address address;
+
         private byte[] avatar;
+
         private Email email;
+
         private LocalDateTime createdDate = LocalDateTime.now();
+
         private LocalDateTime lastModifiedDate = LocalDateTime.now();
+
         private PhoneNumber phoneNumber;
 
         private Set<Eleve> eleves;
+
         private Set<Enseignant> enseignants;
 
         private Set<Salle> salles;
-    @Version()
-    private Long version;
 
+        @Version()
+        private Long version;
 
-
-       public EtablissementBuilder nomEtablissement(String nomEtablissement) {
+        public EtablissementBuilder nomEtablissement(String nomEtablissement) {
 
             this.nomEtablissement = nomEtablissement;
             return this;
 
         }
 
-     public   EtablissementBuilder adresse(Address address) {
+        public EtablissementBuilder adresse(Address address) {
 
             this.address = address;
             return this;
         }
 
-      public  EtablissementBuilder avatar(byte[] avatar) {
+        public EtablissementBuilder avatar(byte[] avatar) {
 
             this.avatar = avatar;
             return this;
         }
 
-      public  EtablissementBuilder email(Email email) {
+        public EtablissementBuilder email(Email email) {
 
             this.email = email;
             return this;
         }
 
-       public EtablissementBuilder createDate(LocalDateTime createDate) {
+        public EtablissementBuilder createDate(LocalDateTime createDate) {
 
             this.createdDate = createdDate;
             return this;
         }
 
-       public EtablissementBuilder phoneNumber(PhoneNumber phoneNumber) {
+        public EtablissementBuilder phoneNumber(PhoneNumber phoneNumber) {
             this.phoneNumber = phoneNumber;
 
             return this;
         }
 
-       public EtablissementBuilder lastModiedDate(LocalDateTime lastModifiedDate) {
+        public EtablissementBuilder lastModiedDate(LocalDateTime lastModifiedDate) {
 
             this.lastModifiedDate = lastModifiedDate;
             return this;
         }
 
-      public   EtablissementBuilder eleves(Set<Eleve> eleves) {
+        public EtablissementBuilder eleves(Set<Eleve> eleves) {
             this.eleves = eleves;
 
             return this;
 
         }
 
-      public   EtablissementBuilder enseignants(Set<Enseignant> enseignants) {
+        public EtablissementBuilder enseignants(Set<Enseignant> enseignants) {
 
             this.enseignants = enseignants;
 
             return this;
         }
 
-       public EtablissementBuilder salles(Set<Salle> salles) {
+        public EtablissementBuilder salles(Set<Salle> salles) {
 
             this.salles = salles;
             return this;

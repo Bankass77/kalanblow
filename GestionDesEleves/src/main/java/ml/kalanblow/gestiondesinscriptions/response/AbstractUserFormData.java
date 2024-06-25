@@ -29,48 +29,45 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFormData {
+public sealed class AbstractUserFormData permits CreateEleveFormData, CreateEnseignantFormData, CreateParentFormData, EditEleveFormData {
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotBlank(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String prenom;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotBlank(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String nomDeFamille;
 
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotBlank
     @Pattern(regexp = "^(\\+223|00223)?[67]\\d{7}$")
     private String phoneNumber;
 
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private UserRole userRole;
 
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Gender gender;
 
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private MaritalStatus maritalStatus;
 
-    @NotBlank
+    @NotBlank(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @Email(groups = ValidationGroupOne.class)
     private String email;
 
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     private Address address;
 
-   
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
+    @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @JsonDeserialize(using = InstantDeserializer.class)
     private LocalDateTime createdDate = LocalDateTime.now();
 
+    @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @LastModifiedDate
-     @NotNull(message = "{notnull.message}", groups = ValidationGroupOne.class)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @JsonDeserialize(using = InstantDeserializer.class)
@@ -79,6 +76,6 @@ public sealed class AbstractUserFormData permits CreateUserFormData, EditUserFor
     @Nullable
     private MultipartFile avatarFile;
 
-    @Nullable
+    @NotNull
     private Set<UserRole> roles;
 }

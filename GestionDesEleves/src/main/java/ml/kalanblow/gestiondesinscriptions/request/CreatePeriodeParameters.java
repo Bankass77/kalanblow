@@ -13,15 +13,9 @@ import java.time.Duration;
 @AllArgsConstructor
 public class CreatePeriodeParameters {
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private int annee;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private Duration duree;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private TypeDeVacances typeDeVacances;
 }

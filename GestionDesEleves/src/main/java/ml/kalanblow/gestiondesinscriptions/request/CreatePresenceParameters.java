@@ -15,12 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CreatePresenceParameters {
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private Cours cours;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private Eleve eleve;
 
     private List<Absence> absences;

@@ -50,22 +50,21 @@ public class EleveServiceImpl implements EleveService {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     @Autowired
-    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService,BCryptPasswordEncoder passwordEncoder) {
+    public EleveServiceImpl(EleveRepository eleveRepository, ParentService parentService, EtablissementService etablissementService,
+            BCryptPasswordEncoder passwordEncoder) {
 
         this.eleveRepository = eleveRepository;
         this.parentService = parentService;
         this.etablissementService = etablissementService;
-        this.passwordEncoder=passwordEncoder;
-
-
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
      * Vérifie l'existence d'un email dans la base de données.
      *
-     * @param email L'adresse email à vérifier.
+     * @param email
+     *         L'adresse email à vérifier.
      * @return true si l'email existe, false sinon.
      */
     @Override
@@ -73,111 +72,100 @@ public class EleveServiceImpl implements EleveService {
 
         log.debug("verifierExistenceEmail {}", email);
 
-        return    eleveRepository.findElevesByEmail(email).isPresent();
+        return eleveRepository.findElevesByEmail(email).isPresent();
 
     }
 
     /**
      * Cherche un élève par son adresse email.
      *
-     * @param email L'adresse email de l'élève à rechercher.
+     * @param email
+     *         L'adresse email de l'élève à rechercher.
      * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
      */
     @Override
     public Optional<Eleve> chercherParEmail(String email) {
         log.debug("chercherParEmail {}", email);
 
-        if (email != null) {
+        if(email != null) {
 
             return eleveRepository.findElevesByEmail(new Email(email));
 
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
      * Obtient une page de la liste des élèves.
      *
-     * @param pageable Les informations de pagination.
+     * @param pageable
+     *         Les informations de pagination.
      * @return Une page contenant des élèves.
      */
     @Override
-    public Page<Eleve> obtenirListeElevePage(Pageable pageable)  {
-        log.debug("obtenirListeElevePage {}");
+    public Page<Eleve> obtenirListeElevePage(Pageable pageable) {
         return eleveRepository.findAll(pageable);
     }
 
-
-
     /**
-     * @param userId     L'identifiant de l'élève à mettre à jour.
-     * @param parameters Les paramètres de mise à jour.
+     * @param userId
+     *         L'identifiant de l'élève à mettre à jour.
+     * @param parameters
+     *         Les paramètres de mise à jour.
      * @return Une instance d'Élève représentant les nouvelles informations de l'élève.
      */
     @Override
     public Eleve mettreAjourUtilisateur(Long userId, EditEleveParameters parameters) {
+        Optional<Eleve> optionalEleve = eleveRepository.findById(userId);
+        Eleve eleve = optionalEleve.orElseThrow(
+                () -> KaladewnManagementException.throwException(String.format("L'élève avec l'id %s n'a pas été trouvé", String.valueOf(userId))));
 
-        Optional<Eleve> eleve = eleveRepository.findById(userId);
-
-        if (parameters.getVersion() != eleve.get().getVersion()) {
-            throw new ObjectOptimisticLockingFailureException(Eleve.class, eleve.get().getId());
-
+        // Vérification de la version
+        if(parameters.getVersion() != eleve.getVersion()) {
+            throw new ObjectOptimisticLockingFailureException(Eleve.class, eleve.getId());
         }
-        parameters = new EditEleveParameters();
-        parameters.setVersion(eleve.get().getVersion());
-        parameters.setUserName(eleve.get().getUserName());
-        parameters.setGender(eleve.get().getGender());
-        parameters.setMaritalStatus(eleve.get().getMaritalStatus());
-        parameters.setEmail(eleve.get().getEmail());
-        parameters.setPassword(passwordEncoder.encode(eleve.get().getPassword()));
-        parameters.setPhoneNumber(eleve.get().getPhoneNumber());
-        parameters.setAddress(eleve.get().getAddress());
-        parameters.setCreatedDate(eleve.get().getCreatedDate());
-        parameters.setModifyDate(eleve.get().getLastModifiedDate());
-        parameters.setDateDeNaissance(eleve.get().getDateDeNaissance());
-        parameters.setAge(eleve.get().getAge());
-        parameters.setStudentIneNumber(eleve.get().getIneNumber());
-        parameters.setPere(eleve.get().getPere());
-        parameters.setMere(eleve.get().getMere());
-        parameters.setPhoneNumber(eleve.get().getPhoneNumber());
-        parameters.setEtablissement(eleve.get().getEtablissement());
-        parameters.setAbsences(eleve.get().getAbsences());
-        parameters.updateStudent(eleve.get());
-        log.debug("Metter à d'un Eleve {} ({})", parameters.getUserName().getFullName());
-        return eleve.get();
+
+         //parameters.updateStudent(eleve);
+        eleveRepository.save(eleve);
+        // Log
+        log.debug("Mise à jour de l'élève {} ({})", parameters.getUserName().getFullName(), parameters.getEmail());
+        return eleve;
     }
 
     /**
      * Obtient un élève par son ID.
      *
-     * @param userId L'ID de l'élève à rechercher.
+     * @param userId
+     *         L'ID de l'élève à rechercher.
      * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
      */
     @Override
     public Optional<Eleve> obtenirEleveParSonId(Long userId) {
-        log.debug("obtenirEleveParSonId {}", userId);
-
-       Optional<Eleve> optionalEleve= eleveRepository.findById(userId);
+        Optional<Eleve> optionalEleve = eleveRepository.findById(userId);
+        log.debug("obtenirEleveParSonId {} ({})", optionalEleve.get().getUserName(), optionalEleve.get().getId());
         return optionalEleve;
     }
 
     /**
      * Récupère un élève en fonction de son numéro INE.
      *
-     * @param ineNumber Le numéro INE de l'élève.
+     * @param ineNumber
+     *         Le numéro INE de l'élève.
      * @return Une instance d'Élève enveloppée dans un Optional, ou Optional.empty() si aucun élève correspondant n'est trouvé.
      */
     @Override
     public Optional<Eleve> chercherParSonNumeroIne(String ineNumber) {
 
-        return  eleveRepository.findByIneNumber(ineNumber);
+        return Optional.ofNullable(eleveRepository.findByIneNumber(ineNumber)
+                .orElseThrow(() -> KaladewnManagementException.throwException("L'élève avec cet numéro INE: %s n'a pas été trouvé", ineNumber)));
     }
 
     /**
      * Supprime un élève par son ID.
      *
-     * @param userId L'ID de l'élève à supprimer.
+     * @param userId
+     *         L'ID de l'élève à supprimer.
      */
     @Override
     public void supprimerEleveParSonId(Long userId) {
@@ -192,12 +180,11 @@ public class EleveServiceImpl implements EleveService {
     public long countEleves() {
 
         List<Eleve> eleveList = eleveRepository.findAll((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
-        if (!eleveList.isEmpty()) {
+        if(!eleveList.isEmpty()) {
             return eleveList.size();
         }
         return 0;
     }
-
 
     /**
      * Supprime tous les élèves.
@@ -206,10 +193,7 @@ public class EleveServiceImpl implements EleveService {
     public void deleteAllEleves() {
         log.debug("deleteAllEleves");
 
-
     }
-
-
 
     /**
      * @param createEleveParameters
@@ -225,41 +209,46 @@ public class EleveServiceImpl implements EleveService {
     /**
      * Récupère une liste d'élèves par leur prénom et nom de famille.
      *
-     * @param prenom       Le prénom de l'élève.
-     * @param nomDeFamille Le nom de famille de l'élève.
+     * @param prenom
+     *         Le prénom de l'élève.
+     * @param nomDeFamille
+     *         Le nom de famille de l'élève.
      * @return Une liste d'élèves correspondant aux critères de recherche.
      */
     @Override
     public Optional<Eleve> recupererEleveParPrenomEtNom(String prenom, String nomDeFamille) {
 
-        Optional<User> optionalUser = eleveRepository.findByUserName_PrenomAndUserName_NomDeFamille(prenom, nomDeFamille);
-        Eleve eleve=  new Eleve();
-        if (optionalUser.isPresent()) {
+        Optional<User> optionalUser = Optional.ofNullable(eleveRepository.findByUserName_PrenomAndUserName_NomDeFamille(prenom, nomDeFamille)
+                .orElseThrow(() -> KaladewnManagementException.throwException("L'élève suivant : %s %s n'a pas été trouvé", prenom, nomDeFamille)));
+        Eleve eleve = new Eleve();
+        if(optionalUser.isPresent()) {
             User user = optionalUser.get();
-          eleve= (Eleve) user;
-          return Optional.of(eleve);
+            eleve = (Eleve) user;
+            return Optional.of(eleve);
         }
 
         return Optional.of(eleve);
     }
 
-
     /**
      * Cette méthode permet d'ajouter une photo au profil d'un élève s'il est fourni dans les paramètres.
      *
-     * @param parameters Les paramètres de création de l'élève.
-     * @param eleve      L'élève auquel la photo doit être associée.
-     * @throws KaladewnManagementException Si une erreur survient lors de la récupération ou de la sauvegarde de la photo.
+     * @param parameters
+     *         Les paramètres de création de l'élève.
+     * @param eleve
+     *         L'élève auquel la photo doit être associée.
+     * @throws KaladewnManagementException
+     *         Si une erreur survient lors de la récupération ou de la sauvegarde de la photo.
      */
     private static void ajouterPhotoSiPresent(CreateEleveParameters parameters, Eleve eleve) {
         // Récupère le fichier de profil de l'élève depuis les paramètres.
         MultipartFile profileEleve = parameters.getAvatar();
 
-        if (profileEleve != null) {
+        if(profileEleve != null) {
             try {
                 // Convertit le contenu du fichier en tableau de bytes et l'associe à l'élève.
                 eleve.setAvatar(profileEleve.getBytes());
-            } catch (IOException e) {
+            } catch(IOException e) {
                 // En cas d'erreur lors de la récupération des bytes du fichier, lance une exception personnalisée.
                 throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
             }
@@ -283,36 +272,41 @@ public class EleveServiceImpl implements EleveService {
     /**
      * Recherche un élève distinct par absence et nom d'utilisateur.
      *
-     * @param absenceEleve L'absence de l'élève à rechercher.
-     * @param userName     Le nom d'utilisateur à rechercher.
+     * @param absenceEleve
+     *         L'absence de l'élève à rechercher.
+     * @param userName
+     *         Le nom d'utilisateur à rechercher.
      * @return Un objet Optional contenant l'élève distinct correspondant à l'absence et au nom d'utilisateur (s'il existe).
      */
     @Override
     public Optional<Eleve> findDistinctByAbsencesAndUserName(Absence absenceEleve, UserName userName) {
 
-
         return eleveRepository.findDistinctByAbsencesAndUserName(absenceEleve, userName);
     }
 
     /**
-     * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la casse).
+     * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la
+     * casse).
      *
-     * @param dateDeNaissance La date de naissance à rechercher.
-     * @param numeroIne       La chaîne de numéro INE à rechercher.
+     * @param dateDeNaissance
+     *         La date de naissance à rechercher.
+     * @param numeroIne
+     *         La chaîne de numéro INE à rechercher.
      * @return Un objet Optional contenant l'élève correspondant aux critères de recherche (s'il existe).
      */
     @Override
     public Optional<Eleve> searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(LocalDate dateDeNaissance, String numeroIne) {
 
-        Optional<Eleve> eleve = eleveRepository.searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(dateDeNaissance, numeroIne);
-        return eleve;
+        return eleveRepository.findByDateDeNaissanceAndIneNumberContainingIgnoreCase(dateDeNaissance, numeroIne);
     }
 
     /**
      * Recherche un élève par date de création se situant entre les dates spécifiées.
      *
-     * @param debut La date de début de la période de création.
-     * @param fin   La date de fin de la période de création.
+     * @param debut
+     *         La date de début de la période de création.
+     * @param fin
+     *         La date de fin de la période de création.
      * @return Un objet Optional contenant l'élève correspondant à la période de création (s'il existe).
      */
     @Override
@@ -323,8 +317,10 @@ public class EleveServiceImpl implements EleveService {
     /**
      * Compte le nombre d'élèves par absence et date de création.
      *
-     * @param absenceEleve   L'absence de l'élève à prendre en compte.
-     * @param dateDeCreation La date de création à prendre en compte.
+     * @param absenceEleve
+     *         L'absence de l'élève à prendre en compte.
+     * @param dateDeCreation
+     *         La date de création à prendre en compte.
      * @return Un objet Optional contenant le nombre d'élèves correspondant aux critères de recherche (s'il existe).
      */
     @Override
@@ -335,7 +331,8 @@ public class EleveServiceImpl implements EleveService {
     /**
      * Recherche un élève distinct par absence.
      *
-     * @param absenceEleve L'absence de l'élève à rechercher.
+     * @param absenceEleve
+     *         L'absence de l'élève à rechercher.
      * @return Un objet Optional contenant l'élève distinct correspondant à l'absence (s'il existe).
      */
     @Override
@@ -346,7 +343,8 @@ public class EleveServiceImpl implements EleveService {
     /**
      * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
      *
-     * @param salleDeClasse La salle de classe pour laquelle rechercher les élèves.
+     * @param salleDeClasse
+     *         La salle de classe pour laquelle rechercher les élèves.
      * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève ne correspond aux critères de recherche.
      */
     @Override
@@ -359,13 +357,26 @@ public class EleveServiceImpl implements EleveService {
         return eleveRepository.findAllBySalleAndDate(salleDeClasse, dateActuelle, pageable);
     }
 
+    /**
+     * Ajoute un nouveau élève en utilisant les paramètres fournis.
+     *
+     * @param createEleveParameters
+     *         Les paramètres nécessaires pour créer un nouvel élève.
+     * @return Le nouvel élève créé.
+     * @throws IllegalStateException
+     *         Si l'objet élève n'a pas pu être sauvegardé.
+     */
     private Eleve ajouterUnNouveauEleve(CreateEleveParameters createEleveParameters) {
+        log.info("Début de la méthode ajouterUnNouveauEleve avec les paramètres: {}", createEleveParameters);
+
         Eleve eleve = new Eleve();
 
         eleve.setPere(createEleveParameters.getMere());
         eleve.setMere(createEleveParameters.getMere());
 
-        eleve.setEtablissement(etablissementService.trouverEtablissementScolaireParSonIdentifiant(createEleveParameters.getEtablissement().getEtablisementScolaireId()));
+        log.debug("Etablissement scolaire ID: {}", createEleveParameters.getEtablissement().getEtablisementScolaireId());
+        eleve.setEtablissement(
+                etablissementService.trouverEtablissementScolaireParSonIdentifiant(createEleveParameters.getEtablissement().getEtablisementScolaireId()));
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
 
         eleve.setUserName(createEleveParameters.getUserName());
@@ -376,6 +387,7 @@ public class EleveServiceImpl implements EleveService {
         eleve.setLastModifiedDate(createEleveParameters.getModifyDate());
         eleve.setAddress(createEleveParameters.getAddress());
         eleve.setPassword(createEleveParameters.getPassword());
+
         ajouterPhotoSiPresent(createEleveParameters, eleve);
         eleve.setMaritalStatus(createEleveParameters.getMaritalStatus());
         eleve.setAge(CalculateUserAge.calculateAge(createEleveParameters.getDateDeNaissance()));
@@ -383,21 +395,21 @@ public class EleveServiceImpl implements EleveService {
 
         eleve.setRoles(Collections.singleton(UserRole.STUDENT));
 
-
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<Eleve>> constraintViolations = validator.validate(eleve, ValidationGroupOne.class);
-        if (!constraintViolations.isEmpty()) {
-
+        if(!constraintViolations.isEmpty()) {
+            log.error("Validation échouée pour l'élève: {}", constraintViolations);
             constraintViolations.forEach(c -> KaladewnManagementException.throwException(c.getMessage()));
         }
-        Eleve nouveauEleve = eleveRepository.save(eleve);
-        if (nouveauEleve != null) {
 
+        Eleve nouveauEleve = eleveRepository.save(eleve);
+        if(nouveauEleve != null) {
+            log.info("Élève sauvegardé avec succès: {}", nouveauEleve);
             return nouveauEleve;
         } else {
-            throw new IllegalStateException("L'objet Eleve n'a pas été sauvegardé.");
+            log.error("L'objet Eleve n'a pas été sauvegardé.");
+            throw  KaladewnManagementException.throwException("L'objet Eleve %s n'a pas été sauvegardé.", eleve.toString());
         }
     }
-
 }
 

@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.response;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.*;
 import ml.kalanblow.gestiondesinscriptions.request.EditEnseignantParameters;
@@ -13,7 +14,8 @@ import java.util.List;
 
 @NoArgsConstructor
 @Data
-public class EditEnseignantFormData extends CreateEnseignantFormData {
+@EqualsAndHashCode(callSuper = false)
+public final class EditEnseignantFormData extends CreateEnseignantFormData {
     private Long id;
     private long version;
     private String leMatricule;
@@ -66,27 +68,15 @@ public class EditEnseignantFormData extends CreateEnseignantFormData {
     public EditEnseignantParameters toEnseignantParameters() {
 
         EditEnseignantParameters editEnseignantParameters = new EditEnseignantParameters();
-        editEnseignantParameters.setAddress(getAddress());
         editEnseignantParameters.setAge(getAge());
         editEnseignantParameters.setCoursDEnseignements(getCoursDEnseignements());
-        editEnseignantParameters.setCreatedDate(getCreatedDate());
         editEnseignantParameters.setDateDeNaissance(getDateDeNaissance());
-        editEnseignantParameters.setEmail(new Email(getEmail()));
         editEnseignantParameters.setEtablissement(getEtablissement());
-        editEnseignantParameters.setGender(getGender());
         editEnseignantParameters.setHeureDebutDisponibilite(getHeureDebutDisponibilite());
         editEnseignantParameters.setHoraireClasses(getHoraireClasses());
         editEnseignantParameters.setHeureFinDisponibilite(getHeureFinDisponibilite());
         editEnseignantParameters.setJoursDisponibles(getJoursDisponibles());
         editEnseignantParameters.setLeMatricule(getLeMatricule());
-        editEnseignantParameters.setMaritalStatus(getMaritalStatus());
-        editEnseignantParameters.setModifyDate(getModifyDate());
-        editEnseignantParameters.setPassword(getPassword());
-        editEnseignantParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
-
-        if(getAvatarFile() !=null && !getAvatarFile().isEmpty()){
-            editEnseignantParameters.setAvatar(getAvatarFile());
-        }
 
         return editEnseignantParameters;
 

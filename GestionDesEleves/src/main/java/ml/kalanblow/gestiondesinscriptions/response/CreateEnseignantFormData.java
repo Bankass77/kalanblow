@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.response;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Cours;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
@@ -19,7 +20,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CreateEnseignantFormData extends  CreateUserFormData{
+@EqualsAndHashCode(callSuper=false)
+public sealed class CreateEnseignantFormData extends  AbstractUserFormData permits EditEnseignantFormData {
 
     @NotBlank
     @NotNull(groups = ValidationGroupOne.class)
@@ -59,9 +61,9 @@ public class CreateEnseignantFormData extends  CreateUserFormData{
         CreateEnseignantParameters createEnseignantParameters= new CreateEnseignantParameters();
 
         createEnseignantParameters.setCoursDEnseignements(getCoursDEnseignements());
-        createEnseignantParameters.setUserName(new UserName(getPrenom(), getNomDeFamille()));
+
         createEnseignantParameters.setAge(CalculateUserAge.calculateAge(getDateDeNaissance()));
-        createEnseignantParameters.setCreatedDate(getCreatedDate());
+
         createEnseignantParameters.setEtablissement(getEtablissement());
         createEnseignantParameters.setDateDeNaissance(getDateDeNaissance());
         createEnseignantParameters.setHeureDebutDisponibilite(getHeureDebutDisponibilite());

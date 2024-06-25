@@ -2,11 +2,13 @@ package ml.kalanblow.gestiondesinscriptions.request;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.model.Matiere;
 
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class EditMatiereParameters extends CreateMatiereParameters {
 
     private  long version;

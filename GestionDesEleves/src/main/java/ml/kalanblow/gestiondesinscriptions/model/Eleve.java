@@ -20,13 +20,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @JsonDeserialize(builder = Eleve.EleveBuilder.class)
 public class Eleve extends User {
 
     private static final long serialVersionUID = 1L;
+
     @Column(name = "ine_number")
     @NotNull(message = "{notnull.message}")
     private String ineNumber;
@@ -43,7 +44,6 @@ public class Eleve extends User {
     @NotNull(message = "{notnull.message}")
     private int age;
 
-
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "pere_id")
     @NotNull(message = "{notnull.message}")
@@ -57,7 +57,7 @@ public class Eleve extends User {
     @OneToMany(mappedBy = "eleve", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Absence> absences;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
@@ -65,11 +65,9 @@ public class Eleve extends User {
     @JoinColumn(name = "classe_Id")
     private Salle salle;
 
-
-    private LocalDateTime dateInscription = LocalDateTime.now();
+    private final LocalDateTime dateInscription = LocalDateTime.now();
 
     private Eleve(EleveBuilder eleveBuilder) {
-
         this.ineNumber = eleveBuilder.ineNumber;
         this.dateDeNaissance = eleveBuilder.dateDeNaissance;
         this.age = eleveBuilder.age;
@@ -80,19 +78,22 @@ public class Eleve extends User {
 
     }
 
-
     /**
      * Builder de la class Elève
      */
     @JsonPOJOBuilder(withPrefix = "")
     public static class EleveBuilder extends User.UserBuilder {
+
         private String ineNumber;
+
         private LocalDate dateDeNaissance;
+
         private int age;
 
         private Parent parent;
 
         private Etablissement etablissement;
+
         private List<Absence> absences;
 
         public EleveBuilder ineNumber(String ineNumber) {
@@ -101,42 +102,32 @@ public class Eleve extends User {
             return this;
         }
 
-
         public EleveBuilder pere(Parent pere) {
-
             this.pere = pere;
-
             return this;
         }
 
         public EleveBuilder mere(Parent mere) {
-
             this.mere = mere;
             return this;
         }
 
         public EleveBuilder dateDeNaissance(LocalDate dateDeNaissance) {
-
             this.dateDeNaissance = dateDeNaissance;
             return this;
         }
 
         public EleveBuilder etablissementScolaire(Etablissement etablissement) {
-
             this.etablissement = etablissement;
-
             return this;
         }
 
         public EleveBuilder absences(List<Absence> absences) {
-
             this.absences = absences;
             return this;
         }
 
-
         public Eleve build() {
-
             return new Eleve(this);
         }
     }
@@ -144,7 +135,6 @@ public class Eleve extends User {
     // Méthode statique pour créer une instance de Eleve à partir du builder
     @JsonDeserialize(builder = User.UserBuilder.class)
     public static Eleve createEleveFromBuilder(EleveBuilder builder) {
-
         return builder().build();
     }
 }

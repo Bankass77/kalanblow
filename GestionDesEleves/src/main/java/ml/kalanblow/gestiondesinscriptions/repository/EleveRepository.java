@@ -55,10 +55,10 @@ public interface EleveRepository extends UserBaseRepository<Eleve>, JpaSpecifica
      * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la casse).
      *
      * @param dateDeNaissance La date de naissance à rechercher.
-     * @param numeroIne La chaîne de numéro INE à rechercher.
+     * @param ineNumber La chaîne de numéro INE à rechercher.
      * @return Un objet Optional contenant l'élève correspondant aux critères de recherche (s'il existe).
      */
-    Optional<Eleve> searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(LocalDate dateDeNaissance, String numeroIne);
+    Optional<Eleve> findByDateDeNaissanceAndIneNumberContainingIgnoreCase(LocalDate dateDeNaissance, String ineNumber);
 
     /**
      * Recherche un élève par date de création se situant entre les dates spécifiées.

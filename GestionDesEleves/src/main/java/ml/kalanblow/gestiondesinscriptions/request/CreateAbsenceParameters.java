@@ -16,26 +16,15 @@ import ml.kalanblow.gestiondesinscriptions.model.Horaire;
 @AllArgsConstructor
 public class CreateAbsenceParameters {
 
-     @NotNull(message = "{notnull.message}")
     private Horaire horaireClasse;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private String motif;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private boolean estJustifiee;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private Cours cours;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private Presence presence;
 
-     @NotNull(message = "{notnull.message}")
-    @NotBlank
     private Eleve eleve;
 }

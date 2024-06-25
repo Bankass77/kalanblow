@@ -28,14 +28,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class KalanblowCustomUserDetailsService implements UserDetailsService {
 
-
     private final EleveRepository  eleveRepository;
 
     private final EnseignantRepository  enseignantRepository;
 
     private final ParentRepository parentRepository;
-
-
 
     @Autowired
     public KalanblowCustomUserDetailsService(EleveRepository eleveRepository, EnseignantRepository enseignantRepository, ParentRepository parentRepository) {

@@ -1,14 +1,15 @@
 package ml.kalanblow.gestiondesinscriptions.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nullable;
 import lombok.*;
-import ml.kalanblow.gestiondesinscriptions.model.Cours;
-import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
-import ml.kalanblow.gestiondesinscriptions.model.Horaire;
+import ml.kalanblow.gestiondesinscriptions.enums.Gender;
+import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
+import ml.kalanblow.gestiondesinscriptions.model.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -16,19 +17,18 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public sealed class CreateEnseignantParameters  extends CreateUserParameters permits EditEnseignantParameters {
+public sealed class CreateEnseignantParameters permits EditEnseignantParameters {
 
+    private UserName userName;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
+    private Email email;
+
     private String leMatricule;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
+    private Gender gender;
+
     private LocalDate dateDeNaissance;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private int age;
 
     private List<DayOfWeek> joursDisponibles;
@@ -37,13 +37,24 @@ public sealed class CreateEnseignantParameters  extends CreateUserParameters per
 
     private LocalTime heureFinDisponibilite;
 
-    @NotBlank
-     @NotNull(message = "{notnull.message}")
     private Etablissement etablissement;
-
 
     private List<Cours> coursDEnseignements;
 
+    private MaritalStatus maritalStatus;
+
     private List<Horaire> horaireClasses;
 
+    private Address address;
+
+    private LocalDateTime createdDate = LocalDateTime.now();
+
+    private LocalDateTime modifyDate = LocalDateTime.now();
+
+    private String password;
+
+    private PhoneNumber phoneNumber;
+
+    @Nullable
+    private MultipartFile avatar;
 }

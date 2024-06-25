@@ -8,7 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySources({@PropertySource(value = "classpath:i18n/messages.properties"),
+@PropertySources({@PropertySource(value = "classpath:i18n/messages.properties"),@PropertySource(value = "classpath:i18n/messages_fr.properties"),
         @PropertySource(value = "classpath:application.properties"), @PropertySource(value = "classpath:application.yaml")})
 
 @Profile("dev")

@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.request;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class EditEtablissementParameters extends CreateEtablissementParameters {
 
     private  long version;

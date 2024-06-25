@@ -1,6 +1,5 @@
 package ml.kalanblow.gestiondesinscriptions.config;
 
-
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -28,10 +27,8 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
- * Configuration class for the Kaladewn application. This class implements
- * the {@link org.springframework.web.servlet.config.annotation.WebMvcConfigurer}
- * interface and defines various beans related to Thymeleaf template resolution,
- * template engines, request logging, and validation.
+ * Configuration class for the Kaladewn application. This class implements the {@link org.springframework.web.servlet.config.annotation.WebMvcConfigurer}
+ * interface and defines various beans related to Thymeleaf template resolution, template engines, request logging, and validation.
  */
 
 @Configuration
@@ -89,38 +86,28 @@ public class KaladewnConfig implements WebMvcConfigurer {
         return resolver;
     }
 
-
-
     /**
      * Configures a local validator factory bean with a specified message source.
      *
-     * @param messageSource The message source for validation messages.
+     * @param messageSource
+     *         The message source for validation messages.
      * @return The local validator factory bean.
      */
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean(MessageSource messageSource) {
-
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
-
         return bean;
     }
-
-    @Bean
-    public static BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy(
-                "ROLE_ADMIN > ROLE_MANAGER and ROLE_MANAGER > ROLE_TEACHER and ROLE_TEACHER > ROLE_STUDENT and ROLE_MANAGER > ROLE_USER and ROLE_PARENT > ROLE_USER"
-        );
+                "ROLE_ADMIN > ROLE_MANAGER and ROLE_MANAGER > ROLE_TEACHER and ROLE_TEACHER > ROLE_STUDENT and ROLE_MANAGER > ROLE_USER and ROLE_PARENT > ROLE_USER");
         return roleHierarchy;
-
     }
+
     /**
      * Configures a CommonsRequestLoggingFilter for request logging.
      *
@@ -144,9 +131,10 @@ public class KaladewnConfig implements WebMvcConfigurer {
     @Bean
     public OpenAPI getOpenApiDocumentation() {
 
-        return new OpenAPI().info(new Info().title(apiTitle).description(apiDescription)
-                .version(apiVersion).contact(new Contact().name(apiContactName).url(apiContactUrl))
-                .termsOfService(apiTermsOfService).license(new License().name(apiLicense).url(apiLicenseUrl))).externalDocs(new ExternalDocumentation().description(apiDescription).url(apiExternalDocUrl));
+        return new OpenAPI().info(
+                        new Info().title(apiTitle).description(apiDescription).version(apiVersion).contact(new Contact().name(apiContactName).url(apiContactUrl))
+                                .termsOfService(apiTermsOfService).license(new License().name(apiLicense).url(apiLicenseUrl)))
+                .externalDocs(new ExternalDocumentation().description(apiDescription).url(apiExternalDocUrl));
 
     }
 
@@ -167,7 +155,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
 
     }
 
-
     @Bean
     public LocaleChangeInterceptor localeInterceptor() {
         LocaleChangeInterceptor localeInterceptor = new LocaleChangeInterceptor();
@@ -179,7 +166,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeInterceptor());
     }
-
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

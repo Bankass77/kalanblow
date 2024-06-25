@@ -37,7 +37,7 @@ target/
 .springBeans
 .sts4-cache
 .env
-*.properties
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -59,6 +59,6 @@ build/
 ### Intellij
 *.iml
 ### Properties files
-*.properties
-*.yaml
-*.yml
+
+
+
