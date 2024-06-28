@@ -59,6 +59,4 @@ build/
 ### Intellij
 *.iml
 ### Properties files
-*.properties
-*.yaml
-*.yml
+
