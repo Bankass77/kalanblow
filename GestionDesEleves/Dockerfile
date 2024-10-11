@@ -8,8 +8,8 @@ RUN apk --no-cache add \
 # Define environment variables
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS JAVA_OPTS=""
 
-# Set the working directory to /src
-WORKDIR /src
+# Set the working directory to /GestionDesEleves
+WORKDIR ./
 
 # Copy the application source code
 COPY . .

@@ -4,29 +4,10 @@ import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
-import ml.kalanblow.gestiondesinscriptions.request.CreateEtablissementParameters;
-import ml.kalanblow.gestiondesinscriptions.request.EditEtablissementParameters;
 
 import java.util.Optional;
 
 public interface EtablissementService {
-
-    /**
-     * Crée un nouvel établissement scolaire en utilisant les paramètres fournis.
-     *
-     * @param createEtablissementScolaireParameters Les paramètres pour la création de l'établissement scolaire.
-     * @return L'établissement scolaire créé.
-     */
-    Etablissement creerEtablissementScolaire(CreateEtablissementParameters createEtablissementScolaireParameters);
-
-    /**
-     * Met à jour un établissement scolaire existant en utilisant son identifiant et les paramètres fournis.
-     *
-     * @param id L'identifiant de l'établissement scolaire à mettre à jour.
-     * @param editEtablissementScolaireParameters Les paramètres pour la mise à jour de l'établissement scolaire.
-     * @return L'établissement scolaire mis à jour.
-     */
-    Etablissement miseAJourEtablissementScolaire(long id, EditEtablissementParameters editEtablissementScolaireParameters);
 
     /**
      * Trouve un établissement scolaire par son nom.

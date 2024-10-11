@@ -2,8 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.service;
 
 
 import ml.kalanblow.gestiondesinscriptions.model.*;
-import ml.kalanblow.gestiondesinscriptions.request.CreateEleveParameters;
-import ml.kalanblow.gestiondesinscriptions.request.EditEleveParameters;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -38,14 +37,6 @@ public interface EleveService {
      */
     Page<Eleve> obtenirListeElevePage(Pageable pageable) ;
 
-    /**
-     * Met à jour les informations d'un élève.
-     *
-     * @param userId     L'identifiant de l'élève à mettre à jour.
-     * @param parameters Les paramètres de mise à jour.
-     * @return L'élève mis à jour.
-     */
-    Eleve mettreAjourUtilisateur(Long userId, EditEleveParameters parameters);
 
     /**
      * Obtient un élève par son identifiant.
@@ -85,14 +76,6 @@ public interface EleveService {
 
 
     /**
-     * Crée un nouvel élève en utilisant les paramètres spécifiés.
-     *
-     * @param createEleveParameters Les paramètres pour créer l'élève.
-     * @return L'élève créé.
-     */
-    Eleve ajouterUnEleve(CreateEleveParameters createEleveParameters);
-
-    /**
      * Récupère une liste d'élèves par leur prénom et nom de famille.
      *
      * @param prenom       Le prénom de l'élève.
@@ -118,15 +101,6 @@ public interface EleveService {
 
 
     /**
-     * Recherche un élève distinct par absence et nom d'utilisateur.
-     *
-     * @param absenceEleve L'absence de l'élève à rechercher.
-     * @param userName     Le nom d'utilisateur à rechercher.
-     * @return Un objet Optional contenant l'élève distinct correspondant à l'absence et au nom d'utilisateur (s'il existe).
-     */
-    Optional<Eleve> findDistinctByAbsencesAndUserName(Absence absenceEleve, UserName userName);
-
-    /**
      * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la casse).
      *
      * @param dateDeNaissance La date de naissance à rechercher.
@@ -145,30 +119,5 @@ public interface EleveService {
     Optional<Optional> findEleveByCreatedDateBetween(LocalDate debut, LocalDate fin);
 
 
-    /**
-     * Compte le nombre d'élèves par absence et date de création.
-     *
-     * @param absenceEleve   L'absence de l'élève à prendre en compte.
-     * @param dateDeCreation La date de création à prendre en compte.
-     * @return Un objet Optional contenant le nombre d'élèves correspondant aux critères de recherche (s'il existe).
-     */
-    Optional<Eleve> countEleveByAbsencesAndCreatedDate(Absence absenceEleve, LocalDate dateDeCreation);
 
-    /**
-     * Recherche un élève distinct par absence.
-     *
-     * @param absenceEleve L'absence de l'élève à rechercher.
-     * @return Un objet Optional contenant l'élève distinct correspondant à l'absence (s'il existe).
-     */
-    Optional<Eleve> findDistinctByAbsences(Absence absenceEleve);
-
-    /**
-     * Recherche une liste distincte d'élèves en fonction de la salle de classe et de l'établissement scolaire fournis.
-     *
-     * @param salleDeClasse La salle de classe pour laquelle rechercher les élèves.
-     * @return Une liste facultative (Optional) d'élèves. Elle peut être vide si aucun élève ne correspond aux critères de recherche.
-     */
-    Optional<List<Eleve>> recupererElevesParClasse (Salle salleDeClasse);
-
-    Page<Eleve> recupererLaListeDesElevesParClasseEtDate(Salle salleDeClasse, LocalDate dateActuelle, Pageable pageable);
 }

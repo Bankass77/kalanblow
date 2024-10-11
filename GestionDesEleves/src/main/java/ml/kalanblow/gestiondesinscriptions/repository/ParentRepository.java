@@ -10,12 +10,10 @@ import java.util.List;
 @Repository
 public interface ParentRepository  extends JpaRepository<Parent, Long> {
 
-
     List<Parent> findByProfession(String profession);
 
-
     // Méthode pour récupérer un parent par son ID
-    Parent findById(long id);
+    Parent findByParentId(long id);
 
     List<Parent> findParentByEnfantsMereOrEnfantsPere( Parent parent1, Parent parent2);
 

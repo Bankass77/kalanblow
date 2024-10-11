@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
@@ -15,27 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
-/**
- * Configuration class for the Kaladewn application. This class implements
- * the {@link org.springframework.web.servlet.config.annotation.WebMvcConfigurer}
- * interface and defines various beans related to Thymeleaf template resolution,
- * template engines, request logging, and validation.
- */
 
 @Configuration
-public class KaladewnConfig implements WebMvcConfigurer {
+public class KaladewnConfig{
 
     @Value("${api.common.version}")
     String apiVersion;
@@ -70,25 +54,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
     @Value("${api.common.contact.email}")
     String apiContactEmail;
 
-    /**
-     * Configures a Thymeleaf template resolver for SVG templates.
-     *
-     * @return The Thymeleaf template resolver for SVG templates.
-     */
-    @Bean
-    @Qualifier("svgTemplateEngine")
-    public ITemplateResolver svgTemplateResolver() {
-        var resolver = new SpringResourceTemplateResolver();
-        resolver.setPrefix("classpath:templates/svg/");
-        resolver.setCharacterEncoding("UTF-8");
-        resolver.setSuffix(".svg");
-        resolver.setTemplateMode("XML");
-        resolver.setCacheable(false);
-        resolver.setCheckExistence(true);
-
-        return resolver;
-    }
-
 
 
     /**
@@ -106,13 +71,8 @@ public class KaladewnConfig implements WebMvcConfigurer {
         return bean;
     }
 
-    @Bean
-    public static BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
-
-    @Bean
+ /*   @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy(
@@ -120,7 +80,7 @@ public class KaladewnConfig implements WebMvcConfigurer {
         );
         return roleHierarchy;
 
-    }
+    }*/
     /**
      * Configures a CommonsRequestLoggingFilter for request logging.
      *
@@ -151,14 +111,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
     }
 
     /**
-     * @return new RestTemple
-     */
-    @Bean
-    RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    /**
      * @return
      */
     @Bean
@@ -166,20 +118,6 @@ public class KaladewnConfig implements WebMvcConfigurer {
         return new InMemoryHttpExchangeRepository();
 
     }
-
-
-    @Bean
-    public LocaleChangeInterceptor localeInterceptor() {
-        LocaleChangeInterceptor localeInterceptor = new LocaleChangeInterceptor();
-        localeInterceptor.setParamName("lang");
-        return localeInterceptor;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeInterceptor());
-    }
-
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

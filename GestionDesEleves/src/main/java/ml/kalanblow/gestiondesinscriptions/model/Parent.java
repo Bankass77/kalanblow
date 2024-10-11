@@ -6,11 +6,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@PrimaryKeyJoinColumn(name = "id")
-@DiscriminatorValue("PARENTS")
+
 @Table(name = "parent")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,17 +18,25 @@ import java.util.Set;
 @Data
 @Entity
 @JsonDeserialize(builder = Parent.ParentBuilder.class)
-public class Parent extends  User{
+public class Parent implements Serializable {
+
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long parentId;
+
+    @Embedded
+    private  User user;
 
     @NotNull(message = "{notnull.message}")
     private String profession;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "pere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pere", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> enfantsPere = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "mere", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "mere", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> enfantsMere = new HashSet<>();
 
 

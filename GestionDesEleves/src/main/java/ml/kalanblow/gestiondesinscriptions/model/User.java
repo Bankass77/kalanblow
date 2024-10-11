@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.util.converter.GenderConverter;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -28,29 +30,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-
-@Data
-@Entity
-@Table(name = "kalanblowUtilisateur", uniqueConstraints = @UniqueConstraint(columnNames = "id"), indexes = @Index(name = "idx_user_email", columnList = "email", unique = true))
-@Accessors(chain = true)
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "USER_TYPE")
-@EqualsAndHashCode(callSuper = false)
-@EntityListeners(AuditingEntityListener.class)
-@JsonDeserialize(builder = User.UserBuilder.class)
-public abstract class User implements Serializable {
-    @Id
-    @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Version()
-    private Long version;
-
+@Embeddable
+public class User implements Serializable {
 
     @Embedded
     private UserName userName;
@@ -107,7 +88,6 @@ public abstract class User implements Serializable {
             @AttributeOverride(name = "city", column = @Column(name = "city")),
             @AttributeOverride(name = "country", column = @Column(name = "country"))})
     private Address address;
-
 
 
     @ElementCollection(targetClass = UserRole.class)

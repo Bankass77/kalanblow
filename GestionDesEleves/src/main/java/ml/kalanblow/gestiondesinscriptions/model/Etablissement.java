@@ -82,14 +82,12 @@ public class Etablissement {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> eleves;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Enseignant> enseignants;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Salle> salles;
 
     private Etablissement(EtablissementBuilder builder) {
         this.address = builder.address;
@@ -115,7 +113,6 @@ public class Etablissement {
         private Set<Eleve> eleves;
         private Set<Enseignant> enseignants;
 
-        private Set<Salle> salles;
     @Version()
     private Long version;
 
@@ -175,12 +172,6 @@ public class Etablissement {
 
             this.enseignants = enseignants;
 
-            return this;
-        }
-
-       public EtablissementBuilder salles(Set<Salle> salles) {
-
-            this.salles = salles;
             return this;
         }
 

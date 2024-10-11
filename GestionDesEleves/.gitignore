@@ -1,0 +1,19 @@
+# Ignorer les fichiers de log
+*.log
+
+# Ignorer les répertoires de dépendances
+/node_modules/
+/vendor/
+
+# Ignorer les fichiers de configuration de l'IDE
+.idea/
+*.iml
+
+# Ignorer les fichiers de build
+/build/
+/dist/
+
+# Ignorer les fichiers temporaires
+*.tmp
+.env
+
