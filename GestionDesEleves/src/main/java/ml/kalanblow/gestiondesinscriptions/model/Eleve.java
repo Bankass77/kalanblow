@@ -3,28 +3,30 @@ package ml.kalanblow.gestiondesinscriptions.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +36,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import ml.kalanblow.gestiondesinscriptions.enums.EtatEleve;
 
 @Entity
 @Table(name = "eleve")
@@ -41,11 +44,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-@JsonDeserialize(builder = User.UserBuilder.class)
 public class Eleve implements Serializable {
 
     @Id
@@ -59,7 +59,6 @@ public class Eleve implements Serializable {
     @Embedded
     private User user;
 
-    private static final long serialVersionUID = 1L;
     @Column(name = "ine_number")
     @NotNull(message = "{notnull.message}")
     private String ineNumber;
@@ -68,29 +67,37 @@ public class Eleve implements Serializable {
     @Column(name = "birthDate")
     @Past
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @JsonIgnore
-    @JsonFormat
     private LocalDate dateDeNaissance;
 
     @Column(name = "age")
     @NotNull(message = "{notnull.message}")
     private int age;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "pere_id")
-    @NotNull(message = "{notnull.message}")
-    private Parent pere;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "eleve_parent",
+            joinColumns = @JoinColumn(name = "eleveId"),
+            inverseJoinColumns = @JoinColumn(name = "parentId")
+    )
+    private Set<Parent> parents = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "mere_id")
-    @NotNull(message = "{notnull.message}")
-    private Parent mere;
-
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "etablisementScolaireId")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "etablisementScolaireId", nullable = false, referencedColumnName = "etablisementScolaireId")
     private Etablissement etablissement;
 
+    @Column
     private LocalDateTime dateInscription = LocalDateTime.now();
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "{notnull.message}")
+    private EtatEleve etat;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "classeId", nullable = false,referencedColumnName ="classeId" )
+    private Classe classeActuelle;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "eleve_anneehistorique")
+    private List<AnneeScolaire> historiqueScolaires;
 }

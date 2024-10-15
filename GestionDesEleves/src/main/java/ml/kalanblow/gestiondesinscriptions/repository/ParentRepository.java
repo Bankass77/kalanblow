@@ -1,22 +1,28 @@
 package ml.kalanblow.gestiondesinscriptions.repository;
 
 import ml.kalanblow.gestiondesinscriptions.model.Parent;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
-public interface ParentRepository  extends JpaRepository<Parent, Long> {
+public interface ParentRepository extends JpaRepository<Parent, Long> {
 
     List<Parent> findByProfession(String profession);
 
     // Méthode pour récupérer un parent par son ID
-    Parent findByParentId(long id);
+    Optional<Parent> findByParentId(long id);
 
-    List<Parent> findParentByEnfantsMereOrEnfantsPere( Parent parent1, Parent parent2);
+    Optional<Parent> findByUserUserNamePrenomAndUserUserNameNomDeFamille(String prenom, String nomDeFamille);
 
-    List<Parent> findParentByEnfantsMereAndEnfantsPere( Parent parent1, Parent parent2);
+    Optional<Parent> findByUserEmailEmail(String email);
+
+    Optional<Parent> findByUserPhoneNumberPhoneNumber(String phonenumber);
+
+    List<Parent> findParentByEnfants(Parent parent);
 
 }

@@ -6,22 +6,20 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
+
 @Data
 @Embeddable
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserName  implements Serializable {
+public class UserName implements Serializable {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @NotNull(message = "{notnull.message}")
     @Size(min = 1, max = 50, message = "{size.message}")
-	private String prenom;
+    private String prenom;
 
     @NotNull(message = "{notnull.message}")
     @Size(min = 1, max = 50, message = "{size.message}")
@@ -29,6 +27,6 @@ public class UserName  implements Serializable {
 
     public String getFullName() {
 
-        return  String.format("%s %s", prenom, nomDeFamille);
+        return String.format("%s %s", prenom, nomDeFamille);
     }
 }

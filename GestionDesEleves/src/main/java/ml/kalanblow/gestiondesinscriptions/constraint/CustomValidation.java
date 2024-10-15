@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.constraint;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.AliasFor;
 

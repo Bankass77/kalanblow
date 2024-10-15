@@ -12,7 +12,9 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Table(name = "enseignant")
@@ -22,7 +24,6 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@JsonDeserialize(builder = Enseignant.EnseignantBuider.class)
 public class Enseignant implements Serializable {
 
     @Id
@@ -31,87 +32,20 @@ public class Enseignant implements Serializable {
     private Long enseignantId;
 
     private User user;
-    @NotBlank
-    @Column
+    @NotNull(message = "{notnull.message}")
+    @Column(unique = true, nullable = false, length = 20)
     private String leMatricule;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
     @NotNull(message = "{notnull.message}")
     private boolean disponible;
 
-    private Enseignant(EnseignantBuider enseignantBuilder) {
-        this.leMatricule = enseignantBuilder.leMatricule;
-        this.etablissement = enseignantBuilder.etablissement;
-    }
-
-
-    /**
-     * Builder de la class Elève
-     */
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class EnseignantBuider extends User.UserBuilder {
-        private String leMatricule;
-        private LocalDate dateDeNaissance;
-        private Etablissement etablissement;
-        private int age;
-        private LocalTime heureDebutDisponibilite;
-        private List<DayOfWeek> joursDisponibles;
-        private LocalTime heureFinDisponibilite;
-
-
-        public EnseignantBuider leMatricule(String leMatricule) {
-
-            this.leMatricule = leMatricule;
-
-            return this;
-        }
-
-        public EnseignantBuider dateDeNaissance(LocalDate dateDeNaissance) {
-
-            this.dateDeNaissance = dateDeNaissance;
-
-            return this;
-        }
-
-        public EnseignantBuider etablissementScolaire(Etablissement etablissement) {
-
-            this.etablissement = etablissement;
-
-            return this;
-        }
-
-        public EnseignantBuider heureDebutDisponibilite(LocalTime heureDebutDisponibilite) {
-
-            this.heureDebutDisponibilite = heureDebutDisponibilite;
-            return this;
-        }
-
-        public EnseignantBuider heureFinDisponibilite(LocalTime heureFinDisponibilite) {
-            this.heureFinDisponibilite = heureFinDisponibilite;
-
-            return this;
-        }
-
-        public EnseignantBuider joursDisponibilite(List<DayOfWeek> joursDisponibles) {
-            this.joursDisponibles = joursDisponibles;
-            return this;
-        }
-
-        public Enseignant build() {
-
-            return new Enseignant(this);
-        }
-
-    }
-
-    // Méthode statique pour créer une instance d'Enseignant à partir du builder
-    @JsonDeserialize(builder = User.UserBuilder.class)
-    public static Enseignant createEnseignatFromBuilder(EnseignantBuider builder) {
-
-        return builder().build();
-    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "enseignant_disponibilites", joinColumns = @JoinColumn(name = "enseignant_id"))
+    @Column(name = "jour_disponible")
+    private Set<DayOfWeek> disponibilites = new HashSet<>();
 
 }

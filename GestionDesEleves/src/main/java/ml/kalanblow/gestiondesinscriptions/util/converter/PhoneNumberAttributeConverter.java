@@ -8,16 +8,16 @@ import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 @Converter(autoApply = true)
 public class PhoneNumberAttributeConverter implements AttributeConverter<PhoneNumber, String> {
 
-	@Override
-	public String convertToDatabaseColumn(PhoneNumber attribute) {
+    @Override
+    public String convertToDatabaseColumn(PhoneNumber attribute) {
 
-		return attribute.asString();
-	}
+        return attribute.asString();
+    }
 
-	@Override
-	public PhoneNumber convertToEntityAttribute(String dbData) {
+    @Override
+    public PhoneNumber convertToEntityAttribute(String dbData) {
 
-		return new PhoneNumber(dbData);
-	}
+        return new PhoneNumber(dbData);
+    }
 
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import ml.kalanblow.gestiondesinscriptions.enums.TypeParent;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -31,13 +32,11 @@ public class Parent implements Serializable {
     @NotNull(message = "{notnull.message}")
     private String profession;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "pere", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Eleve> enfantsPere = new HashSet<>();
+    @NotNull(message = "{notnull.message}")
+    @Enumerated(EnumType.STRING)
+    private TypeParent typeParent;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "mere", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Eleve> enfantsMere = new HashSet<>();
-
-
+    @OneToMany(mappedBy = "parents", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Eleve> enfants = new HashSet<>();
 }

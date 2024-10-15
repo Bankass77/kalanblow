@@ -4,27 +4,27 @@ import java.text.ParseException;
 import java.util.Locale;
 
 
-
 import jakarta.annotation.Nonnull;
 
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
+
 import org.springframework.format.Formatter;
 
 
 public class PhoneNumberFormatter implements Formatter<PhoneNumber> {
 
-	@Override
-	@Nonnull
-	public String print(@Nonnull PhoneNumber object, @Nonnull Locale locale) {
+    @Override
+    @Nonnull
+    public String print(@Nonnull PhoneNumber object, @Nonnull Locale locale) {
 
-		return object.asString();
-	}
+        return object.asString();
+    }
 
-	@Nonnull
-	@Override
-	public PhoneNumber parse(@Nonnull String text, @Nonnull Locale locale) throws ParseException {
+    @Nonnull
+    @Override
+    public PhoneNumber parse(@Nonnull String text, @Nonnull Locale locale) throws ParseException {
 
-		return new PhoneNumber(text);
-	}
+        return new PhoneNumber(text);
+    }
 
 }

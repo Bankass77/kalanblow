@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.enums;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,16 +18,17 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 public enum UserRole implements Serializable {
-    STUDENT ("Elève"), TEACHER ("Enseignant"), MANAGER("Gestionnaire"), ADMIN("Administrateur"), USER("Utilisateur"), PARENT("Parent");
+    STUDENT("Elève"), TEACHER("Enseignant"), MANAGER("Gestionnaire"), ADMIN("Administrateur"), USER("Utilisateur"), PARENT("Parent");
 
     private String value;
+
     public static Set<UserRole> valueAsSet() {
         return new HashSet<>(Arrays.asList(UserRole.values()));
     }
 
     public static UserRole fromValue(String value) {
         for (UserRole userRole : UserRole.values()) {
-            if (userRole.name().equalsIgnoreCase(value)) {
+            if (userRole.getValue().equalsIgnoreCase(value)) {
                 return userRole;
             }
         }

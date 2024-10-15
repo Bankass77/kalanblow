@@ -8,16 +8,16 @@ import ml.kalanblow.gestiondesinscriptions.model.Email;
 @Converter(autoApply = true)
 public class EmailAttributeConverter implements AttributeConverter<Email, String> {
 
-	@Override
-	public String convertToDatabaseColumn(Email attribute) {
+    @Override
+    public String convertToDatabaseColumn(Email attribute) {
 
-		return attribute.asString();
-	}
+        return attribute.asString();
+    }
 
-	@Override
-	public Email convertToEntityAttribute(String dbData) {
+    @Override
+    public Email convertToEntityAttribute(String dbData) {
 
-		return new Email(dbData);
-	}
+        return new Email(dbData);
+    }
 
 }

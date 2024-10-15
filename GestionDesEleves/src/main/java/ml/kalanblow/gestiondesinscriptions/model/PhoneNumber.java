@@ -3,9 +3,11 @@ package ml.kalanblow.gestiondesinscriptions.model;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Pattern;
 import lombok.ToString;
+
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+
 @Embeddable
 @ToString
 public class PhoneNumber implements Serializable {

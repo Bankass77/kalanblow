@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.exception;
 
 
 import ml.kalanblow.gestiondesinscriptions.config.KaladewnPropertiesConfig;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,6 @@ public class KaladewnManagementException extends Exception {
     private static final long serialVersionUID = 1L;
     @Autowired
     private static KaladewnPropertiesConfig propertiesConfig;
-
 
     /**
      * Returns new RuntimeException based on template and args
@@ -49,10 +49,10 @@ public class KaladewnManagementException extends Exception {
     /**
      * Returns new RuntimeException based on EntityType, ExceptionType and args
      *
-     * @param entityType
-     * @param exceptionType
-     * @param args
-     * @return
+     * @param entityType    type de l'entité
+     * @param exceptionType le type de l'exception
+     * @param args          le message de l'argument
+     * @return RuntimeException
      */
     public static RuntimeException throwExceptionWithId(EntityType entityType, ExceptionType exceptionType, String id,
                                                         String... args) {
@@ -64,11 +64,10 @@ public class KaladewnManagementException extends Exception {
      * Returns new RuntimeException based on EntityType, ExceptionType,
      * messageTemplate and args
      *
-     * @param entityType
-     * @param exceptionType
-     * @param messageTemplate
-     * @param args
-     * @return
+     * @param entityType    type de l'entité
+     * @param exceptionType le type de l'exception
+     * @param args          le message de l'argument
+     * @return RuntimeException
      */
     public static RuntimeException throwExceptionWithTemplate(EntityType entityType, ExceptionType exceptionType,
                                                               String messageTemplate, String... args) {
@@ -78,9 +77,10 @@ public class KaladewnManagementException extends Exception {
     /**
      * Returns new RuntimeException based on template and args
      *
-     * @param messageTemplate
-     * @param args
-     * @return
+     * @param messageTemplate le message
+     * @param exceptionType   le type de l'exception
+     * @param args            le message de l'argument
+     * @return RuntimeException
      */
     private static RuntimeException throwException(ExceptionType exceptionType, String messageTemplate,
                                                    String... args) {

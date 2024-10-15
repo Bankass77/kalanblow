@@ -19,9 +19,9 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
     @Override
     public String convertToDatabaseColumn(Gender gender) {
 
-        if (gender ==null){
+        if (gender == null) {
 
-            return  null;
+            return null;
         }
         return gender.getValue();
     }
@@ -42,9 +42,9 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
     @Override
     public Gender convertToEntityAttribute(String dbData) {
 
-        if (dbData ==null){
+        if (dbData == null) {
 
         }
-        return Stream.of(Gender.values()).filter(c->c.getValue().equals(dbData)).findFirst().orElseThrow(IllegalArgumentException::new);
+        return Stream.of(Gender.values()).filter(c -> c.getValue().equals(dbData)).findFirst().orElseThrow(IllegalArgumentException::new);
     }
 }

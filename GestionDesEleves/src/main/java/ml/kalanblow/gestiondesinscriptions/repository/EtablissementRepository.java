@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -62,6 +63,5 @@ public interface EtablissementRepository extends JpaRepository<Etablissement, Jp
      */
     Optional<Etablissement> findEtablissementScolaireByAddress(Address address);
 
-
-
+    Optional<Etablissement> findEtablissementScolaireByIdentiantEtablissement(String identiantEtablissement);
 }

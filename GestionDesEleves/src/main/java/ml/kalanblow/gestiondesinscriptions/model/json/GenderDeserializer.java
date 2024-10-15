@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.model.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 
 import java.io.IOException;

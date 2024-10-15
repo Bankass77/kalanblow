@@ -2,13 +2,21 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+
 @Embeddable
 @ToString
-public class Email  implements Serializable {
+@Data
+@Getter
+@Setter
+public class Email implements Serializable {
 
     @NotNull(message = "{notnull.message}")
     private String email;

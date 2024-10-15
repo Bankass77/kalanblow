@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
@@ -17,9 +18,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
-
 @Configuration
-public class KaladewnConfig{
+public class KaladewnConfig {
 
     @Value("${api.common.version}")
     String apiVersion;
@@ -54,8 +54,6 @@ public class KaladewnConfig{
     @Value("${api.common.contact.email}")
     String apiContactEmail;
 
-
-
     /**
      * Configures a local validator factory bean with a specified message source.
      *
@@ -71,16 +69,6 @@ public class KaladewnConfig{
         return bean;
     }
 
-
- /*   @Bean
-    public RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(
-                "ROLE_ADMIN > ROLE_MANAGER and ROLE_MANAGER > ROLE_TEACHER and ROLE_TEACHER > ROLE_STUDENT and ROLE_MANAGER > ROLE_USER and ROLE_PARENT > ROLE_USER"
-        );
-        return roleHierarchy;
-
-    }*/
     /**
      * Configures a CommonsRequestLoggingFilter for request logging.
      *
@@ -116,7 +104,6 @@ public class KaladewnConfig{
     @Bean
     public HttpExchangeRepository httpTraceRepository() {
         return new InMemoryHttpExchangeRepository();
-
     }
 
     @Bean

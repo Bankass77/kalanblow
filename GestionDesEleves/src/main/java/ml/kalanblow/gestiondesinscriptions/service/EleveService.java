@@ -3,10 +3,10 @@ package ml.kalanblow.gestiondesinscriptions.service;
 
 import ml.kalanblow.gestiondesinscriptions.model.*;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,110 +14,57 @@ public interface EleveService {
 
 
     /**
-     * Vérifie l'existence d'un élève avec l'adresse e-mail spécifiée.
      *
-     * @param email L'adresse e-mail à vérifier.
-     * @return Vrai si un élève avec cette adresse e-mail existe, sinon faux.
+     * @param nom le nom de l'élève
+     * @param prenom le prénom de l'élève
+     * @return une liste d'élève correspondant au nom et prénom
      */
-    boolean verifierExistenceEmail(Email email);
+    List<Eleve> findByUserUsername(String nom, String prenom);
 
     /**
-     * Recherche un élève par son adresse e-mail.
      *
-     * @param email L'adresse e-mail de l'élève à rechercher.
-     * @return Une option contenant l'élève trouvé, ou une option vide si aucun élève correspondant n'est trouvé.
+     * @param email de l'élève
+     * @return un élève ou null
      */
-    Optional<Eleve> chercherParEmail(String email);
+    Optional<Eleve> findUserByEmail( String email);
 
     /**
-     * Obtient une liste paginée d'élèves.
      *
-     * @param pageable Les informations de pagination.
-     * @return Une page d'élèves.
+     * @param phoneNumber , numéro de l'élève à chercher
+     * @return un élève ou null
      */
-    Page<Eleve> obtenirListeElevePage(Pageable pageable) ;
-
+    Optional<Eleve> findUserByPhoneNumber( String phoneNumber);
 
     /**
-     * Obtient un élève par son identifiant.
      *
-     * @param userId L'identifiant de l'élève.
-     * @return Une option contenant l'élève trouvé, ou une option vide si aucun élève correspondant n'est trouvé.
+     * @param nom de l'élève
+     * @param classe de l'élève
+     * @return une liste d'élève en fonction d'une classe
      */
-    Optional<Eleve> obtenirEleveParSonId(Long userId);
-
-    /**
-     * Cherche un élève par son numéro INE.
-     *
-     * @param ineNumber Le numéro INE de l'élève à rechercher.
-     * @return Une option contenant l'élève trouvé, ou une option vide si aucun élève correspondant n'est trouvé.
-     */
-    Optional<Eleve> chercherParSonNumeroIne(String ineNumber);
-
-    /**
-     * Supprime un élève par son identifiant.
-     *
-     * @param userId L'identifiant de l'élève à supprimer.
-     */
-    void supprimerEleveParSonId(Long userId);
+    @Query("Select e From Eleve e WHERE e.user.userName = userName AND e.classeActuelle = :classe")
+    List<Eleve> findByNomAndClasse(@Param("nom") String nom, @Param("classe") String classe);
 
 
     /**
-     * Compte le nombre total d'élèves.
      *
-     * @return Le nombre total d'élèves.
+     * @param eleve qui doit être inscrit
+     * @return un élève
      */
-    long countEleves();
+    Eleve inscrireNouveauEleve(Eleve eleve);
 
     /**
-     * Supprime tous les élèves.
-     */
-    void deleteAllEleves();
-
-
-    /**
-     * Récupère une liste d'élèves par leur prénom et nom de famille.
      *
-     * @param prenom       Le prénom de l'élève.
-     * @param nomDeFamille Le nom de famille de l'élève.
-     * @return Une liste d'élèves correspondant aux critères de recherche.
+     * @param id
+     * @param eleve
+     * @return
      */
-    Optional<Eleve> recupererEleveParPrenomEtNom(String prenom, String nomDeFamille);
+    Eleve mettreAjourEleve(Long id, Eleve eleve);
 
-    /**
-     * Supprime un utilisateur par son identifiant.
-     *
-     * @param userId L'identifiant de l'utilisateur à supprimer.
-     */
-    void supprimerUtilisateurParId(Long userId);
+    void supprimerEleve( long id);
 
-    /**
-     * Recherche un élève par son numéro de téléphone.
-     *
-     * @param telephone Le numéro de téléphone de l'élève à rechercher.
-     * @return Une option contenant l'élève trouvé, ou une option vide si aucun élève correspondant n'est trouvé.
-     */
-    Optional<Eleve> recupererEleveParTelephone(String telephone);
+    List<Eleve> getEleveParents(final Parent parent);
 
+    Optional<Eleve> FindEleveById(Long id);
 
-    /**
-     * Recherche un élève dont la date de naissance est similaire à la date spécifiée et dont le numéro INE contient la chaîne spécifiée (insensible à la casse).
-     *
-     * @param dateDeNaissance La date de naissance à rechercher.
-     * @param numeroIne       La chaîne de numéro INE à rechercher.
-     * @return Un objet Optional contenant l'élève correspondant aux critères de recherche (s'il existe).
-     */
-    Optional<Eleve> searchAllByDateDeNaissanceIsLikeAndIneNumberContainsIgnoreCase(LocalDate dateDeNaissance, String numeroIne);
-
-    /**
-     * Recherche un élève par date de création se situant entre les dates spécifiées.
-     *
-     * @param debut La date de début de la période de création.
-     * @param fin   La date de fin de la période de création.
-     * @return Un objet Optional contenant l'élève correspondant à la période de création (s'il existe).
-     */
-    Optional<Optional> findEleveByCreatedDateBetween(LocalDate debut, LocalDate fin);
-
-
-
+    List<Eleve> getAllEleves();
 }

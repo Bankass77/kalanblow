@@ -2,28 +2,27 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+
+import lombok.Getter;
+
+import lombok.Setter;
+
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.util.converter.GenderConverter;
+import ml.kalanblow.gestiondesinscriptions.model.json.GenderDeserializer;
+import ml.kalanblow.gestiondesinscriptions.model.json.MaritalStatusDeserializer;
+import ml.kalanblow.gestiondesinscriptions.model.json.UserRoleDeserializer;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -31,39 +30,36 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Embeddable
+@Data
+@Getter
+@Setter
 public class User implements Serializable {
 
     @Embedded
     private UserName userName;
 
-    //@Enumerated(EnumType.STRING)
-    @Column(name = "gender")
-    @Convert(converter = GenderConverter.class)
-    @NotNull
+    @NotNull(message = "{notnull.message}")
+    @JsonDeserialize(using = GenderDeserializer.class)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @NotNull(message = "Marital Status is required")
+    @NotNull(message = "{notnull.message}")
     @Enumerated(EnumType.STRING)
-    @Column(name = "marital_Status")
+    @JsonDeserialize(using = MaritalStatusDeserializer.class)
     private MaritalStatus maritalStatus;
 
     @CreatedDate
-    @Column(name = "created_date", nullable = false)
-    @JsonIgnore
+   @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    @NotNull
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
-    @Column(name = "last_modified_date")
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    @NotNull
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
-    @Column(name = "telephone_utilisateur", insertable = true, updatable = true, nullable = false)
     @Nullable
     @Embedded
     private PhoneNumber phoneNumber;
@@ -72,12 +68,11 @@ public class User implements Serializable {
     @Nullable
     private byte[] avatar;
 
-    @NotNull(message = "Please enter a valid address email.")
-    @Column(unique = true, nullable = false, updatable = true, name = "email")
+    @NotNull(message = "{notnull.message}")
     @Embedded
     private Email email;
 
-    @NotNull(message = "Address is required")
+    @NotNull(message = "{notnull.message}")
     @Embedded
     @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
 
@@ -89,42 +84,13 @@ public class User implements Serializable {
             @AttributeOverride(name = "country", column = @Column(name = "country"))})
     private Address address;
 
-
-    @ElementCollection(targetClass = UserRole.class)
+    @JsonDeserialize(using = UserRoleDeserializer.class)
+    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles")
-    @Column(name = "role")
     private Set<UserRole> roles;
 
-    @NotNull
-    @Column(name = "password")
-    @NotNull(message = "Password is required")
+    @NotNull(message = "{notnull.message}")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")
     private String password;
-
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class UserBuilder {
-
-        private UserName userName;
-
-        private Gender gender;
-
-        private MaritalStatus maritalStatus;
-
-        private LocalDateTime createdDate = LocalDateTime.now();
-
-        private LocalDateTime lastModifiedDate = LocalDateTime.now();
-        private PhoneNumber phoneNumber;
-        private byte[] avatar;
-
-        private Email email;
-
-        private Address address;
-
-        private Set<UserRole> roles;
-
-        private String password;
-
-    }
 
 }

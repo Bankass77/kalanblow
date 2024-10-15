@@ -9,6 +9,15 @@ import java.util.Optional;
 
 public interface EtablissementService {
 
+    // Créer un nouvel établissement
+    Etablissement createEtablissement(Etablissement etablissement);
+
+    // Mettre à jour un établissement existant
+    Etablissement updateEtablissement(Long etablisementScolaireId, Etablissement etablissement);
+
+    // Supprimer un établissement par ID
+    void deleteEtablissement(Long etablisementScolaireId);
+
     /**
      * Trouve un établissement scolaire par son nom.
      *
@@ -25,14 +34,13 @@ public interface EtablissementService {
      */
     Etablissement trouverEtablissementScolaireParSonIdentifiant(long id);
 
-
     /**
-     * Recherche un établissement scolaire par son nom.
+     * Trouve un établissement scolaire par son identifiant unique.
      *
-     * @param nomEtablissement Le nom de l'établissement à rechercher.
-     * @return L'établissement scolaire correspondant au nom spécifié, s'il existe.
+     * @param identifiant L'identifiant de l'établissement scolaire à rechercher.
+     * @return L'établissement scolaire correspondant à l'identifiant spécifié, s'il existe.
      */
-    Etablissement findByNomEtablissement(String nomEtablissement);
+    Optional<Etablissement> findEtablissementScolaireByIdentiantEtablissement (String identifiant);
 
 
     /**

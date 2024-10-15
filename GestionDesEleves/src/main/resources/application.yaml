@@ -58,3 +58,6 @@ kalanblow-getion-eleve:
      ## Eleve id 13 404 - A **Not Found** error will be returned
 
      ## Negative product ids 422 - An **Unprocessable Entity** error will be returned
+  logging:
+    level.org.springframework.web:DEBUG
+    logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter:DEBUG
