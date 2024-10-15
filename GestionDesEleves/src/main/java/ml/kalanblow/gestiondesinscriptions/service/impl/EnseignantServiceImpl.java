@@ -15,6 +15,7 @@ import org.springframework.boot.Banner;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
@@ -45,6 +46,14 @@ public class EnseignantServiceImpl implements EnseignantService {
     public Enseignant createEnseignant(final Enseignant enseignant) {
 
         try {
+            if (enseignant.getUser().getRoles() == null || enseignant.getUser().getRoles().isEmpty()){
+                Set<UserRole> roles = new HashSet<>();
+                roles.add(UserRole.TEACHER);
+                enseignant.getUser().setRoles(roles);
+            }else
+                if( !enseignant.getUser().getRoles().contains(UserRole.TEACHER)){
+                    enseignant.getUser().getRoles().add(UserRole.TEACHER);
+                }
             return enseignantRepository.saveAndFlush(enseignant);
         } catch (Exception e) {
 

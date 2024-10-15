@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
@@ -24,6 +25,8 @@ import ml.kalanblow.gestiondesinscriptions.repository.EleveRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.EtablissementRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.ParentRepository;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
+import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
+import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 
 
 @Service
@@ -97,8 +100,20 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public Eleve inscrireNouveauEleve(final Eleve eleve) {
 
-        //eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
-        //eleve.setAge(CalculateUserAge.calculateAge(eleve.getDateDeNaissance()));
+        eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
+        eleve.setAge(CalculateUserAge.calculateAge(eleve.getDateDeNaissance()));
+
+        // Définir ou mettre à jour le rôle de l'élève
+        if (eleve.getUser().getRoles() == null || eleve.getUser().getRoles().isEmpty()) {
+            Set<UserRole> roles = new HashSet<>();
+            roles.add(UserRole.STUDENT);
+            eleve.getUser().setRoles(roles);
+        } else {
+            // Si l'élève a déjà des rôles, vous pouvez mettre à jour ou vérifier ici
+            if (!eleve.getUser().getRoles().contains(UserRole.STUDENT)) {
+                eleve.getUser().getRoles().add(UserRole.STUDENT); // Ajouter le rôle d'élève si ce n'est pas déjà présent
+            }
+        }
 
         Set<Parent> parents = new HashSet<>();
 
@@ -114,7 +129,6 @@ public class EleveServiceImpl implements EleveService {
                 }
             }
         }
-
         eleve.setParents(parents);
 
         // Vérifier si l'établissement est null avant de travailler avec
