@@ -1,0 +1,46 @@
+services:
+  eureka-server:
+    build:
+      context: ../Kalanblow-discovery-service  # Répertoire où se trouve le Dockerfile du Discovery Server
+    volumes:
+      - ./logs/Kalanblow-discovery-service/:/app/Kalanblow-discovery-service/logs
+    ports:
+      - "8761:8761" # Mapping 8761 (host) vers 8761 (container)
+    networks:
+      - microservices-network
+    environment:
+      - eureka.client.register-with-eureka=false
+      - eureka.client.fetch-registry=false
+      - eureka.server.enable-self-preservation=false
+
+    #  - microservice2
+
+  gestiondesincriptions:
+    build:
+      context: ../GestionDesEleves  # Répertoire du microservice 1
+    ports:
+      - "8082:8081" #Mapping 8082 (host) vers 8081 (container:gestiondesincriptions expose le port 8081 à l'intérieur du conteneur)
+    networks:
+      - microservices-network
+    environment:
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+      - spring.application.name=microservice1
+    depends_on:
+      - eureka-server
+
+#  microservice2:
+#    build:
+#      context: ./microservice2  # Répertoire du microservice 2
+#    ports:
+#      - "8082:8082"
+#    networks:
+#      - microservices-network
+#    environment:
+#      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+#      - spring.application.name=microservice2
+#    depends_on:
+#      - eureka-server
+
+networks:
+  microservices-network:
+    driver: bridge
