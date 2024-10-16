@@ -9,9 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-
 import lombok.Getter;
-
 import lombok.Setter;
 
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
@@ -49,7 +47,7 @@ public class User implements Serializable {
     private MaritalStatus maritalStatus;
 
     @CreatedDate
-   @JsonIgnore
+    @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -57,12 +55,13 @@ public class User implements Serializable {
     @LastModifiedDate
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
     @Nullable
     @Embedded
-    private PhoneNumber phoneNumber;
+    @Column(name = "user_phoneNumber", unique = true, nullable = false)
+    private PhoneNumber user_phoneNumber;
 
     @Column
     @Nullable
@@ -70,18 +69,18 @@ public class User implements Serializable {
 
     @NotNull(message = "{notnull.message}")
     @Embedded
-    private Email email;
+    @Column(name = "user_email", unique = true, nullable = false)
+    private Email userEmail;
 
     @NotNull(message = "{notnull.message}")
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
-
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "streetNumber")),
-
-            @AttributeOverride(name = "codePostale", column = @Column(name = "codePostale")),
-
-            @AttributeOverride(name = "city", column = @Column(name = "city")),
-            @AttributeOverride(name = "country", column = @Column(name = "country"))})
+    @AttributeOverrides({
+            @AttributeOverride(name = "street", column = @Column(name = "etablissement_street")),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "etablissement_streetNumber")),
+            @AttributeOverride(name = "codePostale", column = @Column(name = "etablissement_codePostale")),
+            @AttributeOverride(name = "city", column = @Column(name = "etablissement_city")),
+            @AttributeOverride(name = "country", column = @Column(name = "etablissement_country"))
+    })
     private Address address;
 
     @JsonDeserialize(using = UserRoleDeserializer.class)

@@ -7,6 +7,8 @@ import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 
 import java.util.Optional;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface EtablissementService {
 
     // Créer un nouvel établissement
@@ -66,5 +68,5 @@ public interface EtablissementService {
      * @return Une instance optionnelle contenant l'établissement scolaire correspondant à l'adresse postale, si elle existe.
      */
     Optional<Etablissement> findEtablissementScolaireByAddress(Address address);
-
+    public Etablissement uploadLogo(Long etablissementId, MultipartFile logoFile);
 }

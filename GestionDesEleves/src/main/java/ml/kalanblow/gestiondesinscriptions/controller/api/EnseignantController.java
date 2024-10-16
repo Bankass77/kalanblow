@@ -1,10 +1,14 @@
 package ml.kalanblow.gestiondesinscriptions.controller.api;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,9 +19,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
+import ml.kalanblow.gestiondesinscriptions.model.EnseignantDisponibiliteRequest;
 import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
 
 @RestController
@@ -99,31 +106,53 @@ public class EnseignantController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{leMatricule}")
+    public ResponseEntity<Enseignant>  findByLeMatricule(@PathVariable String leMatricule){
+        Optional<Enseignant> enseignant = enseignantService.findByLeMatricule(leMatricule);
+        return enseignant.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<Enseignant> searchAllByEmailIsLike(@PathVariable String email){
+        Optional<Enseignant> enseignant = enseignantService.searchAllByEmailIsLike(new Email(email));
+        return enseignant.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{debut}/{fin}")
+    public ResponseEntity<List<Enseignant>>getEnseignantByUserCreatedDateIsBetween (@PathVariable LocalDate debut, @PathVariable LocalDate fin){
+        List<Enseignant> enseignants = enseignantService.getEnseignantByUserCreatedDateIsBetween(debut,fin);
+        return  ResponseEntity.ofNullable(enseignants);
+    }
+
+    @PostMapping("/disponibilite")
+    public ResponseEntity<Enseignant> getEnseignantByDisponibilite(@RequestBody EnseignantDisponibiliteRequest request) {
+        Optional<Enseignant> enseignant = enseignantService.getEnseignantByCoursDEnseignementsAndHeureDebutDisponibiliteAndAndHeureFinDisponibilite(
+                request.getEnseignant(), request.getJourDisponible(), request.getHeureDebut(), request.getHeureFin());
+
+        return enseignant
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     /**
-     * Retourne les jours de disponibilité d'un enseignant spécifique.
-     *
-     * @param enseignantId l'ID de l'enseignant
-     * @return les jours de disponibilité avec le code 200 (OK), ou 404 (NOT FOUND) si l'enseignant n'existe pas
+     * Endpoint pour récupérer les enseignants disponibles selon le jour et la plage horaire.
+     * @param jour Le jour de la semaine (ex: LUNDI)
+     * @param heureDebut L'heure de début de la plage horaire
+     * @param heureFin L'heure de fin de la plage horaire
+     * @return Liste des enseignants disponibles
      */
-    @GetMapping("/{enseignantId}/disponibilites")
-    public ResponseEntity<Set<DayOfWeek>> trouverDisponibiliteEnseignant(@PathVariable long enseignantId) {
-        // Rechercher l'enseignant par son ID
-        Optional<Enseignant> enseignant = enseignantService.findById(enseignantId);
+    @GetMapping("/disponibilite")
+    public ResponseEntity<List<Enseignant>> getEnseignantsDisponibles(
+            @RequestParam DayOfWeek jour,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDebut,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureFin) {
 
-        // Vérifier si l'enseignant existe
-        if (!enseignant.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        List<Enseignant> enseignants = enseignantService.getEnseignantsDisponibles(jour, heureDebut, heureFin);
+
+        if (!enseignants.isEmpty()) {
+            return ResponseEntity.ok(enseignants);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-
-        // Récupérer les disponibilités de l'enseignant
-        Set<DayOfWeek> disponibilites = enseignantService.getDisponibilitesParEnseignant(enseignant.get());
-
-        // Vérifier si des disponibilités existent
-        if (disponibilites == null || disponibilites.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-
-        // Retourner la réponse avec les disponibilités
-        return ResponseEntity.ok(disponibilites);
     }
 }

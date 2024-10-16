@@ -1,5 +1,11 @@
 server:
   port: 8081
+# Actuator Endpoint Configurations
+info: # /actuator/info
+  app:
+    description: "The service registry of the  kalanblow-getion-eleve application ."
+    application:
+      name: gestiondesinscriptions
 # Postgres config
 spring:
   datasource:
@@ -61,3 +67,12 @@ kalanblow-getion-eleve:
   logging:
     level.org.springframework.web:DEBUG
     logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter:DEBUG
+  eurka:
+    client:
+      registryWith-eureka: true
+      fetchRegistry: true
+      serviceUrl:
+        defaultZone: http://localhost:8761/eureka
+      instance:
+        hostname: localhost
+

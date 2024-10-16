@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,10 @@ import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.model.Classe;
+import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.service.ClasseService;
+import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 
 @RestController
 @RequestMapping("/api/classes")
@@ -34,13 +37,16 @@ public class ClasseController {
 
     private final ClasseService classeService;
 
+    private final EleveService eleveService;
+
     @Autowired
-    public ClasseController(final ClasseService classeService) {
+    public ClasseController(final ClasseService classeService,EleveService eleveService) {
         this.classeService = classeService;
+        this.eleveService = eleveService;
     }
 
     // Créer une nouvelle classe
-    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/creer", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Classe> createClasse(@RequestBody @Validated Classe classe) {
         if (classe == null) {
             return ResponseEntity.badRequest().body(null);
@@ -50,8 +56,8 @@ public class ClasseController {
     }
 
     // Mettre à jour une classe existante
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Classe> updateClasse(@PathVariable("id") Long classeId, @RequestBody Classe classe) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Classe> updateClasse(@PathVariable Long classeId, @RequestBody Classe classe) {
         Optional<Classe> classeOptional = classeService.findByClasseId(classeId);
 
         if (classeOptional.isPresent()) {
@@ -59,12 +65,12 @@ public class ClasseController {
             return new ResponseEntity<>(classeMiseAJour, HttpStatus.OK);
         }
         throw new KaladewnManagementException().throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
-                "Classe non trouvée pour l'ID : " + classeId);
+                "updateClasse Classe non trouvée pour l'ID : " + classeId);
     }
 
     // Supprimer une classe par ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClasse(@PathVariable("id") Long classeId) {
+    public ResponseEntity<Void> deleteClasse(@PathVariable Long classeId) {
         if (classeService.findByClasseId(classeId).isPresent()) {
             classeService.deleteClasse(classeId);
             return ResponseEntity.noContent().build();
@@ -73,45 +79,61 @@ public class ClasseController {
     }
 
     // Trouver par le nom de la classe
-    @GetMapping("/nom")
+    @GetMapping("/listes/{nom}")
     public ResponseEntity<List<Classe>> findByNom(@RequestParam String nom) {
         List<Classe> classes = classeService.findByNom(nom);
         return classes.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(classes);
     }
 
     // Trouver par l'établissement
-    @GetMapping("/etablissement")
+    @GetMapping("/{etablissement}")
     public ResponseEntity<List<Classe>> findByEtablissement(@RequestParam Etablissement etablissement) {
         List<Classe> classes = classeService.findByEtablissement(etablissement);
         return classes.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(classes);
     }
 
     // Trouver par l'année scolaire
-    @GetMapping("/anneescolaire")
+    @GetMapping("/{anneescolaire}")
     public ResponseEntity<List<Classe>> findByAnneeScolaire(@RequestParam AnneeScolaire anneeScolaire) {
         List<Classe> classes = classeService.findByAnneeScolaire(anneeScolaire);
         return classes.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(classes);
     }
 
     // Trouver une classe par ID et par l'établissement
-    @GetMapping("/classeEtablissement")
+    @GetMapping("/trouver/{classeEtablissement}")
     public ResponseEntity<Classe> findByClasseIdAndEtablissement(@RequestParam Long classeId, @RequestParam Etablissement etablissement) {
         Optional<Classe> classeOptional = classeService.findByClasseId(classeId);
         return classeOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Compter le nombre de classes par établissement
-    @GetMapping("/count")
+    @GetMapping("/count/{etablissement}")
     public ResponseEntity<Integer> countByEtablissement(@RequestParam Etablissement etablissement) {
         int count = Math.toIntExact(classeService.countByEtablissement(etablissement));
         return ResponseEntity.ok(count);
     }
 
     // Trouver une classe par son nom
-    @GetMapping("/cle")
+    @GetMapping("/{nom}")
     public ResponseEntity<Classe> findByClasseName(@RequestParam String nom) {
         Optional<Classe> classeOptional = classeService.findByClasseName(nom);
         return classeOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Endpoint pour récupérer les élèves d'une classe avec pagination
+    @GetMapping("/pagine/classe/{classeId}")
+    public ResponseEntity<Page<Eleve>> getElevesPagineParClasse(
+            @PathVariable Long classeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Récupérer la classe via le repository ou service
+        Classe classe = classeService.findByClasseId(classeId).orElseThrow(() ->
+                new KaladewnManagementException().throwException(EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION, "Classe non trouvée")
+        );
+
+        Page<Eleve> elevesPage = eleveService.getElevesPagineParClasse(classe, page, size);
+        return ResponseEntity.ok(elevesPage);
     }
 }
 

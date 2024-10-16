@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -48,40 +47,39 @@ public class Etablissement implements Serializable {
 
     @NotNull(message = "{notnull.message}")
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "street", column = @Column(name = "street")),
-
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "streetNumber")),
-
-            @AttributeOverride(name = "codePostale", column = @Column(name = "codePostale")),
-
-            @AttributeOverride(name = "city", column = @Column(name = "city")),
-            @AttributeOverride(name = "country", column = @Column(name = "country"))})
+    @AttributeOverrides({
+            @AttributeOverride(name = "street", column = @Column(name = "user_street")),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "user_streetNumber")),
+            @AttributeOverride(name = "codePostale", column = @Column(name = "user_codePostale")),
+            @AttributeOverride(name = "city", column = @Column(name = "user_city")),
+            @AttributeOverride(name = "country", column = @Column(name = "user_country"))
+    })
     private Address address;
 
-    @Column
-    @Nullable
-    private byte[] avatar;
+    @Lob
+    @Column(name = "logo", nullable = true)
+    private byte[] logo;
 
     @NotNull(message = "{notnull.message}")
-    @Column(unique = true, nullable = false, updatable = true, name = "email")
+    @Column(unique = true, nullable = false, updatable = true, name = "etablissement_email")
     @Embedded
-    private Email email;
+    private Email etablissementEmail;
 
     @CreatedDate
-    @Column(name = "created_date", nullable = false)
-    //@JsonIgnore
+    @Column(name = "etablissement_created_date", nullable = false, updatable = false)
+    @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-   // @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
-    @Column(name = "last_modified_date")
+    @Column(name = "etablissement_last_modified_date", nullable = false, updatable = false)
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
-    @Column(name = "telephone_utilisateur", insertable = true, updatable = true, nullable = false)
+    @Column(name = "telephone_etablissement", insertable = true, updatable = true, nullable = false)
     @Nullable
     @Embedded
     private PhoneNumber phoneNumber;
@@ -95,4 +93,7 @@ public class Etablissement implements Serializable {
     @OneToMany(mappedBy = "etablissement", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Classe> classes;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "chef_etablissement_id", referencedColumnName = "chefEtablissementId")
+    private ChefEtablissement chefEtablissement;
 }

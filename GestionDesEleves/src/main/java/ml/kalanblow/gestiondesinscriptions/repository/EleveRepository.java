@@ -3,6 +3,8 @@ package ml.kalanblow.gestiondesinscriptions.repository;
 
 import ml.kalanblow.gestiondesinscriptions.model.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,20 +24,25 @@ public interface EleveRepository  extends JpaRepository<Eleve, Long> {
      */
     List<Eleve> findByUserUserNamePrenomAndUserUserNameNomDeFamille(String prenom, String nomDeFamille);
 
+    // Méthode qui renvoie une page d'élèves
+    Page<Eleve> findAll(Pageable pageable);
 
+    // Méthode avec filtre par classe
+    Page<Eleve> findByClasseActuelle(Classe classe, Pageable pageable);
     /**
      *
      * @param email de l'élève
      * @return un élève ou null
      */
-    Optional<Eleve> findByUserEmailEmail(String email);
+    Optional<Eleve> findByUserUserEmailEmail(String email);
 
     /**
      *
      * @param phoneNumber , numéro de l'élève à chercher
      * @return un élève ou null
      */
-    Optional<Eleve> findByUserPhoneNumberPhoneNumber(String phoneNumber);
+    @Query("SELECT e FROM Eleve e WHERE e.user.user_phoneNumber.phoneNumber = :phoneNumber")
+    Optional<Eleve> findByUserUser_phoneNumberPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
     /**
      *

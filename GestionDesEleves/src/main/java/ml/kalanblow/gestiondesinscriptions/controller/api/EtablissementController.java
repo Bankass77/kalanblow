@@ -1,6 +1,7 @@
 package ml.kalanblow.gestiondesinscriptions.controller.api;
 
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
@@ -31,7 +34,7 @@ import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
 import static ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException.throwExceptionWithId;
 
 @RestController
-@RequestMapping("/api/etablissement")
+@RequestMapping("/api/etablissements")
 public class EtablissementController {
 
     private final EtablissementService etablissementService;
@@ -159,7 +162,7 @@ public class EtablissementController {
      * @return Etablissement données de l'établissement
      * @param etablisementScolaireId identifiant établissement
      */
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Etablissement> updateEtablissement(Long etablisementScolaireId, Etablissement etablissement) {
 
         try {
@@ -175,7 +178,7 @@ public class EtablissementController {
      * @param nom de l'établissement
      * @return un Etablissement
      */
-    @GetMapping("/nom")
+    @GetMapping("/{nom}")
     public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonNom(String nom) {
 
         try {
@@ -191,7 +194,7 @@ public class EtablissementController {
      * @param identifiant de l'établissement
      * @return un Etablissement
      */
-    @GetMapping("/identifiant")
+    @GetMapping("/{identifiant}")
     public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonIdentifiant(String identifiant) {
 
         try {
@@ -203,4 +206,10 @@ public class EtablissementController {
         }
     }
 
+    @PostMapping("/{id}/upload-logo")
+    public ResponseEntity<Etablissement> uploadLogo(@PathVariable Long id,
+                                                    @RequestParam("logo") MultipartFile logoFile) {
+        Etablissement updatedEtablissement = etablissementService.uploadLogo(id, logoFile);
+        return ResponseEntity.ok(updatedEtablissement);
+    }
 }

@@ -12,8 +12,10 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -36,6 +38,16 @@ public class Enseignant implements Serializable {
     @Column(unique = true, nullable = false, length = 20)
     private String leMatricule;
 
+    @Column
+    private int heuresTravaillees;  // Les heures normales
+
+    @Column
+    private int heuresSup;  // Les heures supplémentaires
+
+    private static final int HEURES_MAX_SEMAINE = 18;  // 18 heures maximum par semaine
+
+    private static final int HEURES_SUP_MAX = 3;  // 3 heures supplémentaires max
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
@@ -48,4 +60,9 @@ public class Enseignant implements Serializable {
     @Column(name = "jour_disponible")
     private Set<DayOfWeek> disponibilites = new HashSet<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "enseignant_disponibilites", joinColumns = @JoinColumn(name = "enseignant_id"))
+    @MapKeyColumn(name = "jour_disponible")
+    @Column(name = "heure_disponibilite")
+    private Map<DayOfWeek, Disponibilite> hueresDisponibilites = new HashMap<>();
 }

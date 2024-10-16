@@ -3,6 +3,7 @@ package ml.kalanblow.gestiondesinscriptions.service;
 
 import ml.kalanblow.gestiondesinscriptions.model.*;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -44,6 +45,12 @@ public interface EleveService {
     @Query("Select e From Eleve e WHERE e.user.userName = userName AND e.classeActuelle = :classe")
     List<Eleve> findByNomAndClasse(@Param("nom") String nom, @Param("classe") String classe);
 
+    /**
+     *
+     * @param ineNumber identifiant de l'élève
+     * @return l'élève en fonction de son numéro de télephone
+     */
+    Optional<Eleve> findByIneNumber( String ineNumber);
 
     /**
      *
@@ -54,9 +61,9 @@ public interface EleveService {
 
     /**
      *
-     * @param id
-     * @param eleve
-     * @return
+     * @param id de l'élève
+     * @param eleve à mettre à jour
+     * @return un élève
      */
     Eleve mettreAjourEleve(Long id, Eleve eleve);
 
@@ -67,4 +74,8 @@ public interface EleveService {
     Optional<Eleve> FindEleveById(Long id);
 
     List<Eleve> getAllEleves();
+
+    public Page<Eleve> getElevesPagine(int page, int size);
+    // Méthode pour obtenir une page d'élèves d'une classe spécifique
+    public Page<Eleve> getElevesPagineParClasse(Classe classe, int page, int size);
 }

@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
@@ -52,14 +52,15 @@ public class EtablissementServiceImpl implements EtablissementService {
             etab.setAddress(etablissement.getAddress());
             etab.setNomEtablissement(etablissement.getNomEtablissement());
             etab.setEleves(etablissement.getEleves());
-            etab.setEmail(etablissement.getEmail());
+            etab.setEtablissementEmail(etablissement.getEtablissementEmail());
             etab.setCreatedDate(etablissement.getCreatedDate());
             etab.setEnseignants(etablissement.getEnseignants());
             etab.setLastModifiedDate(etablissement.getLastModifiedDate());
             etab.setPhoneNumber(etablissement.getPhoneNumber());
             etab.setVersion(etablissement.getVersion());
-            etab.setAvatar(etablissement.getAvatar());
+            etab.setLogo(etablissement.getLogo());
             etab.setClasses(etablissement.getClasses());
+            etab.setChefEtablissement(etablissement.getChefEtablissement());
 
         }
         return etab;
@@ -132,7 +133,7 @@ public class EtablissementServiceImpl implements EtablissementService {
 
         if (!email.getEmail().isEmpty()) {
 
-            return etablissementRepository.findEtablissementScolaireByEmail(email);
+            return etablissementRepository.findEtablissementScolaireByEtablissementEmail(email);
         } else {
 
             throw new KaladewnManagementException().throwException(EntityType.EMAIL, ExceptionType.ENTITY_EXCEPTION, "Email n'est pas trouvé : " + email.getEmail());
@@ -163,6 +164,30 @@ public class EtablissementServiceImpl implements EtablissementService {
     public Optional<Etablissement> findEtablissementScolaireByAddress(final Address address) {
 
         return etablissementRepository.findEtablissementScolaireByAddress(address);
+    }
+
+    /**
+     * @param etablissementId
+     * @param logoFile
+     * @return
+     */
+    @Override
+    public Etablissement uploadLogo(final Long etablissementId, final MultipartFile logoFile) {
+
+        try {
+            Etablissement etablissement = Optional.ofNullable(etablissementRepository
+                    .findByEtablisementScolaireId(etablissementId)).orElseThrow(() ->
+                    KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE,
+                            ExceptionType.ENTITY_NOT_FOUND, " " + etablissementId));
+
+            //Lire l'image et la convertir en tableau d'octets
+            byte[] logBytes = logoFile.getBytes();
+            etablissement.setLogo(logBytes);
+            return etablissementRepository.save(etablissement);
+        } catch (Exception e) {
+            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE,
+                    ExceptionType.ENTITY_NOT_FOUND, " " + etablissementId);
+        }
     }
 
 }

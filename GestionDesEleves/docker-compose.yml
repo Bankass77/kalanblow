@@ -15,7 +15,7 @@ services:
     depends_on:
       - postgresdb
     build:
-      context: ./
+      context: ../GestionDesEleves
       dockerfile: Dockerfile
     restart: on-failure
     env_file: ./.env
@@ -32,6 +32,7 @@ services:
       }'
     volumes:
       - .m2:/root/.m2
+      - ./logs/gestiondesincriptions:/app/gestiondesincriptions/logs
     stdin_open: true
     tty: true
 

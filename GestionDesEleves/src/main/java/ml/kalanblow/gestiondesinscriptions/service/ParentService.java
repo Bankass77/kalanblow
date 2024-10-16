@@ -13,6 +13,8 @@ public interface ParentService {
 
     List<Parent> getParentsByProfession(String profession);
 
+    Optional<Parent> findByUserUserNamePrenomAndUserUserNameNomDeFamille(String prenom, String nomDeFamille);
+
     Optional<Parent> findByUserEmail(String email);
 
     Optional<Parent> findByPhoneNumber(String phonenumber);

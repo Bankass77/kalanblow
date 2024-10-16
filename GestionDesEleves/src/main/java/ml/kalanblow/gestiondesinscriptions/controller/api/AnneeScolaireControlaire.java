@@ -71,4 +71,16 @@ public class AnneeScolaireControlaire {
 
         return null;
     }
+
+    @GetMapping("/{debut}/{fin}")
+    ResponseEntity<AnneeScolaire> findByAnneeScolaireDebutAndAnneeScolaireFin (@PathVariable int debut, @PathVariable int fin){
+        Optional<AnneeScolaire> anneeScolaire= anneeScolaireService.findByAnneeScolaireDebutAndAnneeScolaireFin(debut,fin);
+        return anneeScolaire.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.noContent().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AnneeScolaire>> listesAnneeScolaire(){
+        List<AnneeScolaire> anneeScolaires = anneeScolaireService.findAll();
+        return ResponseEntity.ok(anneeScolaires);
+    }
 }

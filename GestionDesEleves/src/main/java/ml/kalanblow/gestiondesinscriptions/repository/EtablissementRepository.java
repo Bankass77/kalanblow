@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -45,7 +44,7 @@ public interface EtablissementRepository extends JpaRepository<Etablissement, Jp
      * @param email L'adresse e-mail associée à l'établissement à rechercher.
      * @return Une instance optionnelle contenant l'établissement scolaire correspondant à l'adresse e-mail, si elle existe.
      */
-    Optional<Etablissement> findEtablissementScolaireByEmail(Email email);
+    Optional<Etablissement> findEtablissementScolaireByEtablissementEmail(Email email);
 
     /**
      * Recherche un établissement scolaire par son numéro de téléphone.
@@ -64,4 +63,5 @@ public interface EtablissementRepository extends JpaRepository<Etablissement, Jp
     Optional<Etablissement> findEtablissementScolaireByAddress(Address address);
 
     Optional<Etablissement> findEtablissementScolaireByIdentiantEtablissement(String identiantEtablissement);
+
 }

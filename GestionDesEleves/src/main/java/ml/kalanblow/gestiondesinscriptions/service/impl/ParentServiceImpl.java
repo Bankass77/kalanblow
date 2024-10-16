@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
-import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.model.Parent;
 import ml.kalanblow.gestiondesinscriptions.repository.ParentRepository;
 import ml.kalanblow.gestiondesinscriptions.service.ParentService;
@@ -34,6 +33,7 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public List<Parent> getAllParents() {
+
         return parentRepository.findAll();
     }
 
@@ -69,13 +69,30 @@ public class ParentServiceImpl implements ParentService {
     }
 
     /**
+     * @param prenom du parent de l'élève
+     * @param nomDeFamille nom de famille du parent
+     * @return un parent d'élève
+     */
+    @Override
+    public Optional<Parent> findByUserUserNamePrenomAndUserUserNameNomDeFamille(final String prenom, final String nomDeFamille) {
+        try {
+            return parentRepository.findByUserUserNamePrenomAndUserUserNameNomDeFamille(prenom,
+                      nomDeFamille);
+        }catch ( Exception e){
+            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+                    "findByUserUserNamePrenomAndUserUserNameNomDeFamille: ", e.getMessage());
+        }
+
+    }
+
+    /**
      * @param email du parent
      * @return un Parent
      */
     @Override
     public Optional<Parent> findByUserEmail(final String email) {
         try {
-            Optional<Parent> parent = parentRepository.findByUserEmailEmail(email);
+            Optional<Parent> parent = parentRepository.findByUserEmail(email);
             return parent;
         } catch (Exception e) {
             throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
@@ -91,7 +108,7 @@ public class ParentServiceImpl implements ParentService {
     public Optional<Parent> findByPhoneNumber(final String phonenumber) {
 
         try {
-            return parentRepository.findByUserPhoneNumberPhoneNumber(phonenumber);
+            return parentRepository.findByUserPhoneNumber(phonenumber);
         } catch (Exception e) {
             throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "findByPhoneNumber: ", e.getMessage());

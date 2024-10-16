@@ -7,6 +7,9 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -69,7 +72,7 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public Optional<Eleve> findUserByEmail(final String email) {
-        return Optional.ofNullable(eleveRepository.findByUserEmailEmail(email)
+        return Optional.ofNullable(eleveRepository.findByUserUserEmailEmail(email)
                 .orElseThrow(() -> new KaladewnManagementException()
                         .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec l'email : " + email)));
     }
@@ -80,7 +83,7 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public Optional<Eleve> findUserByPhoneNumber(final String phoneNumber) {
-        return Optional.ofNullable(eleveRepository.findByUserPhoneNumberPhoneNumber(phoneNumber).orElseThrow(() -> new KaladewnManagementException().throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
+        return Optional.ofNullable(eleveRepository.findByUserUser_phoneNumberPhoneNumber(phoneNumber).orElseThrow(() -> new KaladewnManagementException().throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
     }
 
     /**
@@ -91,6 +94,21 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public List<Eleve> findByNomAndClasse(final String nom, final String classe) {
         return eleveRepository.findByUserUserNameNomDeFamilleAndClasse(nom, classe);
+    }
+
+    /**
+     * @param ineNumber identifiant de l'élève
+     * @return un élève
+     */
+    @Override
+    public Optional<Eleve> findByIneNumber(final String ineNumber) {
+
+        try {
+            return eleveRepository.findByIneNumber(ineNumber);
+        } catch (Exception e) {
+            throw new KaladewnManagementException()
+                    .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Le numéro INE de l'élève non trouvé.");
+        }
     }
 
     /**
@@ -147,7 +165,7 @@ public class EleveServiceImpl implements EleveService {
             }
         } else {
             throw new KaladewnManagementException()
-                    .throwException(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION, "Etablissement non fourni.");
+                    .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Etablissement de l'élève non fourni.");
         }
         // Vérification de la classe de l'élève
         Classe classe = eleve.getClasseActuelle();
@@ -251,5 +269,29 @@ public class EleveServiceImpl implements EleveService {
         } catch (Exception e) {
             throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
         }
+    }
+
+    /**
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public Page<Eleve> getElevesPagine(final int page, final int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return eleveRepository.findAll(pageable);
+    }
+
+    /**
+     * @param classe
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public Page<Eleve> getElevesPagineParClasse(final Classe classe, final int page, final int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return eleveRepository.findByClasseActuelle(classe, pageable);
     }
 }

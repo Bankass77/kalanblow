@@ -9,22 +9,22 @@ RUN apk --no-cache add \
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS JAVA_OPTS=""
 
 # Set the working directory to /GestionDesEleves
-WORKDIR ./
+WORKDIR /app/gestiondesincriptions
 
 # Copy the application source code
-COPY . .
+COPY ../GestionDesEleves/target/gestiondesinscriptions-0.0.1-SNAPSHOT.jar gestiondesincriptions.jar
 
 # Build your application (use the appropriate build command, e.g., "mvn package" or "./gradlew build")
-#RUN mvn clean install
+RUN mvn clean install
 
 # Stage 2: Create the final runtime image
 FROM openjdk:17-jdk-slim-buster AS runtime
 ARG JAR_FILE=target/*.jar
 
-COPY ${JAR_FILE} gestiondeseleves.jar
+COPY ${JAR_FILE} gestiondesincriptions-0.0.1-SNAPSHOT.jar
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "/gestiondeseleves.jar"]
+CMD ["java", "-jar", "/gestiondesincriptions.jar"]
