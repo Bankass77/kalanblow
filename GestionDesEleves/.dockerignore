@@ -1,0 +1,9 @@
+# Ignorer tous les répertoires et fichiers non pertinents
+*.iml
+.idea/
+*.class
+*.jar
+target/
+logs/
+.git/
+.m2
