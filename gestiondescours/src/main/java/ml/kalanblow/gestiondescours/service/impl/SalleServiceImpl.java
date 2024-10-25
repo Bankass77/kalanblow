@@ -3,10 +3,7 @@ package ml.kalanblow.gestiondescours.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.openmbean.KeyAlreadyExistsException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -26,13 +23,13 @@ public class SalleServiceImpl implements SalleService {
     private final SalleService salleService;
 
     @Autowired
-    public SalleServiceImpl(@Lazy final SalleService salleService) {
+    public SalleServiceImpl(final SalleService salleService) {
         this.salleService = salleService;
     }
 
     /**
-     * @param cours
-     * @return
+     * @param cours à retourner
+     * @return une Liste de Salle , sinon lève une exception si la liste est vide
      */
     @Override
     public List<Salle> findAllSalleByCours(final Cours cours) {
@@ -46,8 +43,8 @@ public class SalleServiceImpl implements SalleService {
     }
 
     /**
-     * @param id
-     * @return
+     * @param id de la Salle
+     * @return une salle
      */
     @Override
     public Optional<Salle> findSalleBy(final long id) {
@@ -55,8 +52,8 @@ public class SalleServiceImpl implements SalleService {
     }
 
     /**
-     * @param salle
-     * @return
+     * @param salle de cours
+     * @return une nouvele Salle crée
      */
     @Override
     public Salle createSalle(final Salle salle) {
@@ -64,9 +61,9 @@ public class SalleServiceImpl implements SalleService {
     }
 
     /**
-     * @param id
-     * @param salle
-     * @return
+     * @param id de la Salle à mettre jour
+     * @param salle à mettre à jour
+     * @return une Sallle mise à jour
      */
     @Override
     public Salle updateSalle(final long id, final Salle salle) {

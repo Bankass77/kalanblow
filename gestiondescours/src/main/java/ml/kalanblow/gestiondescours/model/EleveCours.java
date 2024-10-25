@@ -34,7 +34,7 @@ public class EleveCours implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eleveId;  // Référence à l'élève (ID provenant du service Gestion des Élèves)
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "cours_eleves",
             joinColumns = @JoinColumn(name = "eleveId"),

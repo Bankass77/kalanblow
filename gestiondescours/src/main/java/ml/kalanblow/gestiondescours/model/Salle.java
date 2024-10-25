@@ -49,7 +49,7 @@ public class Salle implements Serializable {
 
     private Long etablissementId; // Etablissement auquel la salle appartient:Référence à l'établissement (IDs provenant du service Gestion des Élèves)
 
-    @OneToMany(mappedBy = "salle", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "salle", fetch = FetchType.LAZY)
     private List<Cours> cours; // Liste des cours se déroulant dans cette salle
 
     @Column(nullable = true)
