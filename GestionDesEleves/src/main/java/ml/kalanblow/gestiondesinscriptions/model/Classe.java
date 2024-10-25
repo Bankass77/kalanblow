@@ -49,12 +49,12 @@ public class Classe implements Serializable {
     @Version()
     private Long version;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "etablisementScolaireId", nullable = false)
     @NotNull(message = "{notnull.message}")
     private Etablissement etablissement;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anneeScolaireId", nullable = true)
     private AnneeScolaire anneeScolaire;
 }

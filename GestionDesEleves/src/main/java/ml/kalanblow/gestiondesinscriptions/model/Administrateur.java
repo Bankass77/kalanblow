@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 
 @Entity
 @Table(name = "kalanblow_admin")
@@ -40,4 +41,5 @@ public class Administrateur implements Serializable {
 
     @Embedded
     private User user;
+
 }

@@ -1,12 +1,17 @@
-package ml.kalanblow.gestiondesinscriptions.service;
+package ml.kalanblow.gestiondesinscriptions.service.impl;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
 import ml.kalanblow.gestiondesinscriptions.repository.AdministrateurRepository;
+import ml.kalanblow.gestiondesinscriptions.service.AdminService;
 
 @Service
 @Slf4j
@@ -26,6 +31,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Administrateur ajouterAdministrateur(final Administrateur administrateur) {
         try {
+            if(administrateur.getUser().getRoles().isEmpty()){
+                Set<UserRole> roles = new HashSet<>();
+                roles.add(UserRole.ADMIN);
+                administrateur.getUser().setRoles(roles);
+            }else {
+                administrateur.getUser().getRoles().add(UserRole.ADMIN);
+            }
             return administrateurRepository.save(administrateur);
         } catch (Exception e) {
 

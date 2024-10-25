@@ -34,4 +34,5 @@ public enum UserRole implements Serializable {
         }
         throw new IllegalArgumentException("Invalid UserRole value: " + value);
     }
+
 }

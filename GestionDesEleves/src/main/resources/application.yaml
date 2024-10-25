@@ -5,7 +5,7 @@ info: # /actuator/info
   app:
     description: "The service registry of the  kalanblow-getion-eleve application ."
     application:
-      name: gestiondesinscriptions
+      name: GESTION-DES-INSCRIPTIONS
 # Postgres config
 spring:
   datasource:
@@ -13,6 +13,12 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
     username: $POSTGRESDB_USER
     password: $POSTGRESDB_ROOT_PASSWORD
+  kafka:
+      bootstrap-servers: ${KAFKA_RESERVATION_BOOTSTRAP_SERVERS:localhost:9092}
+      topic:
+        gestions-des-eleves: gestions-des-eleves
+      consumer:
+        group-id: gestions-des-cours
   jpa:
     hibernate:
       ddl-auto: update
@@ -67,7 +73,7 @@ kalanblow-getion-eleve:
   logging:
     level.org.springframework.web:DEBUG
     logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter:DEBUG
-  eurka:
+  eureka:
     client:
       registryWith-eureka: true
       fetchRegistry: true
@@ -75,4 +81,6 @@ kalanblow-getion-eleve:
         defaultZone: http://localhost:8761/eureka
       instance:
         hostname: localhost
-
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:info}

@@ -84,7 +84,7 @@ public class User implements Serializable {
     private Address address;
 
     @JsonDeserialize(using = UserRoleDeserializer.class)
-    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     private Set<UserRole> roles;
 

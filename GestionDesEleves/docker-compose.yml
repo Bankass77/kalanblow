@@ -1,40 +1,78 @@
 services:
+  # Service Zookeeper requis pour Kafka
+  zookeeper:
+    image: bitnami/zookeeper:3.9.2
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - gestiondeseleves-network
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+
+  # Service Kafka
+  kafka:
+    image: bitnami/kafka:3.2.0  # Utilisation de l'image Kafka
+    ports:
+      - "19092:9092"  # Port fixe pour Kafka
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:19092  # Si Kafka est utilisé en dehors du conteneur
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - gestiondeseleves-network
+    depends_on:
+      - zookeeper
+    volumes:
+      - kafka_data:/bitnami/kafka
+  # Service Postgres pour la gestion des élèves
   postgresdb:
     image: postgres
     restart: always
-    env_file: ./.env
     environment:
       - POSTGRES_USER=$POSTGRESDB_USER
       - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
-      - POSTGRES_DB=$POSTGRESDB_DATABASE
+      - POSTGRES_DB=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
     ports:
-      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+      - "5432:5432"  # Remplacer les variables par un port fixe si nécessaire
     volumes:
       - db:/var/lib/postgresql/data
-  app:
+
+    # Microservice GestionDesEleves
+  gestiondeseleves:
     depends_on:
       - postgresdb
+      - kafka
     build:
-      context: ../GestionDesEleves
+      context: .
       dockerfile: Dockerfile
     restart: on-failure
-    env_file: ./.env
     ports:
-      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+      - "8081:8081"
     environment:
       SPRING_APPLICATION_JSON: '{
-      "spring.datasource.driver-class-name=org.postgresql.Driver"
-        "spring.datasource.url"  : "jdbc:postgresql://postgresdb:$POSTGRESDB_DOCKER_PORT/$POSTGRESDB_DATABASE",
-        "spring.datasource.username" : "$POSTGRESDB_USER",
-        "spring.datasource.password" : "$POSTGRESDB_ROOT_PASSWORD",
-        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
-        "spring.jpa.hibernate.ddl-auto" : "update"
-      }'
+        "spring.datasource.driver-class-name": "org.postgresql.Driver",
+        "spring.datasource.url": "jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}",
+        "spring.datasource.username": "$POSTGRESDB_USER",
+        "spring.datasource.password": "$POSTGRESDB_ROOT_PASSWORD",
+        "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.PostgreSQLDialect",
+        "spring.jpa.hibernate.ddl-auto": "update"
+     }'
     volumes:
       - .m2:/root/.m2
-      - ./logs/gestiondesincriptions:/app/gestiondesincriptions/logs
+      - ./logs/gestiondeseleves:/app/gestiondeseleves/logs
     stdin_open: true
     tty: true
+    networks:
+      - gestiondeseleves-network
+
+networks:
+  gestiondeseleves-network:
+    driver: bridge
 
 volumes:
   db:
+  zookeeper_data:
+  kafka_data:

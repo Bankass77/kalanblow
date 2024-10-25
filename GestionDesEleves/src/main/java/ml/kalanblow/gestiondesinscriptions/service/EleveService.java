@@ -73,8 +73,6 @@ public interface EleveService {
 
     Optional<Eleve> FindEleveById(Long id);
 
-    List<Eleve> getAllEleves();
-
     public Page<Eleve> getElevesPagine(int page, int size);
     // Méthode pour obtenir une page d'élèves d'une classe spécifique
     public Page<Eleve> getElevesPagineParClasse(Classe classe, int page, int size);

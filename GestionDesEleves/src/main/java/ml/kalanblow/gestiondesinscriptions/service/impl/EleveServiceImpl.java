@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
 import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
+import ml.kalanblow.gestiondesinscriptions.kafka.KafkaProducer;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.model.Classe;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
@@ -43,16 +45,20 @@ public class EleveServiceImpl implements EleveService {
     private final AnneeScolaireRepository anneeScolaireRepository;
     private final ModelMapper modelMapper;
 
+    private final KafkaProducer kafkaProducer;
+
+
     @Autowired
     public EleveServiceImpl(final EleveRepository eleveRepository, final ParentRepository parentRepository,
                             final ClasseRepository classeRepository, final EtablissementRepository etablissementRepository
-            , AnneeScolaireRepository anneeScolaireRepository, ModelMapper modelMapper) {
+            , AnneeScolaireRepository anneeScolaireRepository, ModelMapper modelMapper,KafkaProducer kafkaProducer) {
         this.eleveRepository = eleveRepository;
         this.parentRepository = parentRepository;
         this.classeRepository = classeRepository;
         this.etablissementRepository = etablissementRepository;
         this.anneeScolaireRepository = anneeScolaireRepository;
         this.modelMapper = modelMapper;
+        this.kafkaProducer = kafkaProducer;
     }
 
 
@@ -189,10 +195,13 @@ public class EleveServiceImpl implements EleveService {
                 eleve.getClasseActuelle().setAnneeScolaire(anneeScolaire);
             }
         }
-
+        kafkaProducer.sendMessage("Un nouvel élève a été crée", eleve.getEleveId().toString());
         // Enregistrer l'élève
         return eleveRepository.save(eleve);
+
     }
+
+
 
 
     /**
@@ -254,18 +263,6 @@ public class EleveServiceImpl implements EleveService {
 
         try {
             return eleveRepository.findById(id);
-        } catch (Exception e) {
-            throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
-        }
-    }
-
-    /**
-     * @return une liste d'élèves.
-     */
-    @Override
-    public List<Eleve> getAllEleves() {
-        try {
-            return eleveRepository.findAll();
         } catch (Exception e) {
             throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
         }

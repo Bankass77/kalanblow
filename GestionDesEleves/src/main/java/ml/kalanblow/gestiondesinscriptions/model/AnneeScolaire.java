@@ -33,8 +33,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-//@JsonInclude(value = JsonInclude.Include.NON_NULL)
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
 public class AnneeScolaire {
@@ -55,11 +55,10 @@ public class AnneeScolaire {
     @NotNull(message = "{notnull.message}")
     private int anneeScolaireFin;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "anneeScolaire")
-    //@JoinColumn( name ="eleve_classe")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "anneeScolaire")
     private Set<Classe> classes = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "annee_eleve")
     private Set<Eleve> eleves = new HashSet<>();
 }

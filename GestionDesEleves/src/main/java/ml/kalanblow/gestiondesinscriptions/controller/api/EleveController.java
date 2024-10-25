@@ -10,18 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
+import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
+import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.model.Parent;
-import ml.kalanblow.gestiondesinscriptions.service.ClasseService;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 
 @RestController
@@ -35,35 +34,11 @@ public class EleveController {
         this.eleveService = eleveService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Eleve>> findAll() {
-        List<Eleve> eleves = eleveService.getAllEleves();
-        log.info("Liste des élèves  {}: ", eleves);
-        return ResponseEntity.ok(eleves);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Eleve> findById(@PathVariable Long id) {
         Optional<Eleve> eleve = eleveService.FindEleveById(id);
         log.info("L'élève avec trouvé avec cet id {}", eleve);
         return eleve.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-
-    @PostMapping("/inscrire")
-    public ResponseEntity<Eleve> create(@RequestBody Eleve eleve) {
-        if (eleve == null) {
-            return ResponseEntity.badRequest().body(null); // Vérifie que l'objet élève n'est pas nul
-        }
-        Eleve nouvelEleve = eleveService.inscrireNouveauEleve(eleve);
-        log.info("L'élève a été crée {}: ", nouvelEleve);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nouvelEleve);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Eleve> update(@PathVariable long id, @RequestBody Eleve eleve) {
-        Eleve updatedEleve = eleveService.mettreAjourEleve(id, eleve);
-        log.info("L'élève dont l'id est {}: ", updatedEleve.getEleveId() + " a été mise à jour.");
-        return ResponseEntity.ok(updatedEleve);
     }
 
     @DeleteMapping("/{id}")
@@ -118,7 +93,7 @@ public class EleveController {
     }
 
     // Endpoint pour récupérer les élèves avec pagination
-    @GetMapping("/pagine")
+    @GetMapping("/listes")
     public ResponseEntity<Page<Eleve>> getElevesPagine(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

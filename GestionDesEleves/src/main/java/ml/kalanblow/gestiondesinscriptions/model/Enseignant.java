@@ -48,19 +48,19 @@ public class Enseignant implements Serializable {
 
     private static final int HEURES_SUP_MAX = 3;  // 3 heures supplémentaires max
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
     private Etablissement etablissement;
 
     @NotNull(message = "{notnull.message}")
     private boolean disponible;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "enseignant_disponibilites", joinColumns = @JoinColumn(name = "enseignant_id"))
     @Column(name = "jour_disponible")
     private Set<DayOfWeek> disponibilites = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "enseignant_disponibilites", joinColumns = @JoinColumn(name = "enseignant_id"))
     @MapKeyColumn(name = "jour_disponible")
     @Column(name = "heure_disponibilite")

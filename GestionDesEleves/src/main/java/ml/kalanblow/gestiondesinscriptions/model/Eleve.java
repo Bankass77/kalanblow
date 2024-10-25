@@ -73,7 +73,7 @@ public class Eleve implements Serializable {
     @NotNull(message = "{notnull.message}")
     private int age;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "eleve_parent",
             joinColumns = @JoinColumn(name = "eleveId"),
@@ -81,7 +81,7 @@ public class Eleve implements Serializable {
     )
     private Set<Parent> parents = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "etablisementScolaireId", nullable = false, referencedColumnName = "etablisementScolaireId")
     private Etablissement etablissement;
 
@@ -93,11 +93,11 @@ public class Eleve implements Serializable {
     @NotNull(message = "{notnull.message}")
     private EtatEleve etat;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "classeId", nullable = false,referencedColumnName ="classeId" )
     private Classe classeActuelle;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "eleve_anneehistorique")
     private List<AnneeScolaire> historiqueScolaires;
 }

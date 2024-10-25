@@ -37,6 +37,6 @@ public class Parent implements Serializable {
     private TypeParent typeParent;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "parents", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parents", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Eleve> enfants = new HashSet<>();
 }

@@ -84,16 +84,16 @@ public class Etablissement implements Serializable {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Eleve> eleves;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Enseignant> enseignants;
 
-    @OneToMany(mappedBy = "etablissement", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "etablissement", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Classe> classes;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "chef_etablissement_id", referencedColumnName = "chefEtablissementId")
     private ChefEtablissement chefEtablissement;
 }
