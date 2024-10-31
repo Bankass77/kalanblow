@@ -44,11 +44,8 @@ public class EleveServiceImpl implements EleveService {
     private final EtablissementRepository etablissementRepository;
     private final AnneeScolaireRepository anneeScolaireRepository;
     private final ModelMapper modelMapper;
-
     private final KafkaProducer kafkaProducer;
-
     private final KaladewnManagementException kaladewnManagementException;
-
 
     @Autowired
     public EleveServiceImpl(final EleveRepository eleveRepository, final ParentRepository parentRepository,

@@ -22,8 +22,8 @@ public class AdminServiceImpl implements AdminService {
 
     private final AdministrateurRepository administrateurRepository;
 
-    @Autowired
-    private KaladewnManagementException kaladewnManagementException;
+
+    private final KaladewnManagementException kaladewnManagementException;
 
     @Autowired
     public AdminServiceImpl(final AdministrateurRepository administrateurRepository,KaladewnManagementException kaladewnManagementException) {

@@ -29,11 +29,12 @@ import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
 @Transactional
 public class EnseignantServiceImpl implements EnseignantService {
 
-    @Autowired
+
     private final EnseignantRepository enseignantRepository;
     private final ModelMapper modelMapper;
     private final KaladewnManagementException kaladewnManagementException;
 
+    @Autowired
     public EnseignantServiceImpl(final EnseignantRepository enseignantRepository, ModelMapper modelMapper,KaladewnManagementException kaladewnManagementException) {
         this.enseignantRepository = enseignantRepository;
         this.modelMapper = modelMapper;
