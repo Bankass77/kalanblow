@@ -32,14 +32,15 @@ services:
     image: postgres
     restart: always
     environment:
-      - POSTGRES_USER=$POSTGRESDB_USER
-      - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - POSTGRES_USER=${POSTGRESDB_USER}
+      - POSTGRES_PASSWORD=${POSTGRESDB_ROOT_PASSWORD}
       - POSTGRES_DB=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
     ports:
       - "5432:5432"  # Remplacer les variables par un port fixe si nécessaire
     volumes:
       - db:/var/lib/postgresql/data
-
+    env_file:
+      - .env
     # Microservice GestionDesEleves
   gestiondeseleves:
     depends_on:
@@ -50,7 +51,7 @@ services:
       dockerfile: Dockerfile
     restart: on-failure
     ports:
-      - "8081:8081"
+      - "8080:8080"
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.driver-class-name": "org.postgresql.Driver",

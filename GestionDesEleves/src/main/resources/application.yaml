@@ -1,5 +1,7 @@
 server:
-  port: 8081
+  port: 8080
+env_file:
+  - .env
 # Actuator Endpoint Configurations
 info: # /actuator/info
   app:
@@ -8,11 +10,17 @@ info: # /actuator/info
       name: GESTION-DES-INSCRIPTIONS
 # Postgres config
 spring:
+  #profiles:
+     # active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
-    username: $POSTGRESDB_USER
-    password: $POSTGRESDB_ROOT_PASSWORD
+    username: ${POSTGRESDB_USER}
+    password: ${POSTGRESDB_ROOT_PASSWORD}
+  logging:
+    level:
+      org.springframework.web: DEBUG
+      org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
   kafka:
       bootstrap-servers: ${KAFKA_RESERVATION_BOOTSTRAP_SERVERS:localhost:9092}
       topic:
@@ -70,9 +78,7 @@ kalanblow-getion-eleve:
      ## Eleve id 13 404 - A **Not Found** error will be returned
 
      ## Negative product ids 422 - An **Unprocessable Entity** error will be returned
-  logging:
-    level.org.springframework.web:DEBUG
-    logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter:DEBUG
+
   eureka:
     client:
       registryWith-eureka: true

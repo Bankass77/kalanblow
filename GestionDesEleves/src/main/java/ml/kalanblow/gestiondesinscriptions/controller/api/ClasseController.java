@@ -58,14 +58,11 @@ public class ClasseController {
     // Mettre à jour une classe existante
     @PutMapping("/{id}")
     public ResponseEntity<Classe> updateClasse(@PathVariable Long classeId, @RequestBody Classe classe) {
-        Optional<Classe> classeOptional = classeService.findByClasseId(classeId);
 
-        if (classeOptional.isPresent()) {
-            Classe classeMiseAJour = classeService.updateClasse(classeId, classe);
-            return new ResponseEntity<>(classeMiseAJour, HttpStatus.OK);
-        }
-        throw new KaladewnManagementException().throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
-                "updateClasse Classe non trouvée pour l'ID : " + classeId);
+    return  classeService.findByClasseId(classeId)
+            .flatMap(existingClasse -> classeService.updateClasse(classeId, classe))
+            .map(updateClasse -> new ResponseEntity<>(updateClasse, HttpStatus.OK))
+            .orElse(ResponseEntity.notFound().build());
     }
 
     // Supprimer une classe par ID
@@ -128,11 +125,9 @@ public class ClasseController {
             @RequestParam(defaultValue = "10") int size) {
 
         // Récupérer la classe via le repository ou service
-        Classe classe = classeService.findByClasseId(classeId).orElseThrow(() ->
-                new KaladewnManagementException().throwException(EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION, "Classe non trouvée")
-        );
+        Optional<Classe> classe = classeService.findByClasseId(classeId);
 
-        Page<Eleve> elevesPage = eleveService.getElevesPagineParClasse(classe, page, size);
+        Page<Eleve> elevesPage = eleveService.getElevesPagineParClasse(classe.get(), page, size);
         return ResponseEntity.ok(elevesPage);
     }
 }

@@ -29,15 +29,17 @@ public class ClasseServiceImpl implements ClasseService {
     private final AnneeScolaireRepository anneeScolaireRepository;
     private final EtablissementRepository etablissementRepository;
     private final ModelMapper modelMapper;
+    private final KaladewnManagementException kaladewnManagementException;
 
 
     @Autowired
-    public ClasseServiceImpl(final ClasseRepository classeRepository, AnneeScolaireRepository anneeScolaireRepository,
-                             EtablissementRepository etablissementRepository, ModelMapper modelMapper) {
+    public ClasseServiceImpl(ClasseRepository classeRepository, AnneeScolaireRepository anneeScolaireRepository,
+                             EtablissementRepository etablissementRepository, ModelMapper modelMapper,KaladewnManagementException kaladewnManagementException) {
         this.classeRepository = classeRepository;
         this.anneeScolaireRepository = anneeScolaireRepository;
         this.etablissementRepository = etablissementRepository;
         this.modelMapper = modelMapper;
+        this.kaladewnManagementException= kaladewnManagementException;
     }
 
     /**
@@ -50,14 +52,14 @@ public class ClasseServiceImpl implements ClasseService {
         AnneeScolaire anneeScolaire = classe.getAnneeScolaire();
         if (anneeScolaire != null) {
             Optional<AnneeScolaire> anneeScolaireExistant = anneeScolaireRepository.findById(anneeScolaire.getAnneeScolaireId());
-            if (!anneeScolaireExistant.isPresent()) {
-                throw new KaladewnManagementException().throwException(
+            if (anneeScolaireExistant.isEmpty()) {
+                throw kaladewnManagementException.throwException(
                         EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
                         "L'année scolaire n'existe pas avec cet id : " + anneeScolaire.getAnneeScolaireId());
             }
         } else {
             // Si l'année scolaire n'existe pas, ou est null, lever une exception ou gérer la création
-            throw new KaladewnManagementException().throwException(
+            throw  kaladewnManagementException.throwException(
                     EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
                     "L'année scolaire doit être spécifiée.");
         }
@@ -67,7 +69,7 @@ public class ClasseServiceImpl implements ClasseService {
         if (etablissementExistant != null && etablissementExistant.getEtablisementScolaireId() != null) {
             classe.setEtablissement(etablissementExistant);
         } else {
-            throw new KaladewnManagementException().throwException(
+            throw kaladewnManagementException.throwException(
                     EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
                     "L'Etablissement scolaire n'existe pas avec cet id  pour cette classe: " + etablissementExistant.getEtablisementScolaireId());
         }
@@ -81,9 +83,9 @@ public class ClasseServiceImpl implements ClasseService {
      * @return une classe mise à jour.
      */
     @Override
-    public Classe updateClasse(final Long classeId, final Classe classe) {
+    public Optional<Classe> updateClasse(final Long classeId, final Classe classe) {
         Optional<Classe> classe1 = Optional.ofNullable(classeRepository.findById(classeId)
-                .orElseThrow(() -> new KaladewnManagementException().throwException(EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
+                .orElseThrow(() ->  kaladewnManagementException.throwException(EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
                         "La classe n'est pas trouvée avec cet id : " + classeId)));
 
         if (classe1.isPresent()) {
@@ -94,12 +96,12 @@ public class ClasseServiceImpl implements ClasseService {
             if (anneeScolaire != null && anneeScolaire.getAnneeScolaireId() != null) {
                 Optional<AnneeScolaire> anneeScolaireExistant = anneeScolaireRepository.findById(anneeScolaire.getAnneeScolaireId());
                 if (!anneeScolaireExistant.isPresent()) {
-                    throw new KaladewnManagementException().throwException(
+                    throw  kaladewnManagementException.throwException(
                             EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
                             "L'année scolaire n'existe pas avec cet id : " + anneeScolaire.getAnneeScolaireId());
                 }
             } else {
-                throw new KaladewnManagementException().throwException(
+                throw kaladewnManagementException.throwException(
                         EntityType.CLASSE, ExceptionType.ENTITY_EXCEPTION,
                         "L'année scolaire doit être spécifiée.");
             }
@@ -109,9 +111,9 @@ public class ClasseServiceImpl implements ClasseService {
             classeToUpdate.setVersion(classe.getVersion());
             classeToUpdate.setAnneeScolaire(classe.getAnneeScolaire());
             modelMapper.map(classe, classeToUpdate);
-            return classeRepository.save(classeToUpdate);
+            return Optional.of(classeRepository.save(classeToUpdate));
         }
-        throw new KaladewnManagementException().throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
+        throw kaladewnManagementException.throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
                 "La classe n'est pas trouvée avec cet id : " + classeId);
     }
 
@@ -125,7 +127,7 @@ public class ClasseServiceImpl implements ClasseService {
             classeRepository.deleteById(classeId);
         } else {
 
-            throw new KaladewnManagementException().throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
+            throw kaladewnManagementException.throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
                     "La classe n'a pas pu être supprimé avec cet id : " + classeId);
         }
 
@@ -140,7 +142,7 @@ public class ClasseServiceImpl implements ClasseService {
        try {
            return  classeRepository.findByClasseId(id);
        }catch (Exception e){
-           throw new KaladewnManagementException().throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
+           throw kaladewnManagementException.throwException(EntityType.SALLEDECLASSE, ExceptionType.ENTITY_EXCEPTION,
                    "findByClasseId : " + id);
        }
     }
@@ -155,7 +157,7 @@ public class ClasseServiceImpl implements ClasseService {
             return classeRepository.findByNom(nom);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
                     "findByNom: ", e.getMessage());
         }
     }
@@ -169,7 +171,7 @@ public class ClasseServiceImpl implements ClasseService {
         try {
             return classeRepository.findByNom(etablissement.getNomEtablissement());
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
                     "findByEtablissement: ", e.getMessage());
         }
     }
@@ -183,7 +185,7 @@ public class ClasseServiceImpl implements ClasseService {
         try {
             return classeRepository.findByAnneeScolaire(anneeScolaire);
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
                     "findByAnneeScolaire: ", e.getMessage());
         }
     }
@@ -200,7 +202,7 @@ public class ClasseServiceImpl implements ClasseService {
             return classeRepository.findByClasseIdAndEtablissement(classeId, etablissement);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
                     "findByClasseIdAndEtablissement: ", e.getMessage());
         }
     }
@@ -214,7 +216,7 @@ public class ClasseServiceImpl implements ClasseService {
         try {
             return classeRepository.countByEtablissement(etablissement);
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
                     "countByEtablissement: ", e.getMessage());
         }
     }
@@ -228,7 +230,7 @@ public class ClasseServiceImpl implements ClasseService {
         try {
             return classeRepository.findByNom(nom).stream().findFirst();
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.CLASSE, ExceptionType.ENTITY_NOT_FOUND,
                     "findByClasseName: ", e.getMessage());
         }
     }

@@ -13,7 +13,7 @@ public interface ClasseService {
     Classe createClasse(Classe classe);
 
     // Mettre à jour une classe existante
-    Classe updateClasse(Long classeId, Classe classe);
+    Optional<Classe> updateClasse(Long classeId, Classe classe);
 
     // Supprimer une classe par ID
     void deleteClasse(Long classeId);

@@ -14,13 +14,12 @@ services:
       - eureka.client.fetch-registry=false
       - eureka.server.enable-self-preservation=false
 
-    #  - microservice2
-
+    #  - microservice1
   gestiondesincriptions:
     build:
       context: ../GestionDesEleves  # Répertoire du microservice 1
     ports:
-      - "8082:8080" #Mapping 8082 (host) vers 8080 (container:gestiondesincriptions expose le port 8081 à l'intérieur du conteneur)
+      - "8080:8080" #Mapping 8080 (host) vers 8080 (container:gestiondesincriptions expose le port 8081 à l'intérieur du conteneur)
     networks:
       - gestiondesincriptions-network
       - gestiondescours-network
@@ -29,7 +28,7 @@ services:
       - spring.application.name=microservice1
     depends_on:
       - eureka-server
-
+  #  - microservice 2
   gestiondescours:
     build:
       context: ../gestiondescours  # Répertoire du microservice 2

@@ -1,7 +1,8 @@
 package ml.kalanblow.gestiondesinscriptions.exception;
 
 
-import ml.kalanblow.gestiondesinscriptions.config.KaladewnPropertiesConfig;
+import lombok.Setter;
+import ml.kalanblow.gestiondesinscriptions.config.MessageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,33 +14,40 @@ import java.util.Optional;
 
 @Component
 @ResponseStatus(HttpStatus.NOT_FOUND)
+@Setter
 public class KaladewnManagementException extends Exception {
 
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private  final long serialVersionUID = 1L;
+
+
+    private final MessageService messageService;
+
     @Autowired
-    private static KaladewnPropertiesConfig propertiesConfig;
+    public KaladewnManagementException(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     /**
-     * Returns new RuntimeException based on template and args
      *
      * @param messageTemplate
      * @param args
      * @return
      */
-    public static RuntimeException throwException(String messageTemplate, String... args) {
-        return new RuntimeException(format(messageTemplate, args));
+    public RuntimeException throwException(String messageTemplate, String... args) {
+        String formattedMessage = messageService.getMessage(messageTemplate, args);
+        return new RuntimeException(formattedMessage);
     }
 
     /**
      * Returns new RuntimeException based on EntityType, ExceptionType and args
      *
-     * @param entityType
-     * @param exceptionType
-     * @param args
-     * @return
+     * @param entityType type de l'entité
+     * @param exceptionType le type de l'exception
+     * @param args le message de l'argument
+     * @return {@link RuntimeException}
      */
     public RuntimeException throwException(EntityType entityType, ExceptionType exceptionType, String... args) {
         String messageTemplate = getMessageTemplate(entityType, exceptionType);
@@ -49,12 +57,12 @@ public class KaladewnManagementException extends Exception {
     /**
      * Returns new RuntimeException based on EntityType, ExceptionType and args
      *
-     * @param entityType    type de l'entité
+     * @param entityType type de l'entité
      * @param exceptionType le type de l'exception
-     * @param args          le message de l'argument
-     * @return RuntimeException
+     * @param args le message de l'argument
+     * @return {@link RuntimeException}
      */
-    public static RuntimeException throwExceptionWithId(EntityType entityType, ExceptionType exceptionType, String id,
+    public  RuntimeException throwExceptionWithId(EntityType entityType, ExceptionType exceptionType, String id,
                                                         String... args) {
         String messageTemplate = getMessageTemplate(entityType, exceptionType).concat(".").concat(id);
         return throwException(exceptionType, messageTemplate, args);
@@ -64,12 +72,12 @@ public class KaladewnManagementException extends Exception {
      * Returns new RuntimeException based on EntityType, ExceptionType,
      * messageTemplate and args
      *
-     * @param entityType    type de l'entité
+     * @param entityType type de l'entité
      * @param exceptionType le type de l'exception
-     * @param args          le message de l'argument
-     * @return RuntimeException
+     * @param args le message de l'argument
+     * @return {@link RuntimeException}
      */
-    public static RuntimeException throwExceptionWithTemplate(EntityType entityType, ExceptionType exceptionType,
+    public  RuntimeException throwExceptionWithTemplate(EntityType entityType, ExceptionType exceptionType,
                                                               String messageTemplate, String... args) {
         return throwException(exceptionType, messageTemplate, args);
     }
@@ -77,56 +85,62 @@ public class KaladewnManagementException extends Exception {
     /**
      * Returns new RuntimeException based on template and args
      *
-     * @param messageTemplate le message
-     * @param exceptionType   le type de l'exception
-     * @param args            le message de l'argument
-     * @return RuntimeException
+     * @param messageTemplate type de message
+     * @param exceptionType le type de l'exception
+     * @param args le message de l'argument
+     * @return {@link RuntimeException}
      */
-    private static RuntimeException throwException(ExceptionType exceptionType, String messageTemplate,
+    private  RuntimeException throwException(ExceptionType exceptionType, String messageTemplate,
                                                    String... args) {
         if (ExceptionType.ENTITY_NOT_FOUND.equals(exceptionType)) {
-            return new EntityNotFoundException(format(messageTemplate, args));
+            return new EntityNotFoundException(messageService.format(messageTemplate, args));
         } else if (ExceptionType.DUPLICATE_ENTITY.equals(exceptionType)) {
-            return new DuplicateEntityException(format(messageTemplate, args));
+            return new DuplicateEntityException(messageService.format(messageTemplate, args));
         }
-        return new RuntimeException(format(messageTemplate, args));
+        return new RuntimeException(messageService.format(messageTemplate, args));
     }
 
-    private static String getMessageTemplate(EntityType entityType, ExceptionType exceptionType) {
+    /**
+     *
+     * @param entityType type de l'entité
+     * @param exceptionType le type de l'exception
+     * @return un message avec le type de l'entité et le type d'exception
+     */
+    private  String getMessageTemplate(EntityType entityType, ExceptionType exceptionType) {
         return entityType.name().concat(".").concat(exceptionType.getValue()).toLowerCase();
     }
 
-    private static String format(String template, String... args) {
-        Optional<Object> templateContent = Optional.ofNullable(propertiesConfig.getConfigValue(template));
-        if (templateContent.isPresent()) {
-            return MessageFormat.format((String) templateContent.get(), (Object[]) args);
-        }
-        return String.format(template, (Object[]) args);
-    }
 
     // -------------------------------------------------------------------------
     // No String/variable interpolation in Java. Use format instead.
     // -------------------------------------------------------------------------
-    public static class EntityNotFoundException extends RuntimeException {
+    public  class EntityNotFoundException extends RuntimeException {
         /**
          *
          */
-        private static final long serialVersionUID = 1L;
+        private  final long serialVersionUID = 1L;
 
         public EntityNotFoundException(String message) {
             super(message);
         }
 
+        /**
+         *
+         * @param template du message
+         * @param arg1  argument1 du message
+         * @param arg2 argument2 du message
+         * @param cause de l'exception
+         */
         public EntityNotFoundException(String template, Object arg1, Object arg2, Throwable cause) {
             super(MessageFormat.format(template, arg1, arg2), cause);
         }
     }
 
-    public static class DuplicateEntityException extends RuntimeException {
+    public  class DuplicateEntityException extends RuntimeException {
         /**
          *
          */
-        private static final long serialVersionUID = 1L;
+        private  final long serialVersionUID = 1L;
 
         public DuplicateEntityException(String message) {
             super(message);

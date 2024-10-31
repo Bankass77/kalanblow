@@ -31,13 +31,16 @@ import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
-import static ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException.throwExceptionWithId;
+
 
 @RestController
 @RequestMapping("/api/etablissements")
 public class EtablissementController {
 
     private final EtablissementService etablissementService;
+
+    @Autowired
+    private KaladewnManagementException kaladewnManagementException;
 
     @Autowired
     public EtablissementController(final EtablissementService etablissementService) {
@@ -76,7 +79,7 @@ public class EtablissementController {
                 return ResponseEntity.ok(etablissement);
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
 
         return null;
@@ -96,7 +99,7 @@ public class EtablissementController {
                 return ResponseEntity.ok(etablissement.get());
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
 
         return null;
@@ -116,7 +119,7 @@ public class EtablissementController {
                 return ResponseEntity.ok(etablissement.get());
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
 
         return null;
@@ -136,7 +139,7 @@ public class EtablissementController {
                 return ResponseEntity.ok(etablissement.get());
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
 
         return null;
@@ -153,7 +156,7 @@ public class EtablissementController {
                 etablissementService.deleteEtablissement(etablisementScolaireId);
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwException("Id", e.getMessage());
+            throw kaladewnManagementException.throwException("Id", e.getMessage());
         }
 
     }
@@ -170,7 +173,7 @@ public class EtablissementController {
             return ResponseEntity.ok(etablissement1);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
     }
 
@@ -186,7 +189,7 @@ public class EtablissementController {
             return ResponseEntity.ok(etablissement);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
     }
 
@@ -202,7 +205,7 @@ public class EtablissementController {
             return ResponseEntity.ok(etablissement.get());
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
         }
     }
 

@@ -32,10 +32,12 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Autowired
     private final EnseignantRepository enseignantRepository;
     private final ModelMapper modelMapper;
+    private final KaladewnManagementException kaladewnManagementException;
 
-    public EnseignantServiceImpl(final EnseignantRepository enseignantRepository, ModelMapper modelMapper) {
+    public EnseignantServiceImpl(final EnseignantRepository enseignantRepository, ModelMapper modelMapper,KaladewnManagementException kaladewnManagementException) {
         this.enseignantRepository = enseignantRepository;
         this.modelMapper = modelMapper;
+        this.kaladewnManagementException= kaladewnManagementException;
     }
 
     /**
@@ -57,9 +59,10 @@ public class EnseignantServiceImpl implements EnseignantService {
             return enseignantRepository.saveAndFlush(enseignant);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "createEnseignant", e.getMessage());
         }
+        return enseignant;
     }
 
     /**
@@ -75,7 +78,7 @@ public class EnseignantServiceImpl implements EnseignantService {
             modelMapper.map(enseignant, enseignantToUpdate);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "updateEnseignant :", e.getMessage());
         }
         return enseignantToUpdate.get();
@@ -90,7 +93,7 @@ public class EnseignantServiceImpl implements EnseignantService {
         try {
             enseignant.ifPresent(enseignantRepository::delete);
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "deleteEnseignant: ", e.getMessage());
         }
     }
@@ -108,7 +111,7 @@ public class EnseignantServiceImpl implements EnseignantService {
                 return enseignant;
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "findByLeMatricule: ", e.getMessage());
         }
         return Optional.empty();
@@ -125,9 +128,10 @@ public class EnseignantServiceImpl implements EnseignantService {
             return enseignants;
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "findByEtablissement: ", e.getMessage());
         }
+        return List.of();
     }
 
     /**
@@ -143,7 +147,7 @@ public class EnseignantServiceImpl implements EnseignantService {
                 return enseignant;
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "findById: ", e.getMessage());
         }
         return Optional.empty();
@@ -163,7 +167,7 @@ public class EnseignantServiceImpl implements EnseignantService {
             }
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "searchAllByEmailIsLike: ", e.getMessage());
         }
         return Optional.empty();
@@ -180,9 +184,10 @@ public class EnseignantServiceImpl implements EnseignantService {
             return enseignantRepository.getEnseignantByUserCreatedDateIsBetween(debut, fin);
         } catch (Exception e) {
 
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "searchAllByEmailIsLike: ", e.getMessage());
         }
+        return List.of();
     }
 
     /**
@@ -214,9 +219,10 @@ public class EnseignantServiceImpl implements EnseignantService {
             List<Enseignant> enseignantList = enseignantRepository.findAll();
             return new HashSet<>(enseignantList);
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "getAllEnseignants: ", e.getMessage());
         }
+        return Set.of();
     }
 
     /**
@@ -229,7 +235,7 @@ public class EnseignantServiceImpl implements EnseignantService {
             Optional<Enseignant> enseignant = enseignantRepository.findById(id);
             enseignantRepository.delete(enseignant.get());
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
+           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
                     "deleteById: ", e.getMessage());
         }
     }

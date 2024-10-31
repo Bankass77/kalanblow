@@ -33,17 +33,12 @@ public class ParentController {
         this.parentService = parentService;
     }
 
-    // Mettre à jour une classe existante
     @PutMapping("/{id}")
     public ResponseEntity<Parent> updateClasse(@PathVariable("id") Long parentId, @RequestBody Parent parent) {
-        Optional<Parent> parent1 = parentService.getParentById(parentId);
-
-        if (parent1.isPresent()) {
-            Optional<Parent> parentMiseAJour = parentService.updateParents(parentId, parent1.get());
-            return new ResponseEntity<>(parentMiseAJour.get(), HttpStatus.OK);
-        }
-        throw new KaladewnManagementException().throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION,
-                "updateClasse : " + parentId);
+        return parentService.getParentById(parentId)
+                .flatMap(existingParent -> parentService.updateParents(parentId, parent))
+                .map(updatedParent -> new ResponseEntity<>(updatedParent, HttpStatus.OK))
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
@@ -56,10 +51,7 @@ public class ParentController {
     @GetMapping
     public ResponseEntity<List<Parent>> getAllParents() {
         List<Parent> parents = parentService.getAllParents();
-        if (!parents.isEmpty()) {
-            return ResponseEntity.ok(parents);
-        }
-        throw new KaladewnManagementException().throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION, "la liste des parents est vide");
+        return parents.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(parents);
     }
 
     @GetMapping("/{phonenumber}")
@@ -69,15 +61,9 @@ public class ParentController {
     }
 
     @GetMapping("/{parent}")
-    public ResponseEntity<Parent> getParentsByEleves(@PathVariable Parent parent) {
-
+    public ResponseEntity<List<Parent>> getParentsByEleves(@PathVariable Parent parent) {
         List<Parent> parents = parentService.findParentByEnfants(parent);
-
-        for (Parent newParent : parents) {
-            return ResponseEntity.ok(newParent);
-        }
-        throw new KaladewnManagementException().throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION,
-                "Au parent n'a été trouvé.");
+        return parents.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(parents);
     }
 
     @DeleteMapping("/{id}")
@@ -85,11 +71,10 @@ public class ParentController {
         Optional<Parent> parent = parentService.getParentById(id);
         if (parent.isPresent()) {
             parentService.deleteParent(id);
+            return ResponseEntity.noContent().build();
         }
-        throw new KaladewnManagementException().throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION,
-                "Au parent n'a été trouvé avec cet id :" + id);
+        return ResponseEntity.notFound().build();
     }
-
 
     @GetMapping("/{profession}")
     public ResponseEntity<List<Parent>> chercherParentParProfession(@PathVariable String profession){

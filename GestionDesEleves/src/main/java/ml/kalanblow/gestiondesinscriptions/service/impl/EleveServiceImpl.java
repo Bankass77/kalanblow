@@ -47,11 +47,13 @@ public class EleveServiceImpl implements EleveService {
 
     private final KafkaProducer kafkaProducer;
 
+    private final KaladewnManagementException kaladewnManagementException;
+
 
     @Autowired
     public EleveServiceImpl(final EleveRepository eleveRepository, final ParentRepository parentRepository,
                             final ClasseRepository classeRepository, final EtablissementRepository etablissementRepository
-            , AnneeScolaireRepository anneeScolaireRepository, ModelMapper modelMapper,KafkaProducer kafkaProducer) {
+            , AnneeScolaireRepository anneeScolaireRepository, ModelMapper modelMapper,KafkaProducer kafkaProducer,KaladewnManagementException kaladewnManagementException) {
         this.eleveRepository = eleveRepository;
         this.parentRepository = parentRepository;
         this.classeRepository = classeRepository;
@@ -59,6 +61,7 @@ public class EleveServiceImpl implements EleveService {
         this.anneeScolaireRepository = anneeScolaireRepository;
         this.modelMapper = modelMapper;
         this.kafkaProducer = kafkaProducer;
+        this.kaladewnManagementException= kaladewnManagementException;
     }
 
 
@@ -79,7 +82,7 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public Optional<Eleve> findUserByEmail(final String email) {
         return Optional.ofNullable(eleveRepository.findByUserUserEmailEmail(email)
-                .orElseThrow(() -> new KaladewnManagementException()
+                .orElseThrow(() -> kaladewnManagementException
                         .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec l'email : " + email)));
     }
 
@@ -89,7 +92,7 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public Optional<Eleve> findUserByPhoneNumber(final String phoneNumber) {
-        return Optional.ofNullable(eleveRepository.findByUserUser_phoneNumberPhoneNumber(phoneNumber).orElseThrow(() -> new KaladewnManagementException().throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
+        return Optional.ofNullable(eleveRepository.findByUserUser_phoneNumberPhoneNumber(phoneNumber).orElseThrow(() -> kaladewnManagementException.throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
     }
 
     /**
@@ -112,7 +115,7 @@ public class EleveServiceImpl implements EleveService {
         try {
             return eleveRepository.findByIneNumber(ineNumber);
         } catch (Exception e) {
-            throw new KaladewnManagementException()
+            throw kaladewnManagementException
                     .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Le numéro INE de l'élève non trouvé.");
         }
     }
@@ -170,7 +173,7 @@ public class EleveServiceImpl implements EleveService {
                 eleve.setEtablissement(etablissement);
             }
         } else {
-            throw new KaladewnManagementException()
+            throw kaladewnManagementException
                     .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Etablissement de l'élève non fourni.");
         }
         // Vérification de la classe de l'élève
@@ -222,7 +225,7 @@ public class EleveServiceImpl implements EleveService {
             eleveRepository.saveAndFlush(eleveToUpdate);
             return eleveToUpdate;
         } else {
-            throw new KaladewnManagementException()
+            throw kaladewnManagementException
                     .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Elève non trouvé.");
         }
     }
@@ -234,7 +237,7 @@ public class EleveServiceImpl implements EleveService {
     public void supprimerEleve(final long id) {
 
         if (!eleveRepository.existsById(id)) {
-            throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec l'ID : " + id);
+            throw kaladewnManagementException.throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec l'ID : " + id);
         }
         eleveRepository.deleteById(id);
 
@@ -250,7 +253,7 @@ public class EleveServiceImpl implements EleveService {
         try {
             return eleveRepository.findByParents(parent);
         } catch (Exception e) {
-            throw new KaladewnManagementException().throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
+            throw kaladewnManagementException.throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
         }
     }
 
@@ -264,7 +267,7 @@ public class EleveServiceImpl implements EleveService {
         try {
             return eleveRepository.findById(id);
         } catch (Exception e) {
-            throw new KaladewnManagementException().throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
+            throw kaladewnManagementException.throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
         }
     }
 

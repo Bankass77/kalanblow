@@ -23,8 +23,11 @@ public class EtablissementServiceImpl implements EtablissementService {
 
     private final EtablissementRepository etablissementRepository;
 
+    private final KaladewnManagementException kaladewnManagementException;
+
     @Autowired
-    public EtablissementServiceImpl(final EtablissementRepository etablissementRepository) {
+    public EtablissementServiceImpl(final EtablissementRepository etablissementRepository, KaladewnManagementException kaladewnManagementException) {
+        this.kaladewnManagementException= kaladewnManagementException;
         this.etablissementRepository = etablissementRepository;
     }
 
@@ -45,7 +48,7 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public Etablissement updateEtablissement(final Long etablisementScolaireId, final Etablissement etablissement) {
 
-        Etablissement etab = Optional.ofNullable(etablissementRepository.findByEtablisementScolaireId(etablisementScolaireId)).orElseThrow(() -> KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION, "Etablissement non trouvé avec cet id :" + etablisementScolaireId));
+        Etablissement etab = Optional.ofNullable(etablissementRepository.findByEtablisementScolaireId(etablisementScolaireId)).orElseThrow(() -> kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION, "Etablissement non trouvé avec cet id :" + etablisementScolaireId));
 
         if (etab != null) {
 
@@ -74,7 +77,7 @@ public class EtablissementServiceImpl implements EtablissementService {
 
         Optional<Etablissement> etablissement = Optional.ofNullable(Optional.ofNullable(etablissementRepository
                 .findByEtablisementScolaireId(etablisementScolaireId)).orElseThrow(
-                () -> KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION,
+                () -> kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION,
                         " Etablissement non trouvé :" + etablisementScolaireId)));
         etablissementRepository.delete(etablissement.get());
     }
@@ -90,7 +93,7 @@ public class EtablissementServiceImpl implements EtablissementService {
             return etablissementRepository.findByNomEtablissement(nom);
         } else {
 
-            throw new KaladewnManagementException().throwException(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION,
+            throw kaladewnManagementException.throwException(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_EXCEPTION,
                     " Etablissement non trouvé avec cet nom  :" + nom);
         }
 
@@ -119,7 +122,7 @@ public class EtablissementServiceImpl implements EtablissementService {
                 return etablissement;
             }
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithTemplate(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, "etablissement", e.getMessage());
+            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, "etablissement", e.getMessage());
         }
         return Optional.empty();
     }
@@ -136,7 +139,7 @@ public class EtablissementServiceImpl implements EtablissementService {
             return etablissementRepository.findEtablissementScolaireByEtablissementEmail(email);
         } else {
 
-            throw new KaladewnManagementException().throwException(EntityType.EMAIL, ExceptionType.ENTITY_EXCEPTION, "Email n'est pas trouvé : " + email.getEmail());
+            throw kaladewnManagementException.throwException(EntityType.EMAIL, ExceptionType.ENTITY_EXCEPTION, "Email n'est pas trouvé : " + email.getEmail());
         }
 
     }
@@ -151,7 +154,7 @@ public class EtablissementServiceImpl implements EtablissementService {
         if (!phoneNumber.asString().isEmpty()) {
             return etablissementRepository.findEtablissementScolaireByPhoneNumber(phoneNumber);
         } else {
-            throw new KaladewnManagementException().throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Email n'est pas trouvé : " + phoneNumber);
+            throw kaladewnManagementException.throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Email n'est pas trouvé : " + phoneNumber);
         }
 
     }
@@ -177,7 +180,7 @@ public class EtablissementServiceImpl implements EtablissementService {
         try {
             Etablissement etablissement = Optional.ofNullable(etablissementRepository
                     .findByEtablisementScolaireId(etablissementId)).orElseThrow(() ->
-                    KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE,
+                    kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE,
                             ExceptionType.ENTITY_NOT_FOUND, " " + etablissementId));
 
             //Lire l'image et la convertir en tableau d'octets
@@ -185,7 +188,7 @@ public class EtablissementServiceImpl implements EtablissementService {
             etablissement.setLogo(logBytes);
             return etablissementRepository.save(etablissement);
         } catch (Exception e) {
-            throw KaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE,
+            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE,
                     ExceptionType.ENTITY_NOT_FOUND, " " + etablissementId);
         }
     }

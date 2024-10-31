@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
+import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
+import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.repository.AnneeScolaireRepository;
 import ml.kalanblow.gestiondesinscriptions.service.AnneeScolaireService;
@@ -17,8 +20,11 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
 
     private final AnneeScolaireRepository anneeScolaireRepository;
 
+    private final KaladewnManagementException kaladewnManagementException;
+
     @Autowired
-    public AnneeScolaireServiceImpl(final AnneeScolaireRepository anneeScolaireRepository) {
+    public AnneeScolaireServiceImpl(final AnneeScolaireRepository anneeScolaireRepository,KaladewnManagementException kaladewnManagementException) {
+        this.kaladewnManagementException= kaladewnManagementException;
         this.anneeScolaireRepository = anneeScolaireRepository;
     }
 
@@ -66,17 +72,18 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
     @Override
     public Optional<AnneeScolaire> mettreAJourAnneeScolaire(final long id, final AnneeScolaire anneeScolaire) {
 
-        Optional<AnneeScolaire> anneeScolaire1 = anneeScolaireRepository.findById(id);
-        if(anneeScolaire1.isPresent()){
+        // Recherche l'année scolaire ou lance une exception si non trouvée
+        AnneeScolaire anneeScolaireToUpdate = anneeScolaireRepository.findById(id).orElseThrow(() ->
+                kaladewnManagementException.throwExceptionWithId(EntityType.ANNEESCOLAIRE, ExceptionType.ENTITY_NOT_FOUND,
+                        "L'année scolaire avec l'ID " + id + " n'a pas été trouvée"));
+        anneeScolaireToUpdate.setAnneeScolaireDebut(anneeScolaire.getAnneeScolaireDebut());
+        anneeScolaireToUpdate.setAnneeScolaireFin(anneeScolaire.getAnneeScolaireFin());
+        anneeScolaireToUpdate.setVersion(anneeScolaire.getVersion());
+        anneeScolaireToUpdate.setClasses(anneeScolaire.getClasses());
+        anneeScolaireToUpdate.setEleves(anneeScolaire.getEleves());
 
-            AnneeScolaire anneeScolaireToUpdate=  anneeScolaire1.get();
-
-            anneeScolaireToUpdate.setAnneeScolaireDebut(anneeScolaire.getAnneeScolaireDebut());
-            anneeScolaireToUpdate.setVersion(anneeScolaire.getVersion());
-            anneeScolaireToUpdate.setClasses(anneeScolaire.getClasses());
-            anneeScolaireToUpdate.setEleves(anneeScolaire.getEleves());
-            return Optional.of(anneeScolaireRepository.saveAndFlush(anneeScolaireToUpdate));
-        }
-        return  null;
+        // Sauvegarde et retourne l'entité mise à jour
+        return Optional.of(anneeScolaireRepository.save(anneeScolaireToUpdate));
     }
+
 }
