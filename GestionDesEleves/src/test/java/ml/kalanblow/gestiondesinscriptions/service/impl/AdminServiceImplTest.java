@@ -10,10 +10,8 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-<<<<<<< HEAD
-=======
+
 import org.mockito.InjectMocks;
->>>>>>> daaab6c ( add test)
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -39,11 +37,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AdminServiceImplTest {
 
-<<<<<<< HEAD
-    //@InjectMocks
-=======
+
     @InjectMocks
->>>>>>> daaab6c ( add test)
     private AdminServiceImpl adminService;
 
     @Mock
@@ -51,10 +46,7 @@ class AdminServiceImplTest {
 
     @BeforeEach
     void setUp() {
-<<<<<<< HEAD
 
-=======
->>>>>>> daaab6c ( add test)
         MockitoAnnotations.openMocks(this);
     }
 
