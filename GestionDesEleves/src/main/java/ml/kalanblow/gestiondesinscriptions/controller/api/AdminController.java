@@ -33,6 +33,7 @@ public class AdminController {
     private final  AdminService adminService;
     private  final EleveService eleveService;
 
+    @Autowired
     public AdminController(final AdminService adminService, final EleveService eleveService) {
         this.adminService = adminService;
         this.eleveService = eleveService;
