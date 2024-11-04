@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
-import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
+import ml.kalanblow.gestiondesinscriptions.exception.AdministrateurAlreadyExistsException;
+import ml.kalanblow.gestiondesinscriptions.exception.AnnneeScolaireAlreadyExistsException;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.repository.AnneeScolaireRepository;
 import ml.kalanblow.gestiondesinscriptions.service.AnneeScolaireService;
+import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Transactional
@@ -20,70 +21,90 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
 
     private final AnneeScolaireRepository anneeScolaireRepository;
 
-    private final KaladewnManagementException kaladewnManagementException;
-
     @Autowired
-    public AnneeScolaireServiceImpl(final AnneeScolaireRepository anneeScolaireRepository,KaladewnManagementException kaladewnManagementException) {
-        this.kaladewnManagementException= kaladewnManagementException;
+    public AnneeScolaireServiceImpl(AnneeScolaireRepository anneeScolaireRepository) {
         this.anneeScolaireRepository = anneeScolaireRepository;
     }
 
     /**
-     * @param aLong 
-     * @return
+     * @param aLong identifaint de l'anneeScoalier
+     * @return annneeScoliare
      */
     @Override
     public Optional<AnneeScolaire> findById(final Long aLong) {
-        return anneeScolaireRepository.findById(aLong);
+
+        try {
+            return anneeScolaireRepository.findById(aLong);
+        } catch (Exception e){
+
+            throw  new AnnneeScolaireAlreadyExistsException(ErrorMessages.ERROR_AnnneeScolaire_NOT_FOUND + aLong);
+        }
     }
 
     /**
-     * @param debut 
-     * @param fin
-     * @return
+     * @param debut de l'annneeSclaire
+     * @param fin de l'annneeSclaire
+     * @return une annneeSclaire
      */
     @Override
     public Optional<AnneeScolaire> findByAnneeScolaireDebutAndAnneeScolaireFin(final int debut, final int fin) {
-        return anneeScolaireRepository.findByAnneeScolaireDebutAndAnneeScolaireFin(debut, fin);
+       try {
+           return anneeScolaireRepository.findByAnneeScolaireDebutAndAnneeScolaireFin(debut, fin);
+       }catch (Exception e){
+
+           throw  new KaladewnManagementException(e.getMessage());
+       }
     }
 
     /**
-     * @return 
+     * @return une liste d'anneeScolaire
      */
     @Override
     public List<AnneeScolaire> findAll() {
-        return anneeScolaireRepository.findAll();
+       try {
+           return anneeScolaireRepository.findAll();
+       } catch (Exception e) {
+           throw new KaladewnManagementException(e.getMessage());
+       }
     }
 
     /**
-     * @param anneeScolaire 
-     * @return
+     * @param anneeScolaire à créer
+     * @return une anneeSclaire
      */
     @Override
     public Optional<AnneeScolaire> createNewAnneeScolaire(final AnneeScolaire anneeScolaire) {
-        return Optional.of(anneeScolaireRepository.save(anneeScolaire));
+
+        try {
+            AnneeScolaire anneeScolaireSaved = anneeScolaireRepository.save(anneeScolaire);
+            return Optional.of(anneeScolaireSaved);
+        }catch (Exception e){
+
+            throw new KaladewnManagementException(e.getMessage());
+        }
     }
 
+
     /**
-     * @param id 
-     * @param anneeScolaire
-     * @return
+     * @param id de l'AnneeScolaire à mettre à jour
+     * @param anneeScolaire à mettre à jour
+     * @return une anneeSclaire qui a été mise à jour
      */
     @Override
     public Optional<AnneeScolaire> mettreAJourAnneeScolaire(final long id, final AnneeScolaire anneeScolaire) {
 
-        // Recherche l'année scolaire ou lance une exception si non trouvée
-        AnneeScolaire anneeScolaireToUpdate = anneeScolaireRepository.findById(id).orElseThrow(() ->
-                kaladewnManagementException.throwExceptionWithId(EntityType.ANNEESCOLAIRE, ExceptionType.ENTITY_NOT_FOUND,
-                        "L'année scolaire avec l'ID " + id + " n'a pas été trouvée"));
-        anneeScolaireToUpdate.setAnneeScolaireDebut(anneeScolaire.getAnneeScolaireDebut());
-        anneeScolaireToUpdate.setAnneeScolaireFin(anneeScolaire.getAnneeScolaireFin());
-        anneeScolaireToUpdate.setVersion(anneeScolaire.getVersion());
-        anneeScolaireToUpdate.setClasses(anneeScolaire.getClasses());
-        anneeScolaireToUpdate.setEleves(anneeScolaire.getEleves());
-
-        // Sauvegarde et retourne l'entité mise à jour
-        return Optional.of(anneeScolaireRepository.save(anneeScolaireToUpdate));
+       try {
+           // Recherche l'année scolaire ou lance une exception si non trouvée
+           AnneeScolaire anneeScolaireToUpdate = anneeScolaireRepository.findById(id).orElseThrow(() ->
+                   new AdministrateurAlreadyExistsException(ErrorMessages.ERROR_AnnneeScolaire_NOT_FOUND + id));
+           anneeScolaireToUpdate.setAnneeScolaireDebut(anneeScolaire.getAnneeScolaireDebut());
+           anneeScolaireToUpdate.setAnneeScolaireFin(anneeScolaire.getAnneeScolaireFin());
+           anneeScolaireToUpdate.setClasses(anneeScolaire.getClasses());
+           anneeScolaireToUpdate.setEleves(anneeScolaire.getEleves());
+           return Optional.of(anneeScolaireRepository.save(anneeScolaireToUpdate));
+       } catch (Exception e) {
+           throw new AnnneeScolaireAlreadyExistsException(e.getMessage());
+       }
     }
 
 }

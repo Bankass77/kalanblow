@@ -1,3 +1,4 @@
+/*
 package ml.kalanblow.gestiondesinscriptions.exception;
 
 import java.io.Serializable;
@@ -17,3 +18,4 @@ public enum ExceptionType implements Serializable {
     }
 
 }
+*/

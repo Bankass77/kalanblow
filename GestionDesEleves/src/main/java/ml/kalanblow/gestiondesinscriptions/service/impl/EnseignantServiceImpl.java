@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
-import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Disponibilite;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
@@ -24,6 +22,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.repository.EnseignantRepository;
 import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
+import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Transactional
@@ -32,13 +31,13 @@ public class EnseignantServiceImpl implements EnseignantService {
 
     private final EnseignantRepository enseignantRepository;
     private final ModelMapper modelMapper;
-    private final KaladewnManagementException kaladewnManagementException;
+
 
     @Autowired
-    public EnseignantServiceImpl(final EnseignantRepository enseignantRepository, ModelMapper modelMapper,KaladewnManagementException kaladewnManagementException) {
+    public EnseignantServiceImpl(final EnseignantRepository enseignantRepository, ModelMapper modelMapper) {
         this.enseignantRepository = enseignantRepository;
         this.modelMapper = modelMapper;
-        this.kaladewnManagementException= kaladewnManagementException;
+
     }
 
     /**
@@ -60,10 +59,10 @@ public class EnseignantServiceImpl implements EnseignantService {
             return enseignantRepository.saveAndFlush(enseignant);
         } catch (Exception e) {
 
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "createEnseignant", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_ALREADY_FOUND +
+                    "createEnseignant");
         }
-        return enseignant;
+
     }
 
     /**
@@ -79,8 +78,8 @@ public class EnseignantServiceImpl implements EnseignantService {
             modelMapper.map(enseignant, enseignantToUpdate);
         } catch (Exception e) {
 
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "updateEnseignant :", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND +
+                    "updateEnseignant :");
         }
         return enseignantToUpdate.get();
     }
@@ -94,8 +93,8 @@ public class EnseignantServiceImpl implements EnseignantService {
         try {
             enseignant.ifPresent(enseignantRepository::delete);
         } catch (Exception e) {
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "deleteEnseignant: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "deleteEnseignant: ");
         }
     }
 
@@ -112,8 +111,8 @@ public class EnseignantServiceImpl implements EnseignantService {
                 return enseignant;
             }
         } catch (Exception e) {
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findByLeMatricule: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "findByLeMatricule: ");
         }
         return Optional.empty();
     }
@@ -129,10 +128,9 @@ public class EnseignantServiceImpl implements EnseignantService {
             return enseignants;
         } catch (Exception e) {
 
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findByEtablissement: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "findByEtablissement: ");
         }
-        return List.of();
     }
 
     /**
@@ -148,8 +146,8 @@ public class EnseignantServiceImpl implements EnseignantService {
                 return enseignant;
             }
         } catch (Exception e) {
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findById: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "findById: ");
         }
         return Optional.empty();
     }
@@ -168,8 +166,8 @@ public class EnseignantServiceImpl implements EnseignantService {
             }
         } catch (Exception e) {
 
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "searchAllByEmailIsLike: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "searchAllByEmailIsLike: ");
         }
         return Optional.empty();
     }
@@ -185,10 +183,9 @@ public class EnseignantServiceImpl implements EnseignantService {
             return enseignantRepository.getEnseignantByUserCreatedDateIsBetween(debut, fin);
         } catch (Exception e) {
 
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "searchAllByEmailIsLike: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "searchAllByEmailIsLike: ");
         }
-        return List.of();
     }
 
     /**
@@ -220,10 +217,9 @@ public class EnseignantServiceImpl implements EnseignantService {
             List<Enseignant> enseignantList = enseignantRepository.findAll();
             return new HashSet<>(enseignantList);
         } catch (Exception e) {
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "getAllEnseignants: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "getAllEnseignants: ");
         }
-        return Set.of();
     }
 
     /**
@@ -236,8 +232,8 @@ public class EnseignantServiceImpl implements EnseignantService {
             Optional<Enseignant> enseignant = enseignantRepository.findById(id);
             enseignantRepository.delete(enseignant.get());
         } catch (Exception e) {
-           kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "deleteById: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
+                    "deleteById: ");
         }
     }
 

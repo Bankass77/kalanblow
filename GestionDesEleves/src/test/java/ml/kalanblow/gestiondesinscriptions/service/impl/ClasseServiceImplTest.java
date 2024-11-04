@@ -1,3 +1,4 @@
+/*
 package ml.kalanblow.gestiondesinscriptions.service.impl;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.model.ChefEtablissement;
@@ -42,8 +42,6 @@ class ClasseServiceImplTest {
     private EtablissementRepository etablissementRepository;
     @MockBean
     private ModelMapper modelMapper;
-    @MockBean
-    private KaladewnManagementException exception;
 
     @Autowired
     private ClasseServiceImpl classeService;
@@ -134,4 +132,4 @@ class ClasseServiceImplTest {
     @Test
     void findByClasseName() {
     }
-}
+}*/

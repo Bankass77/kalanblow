@@ -18,7 +18,7 @@ public interface ClasseService {
     // Supprimer une classe par ID
     void deleteClasse(Long classeId);
 
-    Optional<Classe> findByClasseId(long id);
+    Optional<Classe> findByClasseById(long id);
 
     // Trouver par le nom de la classe
     List<Classe> findByNom(String nom);
@@ -36,4 +36,5 @@ public interface ClasseService {
     Long countByEtablissement(Etablissement etablissement);
 
     Optional<Classe> findByClasseName( String nom);
+
 }

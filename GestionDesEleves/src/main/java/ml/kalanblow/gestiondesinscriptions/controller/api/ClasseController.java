@@ -19,10 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
-import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.model.Classe;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
@@ -33,6 +31,7 @@ import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 @RestController
 @RequestMapping("/api/classes")
 @Slf4j
+@Validated
 public class ClasseController {
 
     private final ClasseService classeService;
@@ -47,7 +46,7 @@ public class ClasseController {
 
     // Créer une nouvelle classe
     @PostMapping(value = "/creer", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Classe> createClasse(@RequestBody @Validated Classe classe) {
+    public ResponseEntity<Classe> createClasse(@RequestBody @Valid Classe classe) {
         if (classe == null) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -59,7 +58,7 @@ public class ClasseController {
     @PutMapping("/{id}")
     public ResponseEntity<Classe> updateClasse(@PathVariable Long classeId, @RequestBody Classe classe) {
 
-    return  classeService.findByClasseId(classeId)
+    return  classeService.findByClasseById(classeId)
             .flatMap(existingClasse -> classeService.updateClasse(classeId, classe))
             .map(updateClasse -> new ResponseEntity<>(updateClasse, HttpStatus.OK))
             .orElse(ResponseEntity.notFound().build());
@@ -68,7 +67,7 @@ public class ClasseController {
     // Supprimer une classe par ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClasse(@PathVariable Long classeId) {
-        if (classeService.findByClasseId(classeId).isPresent()) {
+        if (classeService.findByClasseById(classeId).isPresent()) {
             classeService.deleteClasse(classeId);
             return ResponseEntity.noContent().build();
         }
@@ -99,7 +98,7 @@ public class ClasseController {
     // Trouver une classe par ID et par l'établissement
     @GetMapping("/trouver/{classeEtablissement}")
     public ResponseEntity<Classe> findByClasseIdAndEtablissement(@RequestParam Long classeId, @RequestParam Etablissement etablissement) {
-        Optional<Classe> classeOptional = classeService.findByClasseId(classeId);
+        Optional<Classe> classeOptional = classeService.findByClasseById(classeId);
         return classeOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -125,7 +124,7 @@ public class ClasseController {
             @RequestParam(defaultValue = "10") int size) {
 
         // Récupérer la classe via le repository ou service
-        Optional<Classe> classe = classeService.findByClasseId(classeId);
+        Optional<Classe> classe = classeService.findByClasseById(classeId);
 
         Page<Eleve> elevesPage = eleveService.getElevesPagineParClasse(classe.get(), page, size);
         return ResponseEntity.ok(elevesPage);

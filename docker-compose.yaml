@@ -1,4 +1,10 @@
 services:
+  #RabbitMq
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.0.3-alpine
+    ports:
+      - "5672:5672"
   # Service Zookeeper requis pour Kafka
   zookeeper:
     image: bitnami/zookeeper:3.9.2
@@ -7,7 +13,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
-      - gestiondeseleves-network
+      - gestiondesincriptions-network
     volumes:
       - zookeeper_data:/bitnami/zookeeper
 
@@ -22,7 +28,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
-      - gestiondeseleves-network
+      - gestiondesincriptions-network
     depends_on:
       - zookeeper
     volumes:
@@ -41,18 +47,45 @@ services:
       - db:/var/lib/postgresql/data
     env_file:
       - .env
+  kalanblow-discovery-service:
+    build:
+      context: ../kalanblow/Kalanblow-discovery-service  # Répertoire où se trouve le Dockerfile du Discovery Server
+    volumes:
+      - ../logs/Kalanblow-discovery-service/:/app/Kalanblow-discovery-service/logs
+    ports:
+      - "8761:8761" # Mapping 8761 (host) vers 8761 (container)
+    networks:
+      - gestiondesincriptions-network
+
+    environment:
+      - eureka.client.register-with-eureka=false
+      - eureka.client.fetch-registry=false
+      - eureka.server.enable-self-preservation=false
+    image: kalanblow/kalanblow-discovery-service:0.0.1-SNAPSHOT
+    healthcheck:
+      test: curl --fail http://localhost:8761/eureka || exit 1
+      interval: 4s
+      timeout: 2s
+      retries: 3
     # Microservice GestionDesEleves
   gestiondeseleves:
+    image: kalanblow/gestiondesincriptions:latest
     depends_on:
+      kalanblow-discovery-service:
+        condition: service_healthy
+    links:
+      - kalanblow-discovery-service
+      - rabbitmq
       - postgresdb
       - kafka
     build:
-      context: .
+      context: ../kalanblow/GestionDesEleves
       dockerfile: Dockerfile
     restart: on-failure
     ports:
       - "8080:8080"
     environment:
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.driver-class-name": "org.postgresql.Driver",
         "spring.datasource.url": "jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}",
@@ -63,14 +96,14 @@ services:
      }'
     volumes:
       - .m2:/root/.m2
-      - ./logs/gestiondeseleves:/app/gestiondeseleves/logs
+      - ../logs/gestiondeseleves:/app/gestiondeseleves/logs
     stdin_open: true
     tty: true
     networks:
-      - gestiondeseleves-network
+      - gestiondesincriptions-network
 
 networks:
-  gestiondeseleves-network:
+  gestiondesincriptions-network:
     driver: bridge
 
 volumes:

@@ -22,13 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.model.EnseignantDisponibiliteRequest;
 import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
 
 @RestController
-@RequestMapping("/api/enseignants") // Pluriel pour correspondre à la ressource "enseignants"
+@RequestMapping("/api/enseignants")
+@Validated
 public class EnseignantController {
 
     private final EnseignantService enseignantService;
@@ -45,7 +47,7 @@ public class EnseignantController {
      * @return l'enseignant créé avec le code 201 (CREATED)
      */
     @PostMapping("/create")
-    public ResponseEntity<Enseignant> createEnseignant(@Validated @RequestBody Enseignant enseignant) {
+    public ResponseEntity<Enseignant> createEnseignant(@Valid @RequestBody Enseignant enseignant) {
         Enseignant nouveauEnseignant = enseignantService.createEnseignant(enseignant);
         return new ResponseEntity<>(nouveauEnseignant, HttpStatus.CREATED);
     }

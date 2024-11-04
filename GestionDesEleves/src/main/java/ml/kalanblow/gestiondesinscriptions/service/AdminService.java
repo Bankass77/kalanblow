@@ -1,5 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.service;
 
+import java.util.Optional;
 import java.util.Set;
 
 import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
@@ -14,5 +15,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
      Set<Administrateur> getAllAdministrateurs ();
 
      Administrateur updateAdministrateur(long id, Administrateur adminDetails);
+
+     Optional<Administrateur> getAdminById(long id);
 
 }

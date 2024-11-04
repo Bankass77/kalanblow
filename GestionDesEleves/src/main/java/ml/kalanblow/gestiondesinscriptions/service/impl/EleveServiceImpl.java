@@ -10,13 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
-import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.kafka.KafkaProducer;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
@@ -31,6 +28,7 @@ import ml.kalanblow.gestiondesinscriptions.repository.EtablissementRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.ParentRepository;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
+import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 
 
@@ -45,12 +43,12 @@ public class EleveServiceImpl implements EleveService {
     private final AnneeScolaireRepository anneeScolaireRepository;
     private final ModelMapper modelMapper;
     private final KafkaProducer kafkaProducer;
-    private final KaladewnManagementException kaladewnManagementException;
+
 
     @Autowired
     public EleveServiceImpl(final EleveRepository eleveRepository, final ParentRepository parentRepository,
                             final ClasseRepository classeRepository, final EtablissementRepository etablissementRepository
-            , AnneeScolaireRepository anneeScolaireRepository, ModelMapper modelMapper,KafkaProducer kafkaProducer,KaladewnManagementException kaladewnManagementException) {
+            , AnneeScolaireRepository anneeScolaireRepository, ModelMapper modelMapper,KafkaProducer kafkaProducer) {
         this.eleveRepository = eleveRepository;
         this.parentRepository = parentRepository;
         this.classeRepository = classeRepository;
@@ -58,7 +56,7 @@ public class EleveServiceImpl implements EleveService {
         this.anneeScolaireRepository = anneeScolaireRepository;
         this.modelMapper = modelMapper;
         this.kafkaProducer = kafkaProducer;
-        this.kaladewnManagementException= kaladewnManagementException;
+
     }
 
 
@@ -79,8 +77,7 @@ public class EleveServiceImpl implements EleveService {
     @Override
     public Optional<Eleve> findUserByEmail(final String email) {
         return Optional.ofNullable(eleveRepository.findByUserUserEmailEmail(email)
-                .orElseThrow(() -> kaladewnManagementException
-                        .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec l'email : " + email)));
+                .orElseThrow(() -> new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND+ "Aucun élève trouvé avec l'email : " + email)));
     }
 
     /**
@@ -89,7 +86,9 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public Optional<Eleve> findUserByPhoneNumber(final String phoneNumber) {
-        return Optional.ofNullable(eleveRepository.findByUserUser_phoneNumberPhoneNumber(phoneNumber).orElseThrow(() -> kaladewnManagementException.throwException(EntityType.PHONENUMBER, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
+        return Optional.ofNullable(eleveRepository.findByUserUser_phoneNumberPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND +
+                        "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
     }
 
     /**
@@ -112,8 +111,7 @@ public class EleveServiceImpl implements EleveService {
         try {
             return eleveRepository.findByIneNumber(ineNumber);
         } catch (Exception e) {
-            throw kaladewnManagementException
-                    .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Le numéro INE de l'élève non trouvé.");
+            throw  new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND +"Le numéro INE de l'élève non trouvé.");
         }
     }
 
@@ -170,8 +168,7 @@ public class EleveServiceImpl implements EleveService {
                 eleve.setEtablissement(etablissement);
             }
         } else {
-            throw kaladewnManagementException
-                    .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Etablissement de l'élève non fourni.");
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND + "Etablissement de l'élève non fourni.");
         }
         // Vérification de la classe de l'élève
         Classe classe = eleve.getClasseActuelle();
@@ -219,11 +216,10 @@ public class EleveServiceImpl implements EleveService {
             // Mapper uniquement les champs non-nuls de eleveDto vers eleveToUpdate
             modelMapper.map(eleveDto, eleveToUpdate);
 
-            eleveRepository.saveAndFlush(eleveToUpdate);
+            eleveRepository.save(eleveToUpdate);
             return eleveToUpdate;
         } else {
-            throw kaladewnManagementException
-                    .throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Elève non trouvé.");
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Eleve_ALREADY_FOUND + "Elève non trouvé.");
         }
     }
 
@@ -234,7 +230,7 @@ public class EleveServiceImpl implements EleveService {
     public void supprimerEleve(final long id) {
 
         if (!eleveRepository.existsById(id)) {
-            throw kaladewnManagementException.throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, "Aucun élève trouvé avec l'ID : " + id);
+            throw  new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND + "Aucun élève trouvé avec l'ID : " + id);
         }
         eleveRepository.deleteById(id);
 
@@ -250,7 +246,7 @@ public class EleveServiceImpl implements EleveService {
         try {
             return eleveRepository.findByParents(parent);
         } catch (Exception e) {
-            throw kaladewnManagementException.throwException(EntityType.PARENT, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
+            throw  new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND +  e.getMessage());
         }
     }
 
@@ -264,7 +260,7 @@ public class EleveServiceImpl implements EleveService {
         try {
             return eleveRepository.findById(id);
         } catch (Exception e) {
-            throw kaladewnManagementException.throwException(EntityType.ELEVE, ExceptionType.ENTITY_EXCEPTION, e.getMessage());
+            throw  new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND + e.getMessage());
         }
     }
 

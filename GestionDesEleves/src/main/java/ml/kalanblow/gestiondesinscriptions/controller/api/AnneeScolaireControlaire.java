@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.service.AnneeScolaireService;
 
 @RestController
 @RequestMapping("/api/anneescolaires")
+@Validated
 public class AnneeScolaireControlaire {
 
     private final AnneeScolaireService anneeScolaireService;
@@ -33,7 +35,7 @@ public class AnneeScolaireControlaire {
     }
 
     @PostMapping(value = "/creer")
-    public ResponseEntity<?> creerAnneeScolaire(@Validated @RequestBody AnneeScolaire anneeScolaire, BindingResult result) {
+    public ResponseEntity<?> creerAnneeScolaire(@Valid @RequestBody AnneeScolaire anneeScolaire, BindingResult result) {
 
         if (result.hasErrors()) {
             List<String> messagesErrors = result.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();

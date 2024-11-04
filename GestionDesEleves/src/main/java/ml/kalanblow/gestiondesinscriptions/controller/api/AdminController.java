@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
@@ -25,6 +27,7 @@ import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 @RestController
 @RequestMapping("/api/admin")
 @Slf4j
+@Validated
 public class AdminController {
 
     private final  AdminService adminService;
@@ -36,7 +39,7 @@ public class AdminController {
     }
 
     @PostMapping("/ajouter")
-    public ResponseEntity<Administrateur> ajouterAdministrateur(@Validated @RequestBody Administrateur admin) {
+    public ResponseEntity<Administrateur> ajouterAdministrateur(@Valid @RequestBody Administrateur admin) {
         Administrateur nouvelAdmin = adminService.ajouterAdministrateur(admin);
         return ResponseEntity.ok(nouvelAdmin);
     }

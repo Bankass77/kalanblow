@@ -3,6 +3,14 @@ server:
 env_file:
   - .env
 # Actuator Endpoint Configurations
+management:
+  endpoint:
+    info:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: info, health
 info: # /actuator/info
   app:
     description: "The service registry of the  kalanblow-getion-eleve application ."
@@ -12,6 +20,10 @@ info: # /actuator/info
 spring:
   #profiles:
      # active: dev
+  application:
+    name: GESTION-DES-INSCRIPTIONS
+  messages:
+    basename: messages
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
@@ -33,7 +45,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
+        show_sql: true
+        format_sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    connection-timeout: 2000
 # OpenAPI
 springdoc:
   swagger-ui.path: /openapi/swagger-ui.html

@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
-import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Parent;
 import ml.kalanblow.gestiondesinscriptions.repository.ParentRepository;
 import ml.kalanblow.gestiondesinscriptions.service.ParentService;
+import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Transactional
@@ -21,13 +20,13 @@ public class ParentServiceImpl implements ParentService {
 
     private final ParentRepository parentRepository;
     private final ModelMapper modelMapper;
-    private final KaladewnManagementException kaladewnManagementException;
+
 
     @Autowired
-    public ParentServiceImpl(final ParentRepository parentRepository, ModelMapper modelMapper,KaladewnManagementException kaladewnManagementException) {
+    public ParentServiceImpl(final ParentRepository parentRepository, ModelMapper modelMapper) {
         this.parentRepository = parentRepository;
         this.modelMapper = modelMapper;
-        this.kaladewnManagementException= kaladewnManagementException;
+
     }
 
     /**
@@ -50,8 +49,8 @@ public class ParentServiceImpl implements ParentService {
             Optional<Parent> parent = parentRepository.findByParentId(id);
             return parent;
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "getParentById: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "getParentById: " + id);
         }
     }
 
@@ -65,8 +64,8 @@ public class ParentServiceImpl implements ParentService {
         try {
             return parentRepository.findByProfession(profession);
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "getParentsByProfession: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "getParentsByProfession: " + profession);
         }
     }
 
@@ -81,8 +80,8 @@ public class ParentServiceImpl implements ParentService {
             return parentRepository.findByUserUserNamePrenomAndUserUserNameNomDeFamille(prenom,
                       nomDeFamille);
         }catch ( Exception e){
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findByUserUserNamePrenomAndUserUserNameNomDeFamille: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "findByUserUserNamePrenomAndUserUserNameNomDeFamille: " + nomDeFamille + " " + prenom);
         }
 
     }
@@ -97,8 +96,8 @@ public class ParentServiceImpl implements ParentService {
             Optional<Parent> parent = parentRepository.findByUserEmail(email);
             return parent;
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findByUserEmail: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "findByUserEmail: " + email);
         }
     }
 
@@ -112,8 +111,8 @@ public class ParentServiceImpl implements ParentService {
         try {
             return parentRepository.findByUserPhoneNumber(phonenumber);
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findByPhoneNumber: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "findByPhoneNumber: " + phonenumber);
         }
     }
 
@@ -127,8 +126,8 @@ public class ParentServiceImpl implements ParentService {
         try {
             return parentRepository.findParentByEnfants(parent);
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "findParentByEnfants: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "findParentByEnfants: " + parent);
         }
     }
 
@@ -140,8 +139,8 @@ public class ParentServiceImpl implements ParentService {
         try {
             parentRepository.deleteById(id);
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "deleteParent: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "deleteParent: " + id);
         }
     }
 
@@ -156,8 +155,8 @@ public class ParentServiceImpl implements ParentService {
             modelMapper.map(parent, parentToUpdate);
 
         } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithTemplate(EntityType.ENSEIGNANT, ExceptionType.DUPLICATE_ENTITY,
-                    "updateParents: ", e.getMessage());
+            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
+                    "updateParents: " + id);
         }
         return Optional.empty();
     }

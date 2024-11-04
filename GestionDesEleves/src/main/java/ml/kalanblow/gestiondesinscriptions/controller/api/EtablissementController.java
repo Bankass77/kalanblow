@@ -1,7 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.controller.api;
 
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +18,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import ml.kalanblow.gestiondesinscriptions.exception.EntityType;
-import ml.kalanblow.gestiondesinscriptions.exception.ExceptionType;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
+import jakarta.validation.Valid;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
@@ -35,12 +31,10 @@ import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
 
 @RestController
 @RequestMapping("/api/etablissements")
+@Validated
 public class EtablissementController {
 
     private final EtablissementService etablissementService;
-
-    @Autowired
-    private KaladewnManagementException kaladewnManagementException;
 
     @Autowired
     public EtablissementController(final EtablissementService etablissementService) {
@@ -48,16 +42,17 @@ public class EtablissementController {
     }
 
     /**
+     * Crée un nouvel établissement.
      * @param etablissement
-     * @param result        message d'erreur
+     * @param result message d'erreur
      * @return un Etablissement
      */
     @PostMapping(value = "/creer")
-    public ResponseEntity<?> inscrireEleve(@Validated @RequestBody Etablissement etablissement, BindingResult result) {
-
+    public ResponseEntity<?> inscrireEleve(@Valid @RequestBody Etablissement etablissement, BindingResult result) {
         if (result.hasErrors()) {
-
-            List<String> messagesErrors = result.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            List<String> messagesErrors = result.getFieldErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
             return ResponseEntity.badRequest().body(messagesErrors);
         }
 
@@ -66,153 +61,104 @@ public class EtablissementController {
     }
 
     /**
-     * @param id de l'établissement
+     * Trouve un établissement par ID.
+     * @param id identifiant de l'établissement
      * @return Etablissement
      */
     @GetMapping("/{id}")
     public ResponseEntity<Etablissement> trouverEtablissementScolaire(@PathVariable long id) {
-
-        try {
-            Etablissement etablissement = etablissementService.trouverEtablissementScolaireParSonIdentifiant(id);
-            if (etablissement != null) {
-
-                return ResponseEntity.ok(etablissement);
-            }
-        } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
-
-        return null;
+        Etablissement etablissement = etablissementService.trouverEtablissementScolaireParSonIdentifiant(id);
+        return ResponseEntity.ok(etablissement);
     }
 
     /**
+     * Trouve un établissement par email.
      * @param email de l'établissement
      * @return Etablissement
      */
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<Etablissement> trouverEtablissementScolairePasonEmail(@PathVariable String email) {
-
-        try {
-            Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByEmail(new Email(email));
-            if (etablissement.isPresent()) {
-
-                return ResponseEntity.ok(etablissement.get());
-            }
-        } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
-
-        return null;
+        Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByEmail(new Email(email));
+        return etablissement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * @param phone numéro de téléphone de l'établissement
-     * @return Etablissement en fonction du numéro de téléphone
-     */
-    @GetMapping("/{phonenumber}")
-    public ResponseEntity<Etablissement> trouverEtablissementScolaireParNumeroTelephone(@PathVariable String phone) {
-
-        try {
-            Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByPhoneNumber(new PhoneNumber(phone));
-            if (etablissement.isPresent()) {
-
-                return ResponseEntity.ok(etablissement.get());
-            }
-        } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
-
-        return null;
-    }
-
-    /**
-     * @param adresse de l'établissement
+     * Trouve un établissement par numéro de téléphone.
+     * @param phone numéro de téléphone
      * @return Etablissement
      */
-    @GetMapping("/{adresseetablissement}")
-    public ResponseEntity<Etablissement> trouverEtablissementScolaireParAdresse(@PathVariable Address adresse) {
-
-        try {
-            Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByAddress(adresse);
-            if (etablissement.isPresent()) {
-
-                return ResponseEntity.ok(etablissement.get());
-            }
-        } catch (Exception e) {
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
-
-        return null;
+    @GetMapping("/phone/{phone}")
+    public ResponseEntity<Etablissement> trouverEtablissementScolaireParNumeroTelephone(@PathVariable String phone) {
+        Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByPhoneNumber(new PhoneNumber(phone));
+        return etablissement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
+     * Trouve un établissement par adresse.
+     * @param adresse adresse de l'établissement
+     * @return Etablissement
+     */
+    @GetMapping("/adresse/{adresse}")
+    public ResponseEntity<Etablissement> trouverEtablissementScolaireParAdresse(@PathVariable Address adresse) {
+        Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByAddress(adresse);
+        return etablissement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Supprime un établissement par ID.
      * @param etablisementScolaireId identifiant de l'établissement
      */
     @DeleteMapping("/{id}")
-    public void deleteEtablissement(Long etablisementScolaireId) {
-
-        try {
-            if (etablisementScolaireId != null) {
-                etablissementService.deleteEtablissement(etablisementScolaireId);
-            }
-        } catch (Exception e) {
-            throw kaladewnManagementException.throwException("Id", e.getMessage());
-        }
-
+    public ResponseEntity<Void> deleteEtablissement(@PathVariable Long etablisementScolaireId) {
+        etablissementService.deleteEtablissement(etablisementScolaireId);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * @return Etablissement données de l'établissement
-     * @param etablisementScolaireId identifiant établissement
+     * Met à jour un établissement par ID.
+     * @param etablisementScolaireId identifiant de l'établissement
+     * @param etablissement données de l'établissement à mettre à jour
+     * @return Etablissement mis à jour
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Etablissement> updateEtablissement(Long etablisementScolaireId, Etablissement etablissement) {
-
-        try {
-            Etablissement etablissement1 = etablissementService.updateEtablissement(etablisementScolaireId, etablissement);
-            return ResponseEntity.ok(etablissement1);
-        } catch (Exception e) {
-
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
+    public ResponseEntity<Etablissement> updateEtablissement(@PathVariable Long etablisementScolaireId,
+                                                             @RequestBody Etablissement etablissement) {
+        Etablissement etablissement1 = etablissementService.updateEtablissement(etablisementScolaireId, etablissement);
+        return ResponseEntity.ok(etablissement1);
     }
 
     /**
-     * @param nom de l'établissement
-     * @return un Etablissement
+     * Trouve un établissement par son nom.
+     * @param nom nom de l'établissement
+     * @return Etablissement
      */
-    @GetMapping("/{nom}")
-    public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonNom(String nom) {
-
-        try {
-            Etablissement etablissement = etablissementService.trouverEtablissementScolaireParSonNom(nom);
-            return ResponseEntity.ok(etablissement);
-        } catch (Exception e) {
-
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
+    @GetMapping("/nom/{nom}")
+    public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonNom(@PathVariable String nom) {
+        Etablissement etablissement = etablissementService.trouverEtablissementScolaireParSonNom(nom);
+        return ResponseEntity.ok(etablissement);
     }
 
     /**
-     * @param identifiant de l'établissement
-     * @return un Etablissement
+     * Trouve un établissement par son identifiant.
+     * @param identifiant identifiant de l'établissement
+     * @return Etablissement
      */
-    @GetMapping("/{identifiant}")
-    public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonIdentifiant(String identifiant) {
-
-        try {
-            Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByIdentiantEtablissement(identifiant);
-            return ResponseEntity.ok(etablissement.get());
-        } catch (Exception e) {
-
-            throw kaladewnManagementException.throwExceptionWithId(EntityType.ETABLISSEMENTSCOLAIRE, ExceptionType.ENTITY_NOT_FOUND, e.getMessage());
-        }
+    @GetMapping("/identifiant/{identifiant}")
+    public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonIdentifiant(@PathVariable String identifiant) {
+        Optional<Etablissement> etablissement = etablissementService.findEtablissementScolaireByIdentiantEtablissement(identifiant);
+        return etablissement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Charge un logo pour un établissement par ID.
+     * @param id identifiant de l'établissement
+     * @param logoFile fichier du logo
+     * @return Etablissement avec logo mis à jour
+     */
     @PostMapping("/{id}/upload-logo")
-    public ResponseEntity<Etablissement> uploadLogo(@PathVariable Long id,
-                                                    @RequestParam("logo") MultipartFile logoFile) {
+    public ResponseEntity<Etablissement> uploadLogo(@PathVariable Long id, @RequestParam("logo") MultipartFile logoFile) {
         Etablissement updatedEtablissement = etablissementService.uploadLogo(id, logoFile);
         return ResponseEntity.ok(updatedEtablissement);
     }
 }
+

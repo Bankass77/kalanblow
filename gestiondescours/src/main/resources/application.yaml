@@ -8,6 +8,8 @@ info: # /actuator/info
       name: GESTION-DES-COURS
 # Mysql config
 spring:
+  application:
+    name: gestiondescours
   datasource:
     url: jdbc:mysql://localhost:3306/kalanblowgestioncoursdb
     username: root

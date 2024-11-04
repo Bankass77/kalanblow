@@ -1,0 +1,102 @@
+server:
+  port: 8080
+env_file:
+  - .env
+# Actuator Endpoint Configurations
+info: # /actuator/info
+  app:
+    description: "The service registry of the  kalanblow-getion-notes application ."
+    application:
+      name: GESTION-DES-NOTES
+# Postgres config
+spring:
+  #profiles:
+     # active: dev
+  application:
+    name: gestiondesincriptions
+  messages:
+    basename: messages
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
+    username: ${POSTGRESDB_USER}
+    password: ${POSTGRESDB_ROOT_PASSWORD}
+  logging:
+    level:
+      org.springframework.web: DEBUG
+      org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+  kafka:
+      bootstrap-servers: ${KAFKA_RESERVATION_BOOTSTRAP_SERVERS:localhost:9092}
+      topic:
+        gestions-des-eleves: gestions-des-notes
+      consumer:
+        group-id: gestions-des-cours
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    connection-timeout: 2000
+server.port: 0
+# OpenAPI
+springdoc:
+  swagger-ui.path: /openapi/swagger-ui.html
+  api-docs.path: /openapi/v3/api-docs
+  packagesToScan: ml.kalanblow.gestiondesnotes
+  pathsToMatch: /**
+api:
+  common:
+    version: 1.0.0
+    title: Kalanblow Rest API gestion des notes.
+    description: Description de l'API...
+    termsOfService: Gestion des Notes
+    licence: " MIT license"
+    licenseUrl: "https://github.com/"
+    externalDocDesc: "Gestion des Notes"
+    externalDocUrl: "https://github.com/"
+    contact:
+      name: "Kalanblow"
+      url: "https://github.com/"
+      email: contact@email.com
+
+responseCodes:
+  ok.description: OK
+  badRequest.description: Bad Request, invalid format of the request. See response message for more information
+  notFound.description: Not found, the specified id does not exist
+  unprocessableEntity.description: Unprocessable entity, input parameters caused the processing to fail. See response message for more information
+
+kalanblow-getion-eleve:
+  get-kalanblow-getion-eleve:
+    description: Returns a composite view of the specified product id
+    notes: |
+    # Normal response If the requested product id is found, the method will return information regarding:1. Gestion Inscription des élèves
+
+    # Expected partial and error responses In the following cases, only a partial response will be created (used to simplify testing of error conditions):
+
+      ## Eleve id 113 200 - Ok, but no recommendations will be returned
+
+     ## Eleve id 213 200 - Ok, but no reviews will be returned
+
+      ## Non-numerical eleve id 400 - A **Bad Request** error will be returned
+
+     ## Eleve id 13 404 - A **Not Found** error will be returned
+
+     ## Negative product ids 422 - An **Unprocessable Entity** error will be returned
+
+  eureka:
+    client:
+      registryWith-eureka: true
+      fetchRegistry: true
+      serviceUrl:
+        defaultZone: http://localhost:8761/eureka
+      instance:
+        hostname: localhost
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:info}
