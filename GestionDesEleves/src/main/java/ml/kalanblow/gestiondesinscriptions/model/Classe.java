@@ -4,10 +4,9 @@ import java.io.Serializable;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -32,10 +31,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-//@JsonInclude(value = JsonInclude.Include.NON_NULL)
-//@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Classe implements Serializable {
     @Id
     @Column(nullable = false)
@@ -49,12 +47,14 @@ public class Classe implements Serializable {
     @Version()
     private Long version;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "etablisementScolaireId", nullable = false)
     @NotNull(message = "{notnull.message}")
+    @JsonIgnore
     private Etablissement etablissement;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anneeScolaireId", nullable = true)
+    @JsonIgnore
     private AnneeScolaire anneeScolaire;
 }

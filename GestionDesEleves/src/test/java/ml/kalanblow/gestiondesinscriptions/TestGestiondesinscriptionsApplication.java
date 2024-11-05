@@ -27,6 +27,7 @@ import org.testcontainers.utility.DockerImageName;
 import ml.kalanblow.gestiondesinscriptions.enums.Gender;
 import ml.kalanblow.gestiondesinscriptions.enums.MaritalStatus;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
+import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
@@ -127,9 +128,9 @@ public class TestGestiondesinscriptionsApplication {
 	@Test
 	public void testFindAdminByIdNotFound(){
 		Exception exception = assertThrows(
-				KaladewnManagementException.class,
+				EntityNotFoundException.class,
 				() -> adminService.supprimerAdministrateur(1L));
-		assertEquals("Admin not exist with id:1", exception.getMessage());
+		assertEquals(Administrateur.class.getName()+" "+ 1 + " "+ "not found!", exception.getMessage());
 	}
 
     @Bean

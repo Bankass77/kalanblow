@@ -1,6 +1,8 @@
 package ml.kalanblow.gestiondesinscriptions.config;
 
 
+import java.util.Locale;
+
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -14,9 +16,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 @Configuration
 public class KaladewnConfig {
@@ -97,7 +102,20 @@ public class KaladewnConfig {
                 .termsOfService(apiTermsOfService).license(new License().name(apiLicense).url(apiLicenseUrl))).externalDocs(new ExternalDocumentation().description(apiDescription).url(apiExternalDocUrl));
 
     }
+    @Bean
+    public LocaleResolver localeResolver() {
+        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.FRANCE);
+        return localeResolver;
+    }
 
+    @Bean
+    public ReloadableResourceBundleMessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
     /**
      * @return
      */

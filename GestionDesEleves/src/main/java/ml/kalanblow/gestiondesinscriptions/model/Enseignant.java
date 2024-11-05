@@ -1,5 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
@@ -50,6 +51,7 @@ public class Enseignant implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "etablisementScolaireId")
+    @JsonIgnore
     private Etablissement etablissement;
 
     @NotNull(message = "{notnull.message}")

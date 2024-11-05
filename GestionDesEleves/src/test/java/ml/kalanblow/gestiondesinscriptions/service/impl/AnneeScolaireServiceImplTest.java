@@ -14,11 +14,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
-import ml.kalanblow.gestiondesinscriptions.exception.AnnneeScolaireAlreadyExistsException;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
+import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.repository.AnneeScolaireRepository;
-import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -75,9 +73,9 @@ class AnneeScolaireServiceImplTest {
     public void findByIdUnSuccess() {
         when(anneeScolaireRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        AnnneeScolaireAlreadyExistsException exp = assertThrows(AnnneeScolaireAlreadyExistsException.class, () -> anneeScolaireService.findById(1L).orElseThrow(()->
-                new AnnneeScolaireAlreadyExistsException(ErrorMessages.ERROR_AnnneeScolaire_NOT_FOUND + 1L)));
-        assertEquals(ErrorMessages.ERROR_AnnneeScolaire_NOT_FOUND +1, exp.getMessage());
+        EntityNotFoundException exp = assertThrows(EntityNotFoundException.class, () -> anneeScolaireService.findById(1L).orElseThrow(()->
+                new EntityNotFoundException( 1L, AnneeScolaire.class)));
+        assertEquals(AnneeScolaire.class.getName() +" "+ 1 + " "+ "not found!", exp.getMessage());
     }
 
     @Test
@@ -137,11 +135,11 @@ class AnneeScolaireServiceImplTest {
 
         when(anneeScolaireRepository.findById(id)).thenReturn(Optional.empty());
 
-        AnnneeScolaireAlreadyExistsException exception = assertThrows(AnnneeScolaireAlreadyExistsException.class, () -> {
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             anneeScolaireService.mettreAJourAnneeScolaire(id, updatedAnneeScolaire);
         });
 
-        assertEquals(ErrorMessages.ERROR_AnnneeScolaire_NOT_FOUND + 99L, exception.getMessage());
+        assertEquals(AnneeScolaire.class.getName() +" "+ 99 + " "+ "not found!", exception.getMessage());
     }
 
     @Test

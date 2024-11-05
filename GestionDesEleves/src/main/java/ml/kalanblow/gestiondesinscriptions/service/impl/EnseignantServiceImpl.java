@@ -22,7 +22,6 @@ import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.repository.EnseignantRepository;
 import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
-import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Transactional
@@ -47,21 +46,16 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     public Enseignant createEnseignant(final Enseignant enseignant) {
 
-        try {
-            if (enseignant.getUser().getRoles() == null || enseignant.getUser().getRoles().isEmpty()){
-                Set<UserRole> roles = new HashSet<>();
-                roles.add(UserRole.TEACHER);
-                enseignant.getUser().setRoles(roles);
-            }else
-                if( !enseignant.getUser().getRoles().contains(UserRole.TEACHER)){
-                    enseignant.getUser().getRoles().add(UserRole.TEACHER);
-                }
-            return enseignantRepository.saveAndFlush(enseignant);
-        } catch (Exception e) {
 
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_ALREADY_FOUND +
-                    "createEnseignant");
+        if (enseignant.getUser().getRoles() == null || enseignant.getUser().getRoles().isEmpty()) {
+            Set<UserRole> roles = new HashSet<>();
+            roles.add(UserRole.TEACHER);
+            enseignant.getUser().setRoles(roles);
+        } else if (!enseignant.getUser().getRoles().contains(UserRole.TEACHER)) {
+            enseignant.getUser().getRoles().add(UserRole.TEACHER);
         }
+        return enseignantRepository.saveAndFlush(enseignant);
+
 
     }
 
@@ -74,13 +68,9 @@ public class EnseignantServiceImpl implements EnseignantService {
     public Enseignant updateEnseignant(final Long enseignantId, final Enseignant enseignant) {
 
         Optional<Enseignant> enseignantToUpdate = enseignantRepository.findByLeMatricule(enseignant.getLeMatricule());
-        try {
-            modelMapper.map(enseignant, enseignantToUpdate);
-        } catch (Exception e) {
 
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Eleve_NOT_FOUND +
-                    "updateEnseignant :");
-        }
+        modelMapper.map(enseignant, enseignantToUpdate);
+
         return enseignantToUpdate.get();
     }
 
@@ -90,12 +80,9 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     public void deleteEnseignant(final Long enseignantId) {
         Optional<Enseignant> enseignant = enseignantRepository.findById(enseignantId);
-        try {
-            enseignant.ifPresent(enseignantRepository::delete);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "deleteEnseignant: ");
-        }
+
+        enseignant.ifPresent(enseignantRepository::delete);
+
     }
 
     /**
@@ -105,16 +92,10 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     public Optional<Enseignant> findByLeMatricule(final String leMatricule) {
 
-        try {
-            Optional<Enseignant> enseignant = enseignantRepository.findByLeMatricule(leMatricule);
-            if (enseignant.isPresent()) {
-                return enseignant;
-            }
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "findByLeMatricule: ");
-        }
-        return Optional.empty();
+
+        Optional<Enseignant> enseignant = enseignantRepository.findByLeMatricule(leMatricule);
+        return enseignant;
+
     }
 
     /**
@@ -123,14 +104,10 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public List<Enseignant> findByEtablissement(final Etablissement etablissement) {
-        try {
-            List<Enseignant> enseignants = enseignantRepository.findByEtablissement(etablissement);
-            return enseignants;
-        } catch (Exception e) {
 
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "findByEtablissement: ");
-        }
+        List<Enseignant> enseignants = enseignantRepository.findByEtablissement(etablissement);
+        return enseignants;
+
     }
 
     /**
@@ -140,16 +117,7 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     public Optional<Enseignant> findById(final Long aLong) {
 
-        try {
-            Optional<Enseignant> enseignant = enseignantRepository.findById(aLong);
-            if (enseignant.isPresent()) {
-                return enseignant;
-            }
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "findById: ");
-        }
-        return Optional.empty();
+        return enseignantRepository.findById(aLong);
     }
 
     /**
@@ -158,18 +126,9 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public Optional<Enseignant> searchAllByEmailIsLike(final Email email) {
-        try {
 
-            Optional<Enseignant> enseignantParEmail = enseignantRepository.findByUserEmail(email.asString());
-            if (enseignantParEmail.isPresent()) {
-                return enseignantParEmail;
-            }
-        } catch (Exception e) {
+        return enseignantRepository.findByUserEmail(email.asString());
 
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "searchAllByEmailIsLike: ");
-        }
-        return Optional.empty();
     }
 
     /**
@@ -179,32 +138,29 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public List<Enseignant> getEnseignantByUserCreatedDateIsBetween(final LocalDate debut, final LocalDate fin) {
-        try {
-            return enseignantRepository.getEnseignantByUserCreatedDateIsBetween(debut, fin);
-        } catch (Exception e) {
 
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "searchAllByEmailIsLike: ");
-        }
+        return enseignantRepository.getEnseignantByUserCreatedDateIsBetween(debut, fin);
+
     }
 
     /**
-     * @param enseignant L'enseignant pour lequel rechercher.
-     * @param jourDisponible les jours de disponibilités spécifiques de l'enseignant
+     * @param enseignant              L'enseignant pour lequel rechercher.
+     * @param jourDisponible          les jours de disponibilités spécifiques de l'enseignant
      * @param heureDebutDisponibilite L'heure de début de disponibilité à rechercher.
-     * @param heureFinDisponibilite L'heure de fin de disponibilité à rechercher.
+     * @param heureFinDisponibilite   L'heure de fin de disponibilité à rechercher.
      * @return un enseignant spécifique avec ses disponibilités
      */
     @Override
     public Optional<Enseignant> getEnseignantByCoursDEnseignementsAndHeureDebutDisponibiliteAndAndHeureFinDisponibilite(final Enseignant enseignant, final DayOfWeek jourDisponible, final LocalTime heureDebutDisponibilite, final LocalTime heureFinDisponibilite) {
 
         Disponibilite disponibilite = enseignant.getHueresDisponibilites().get(jourDisponible);
-        if (disponibilite != null){
-            if (!heureDebutDisponibilite.isAfter(disponibilite.getHeureDebut()) && !heureFinDisponibilite.isAfter(disponibilite.getHeureFin())){
+        if (disponibilite != null) {
+            if (!heureDebutDisponibilite.isAfter(disponibilite.getHeureDebut()) && !heureFinDisponibilite.isAfter(disponibilite.getHeureFin())) {
                 return Optional.of(enseignant); // Enseignant disponible.
             }
         }
-        return Optional.empty(); // pas d'enseignant de disponible trouvé.
+
+        return Optional.empty();
     }
 
 
@@ -213,13 +169,9 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public Set<Enseignant> getAllEnseignants() {
-        try {
-            List<Enseignant> enseignantList = enseignantRepository.findAll();
-            return new HashSet<>(enseignantList);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "getAllEnseignants: ");
-        }
+        List<Enseignant> enseignantList = enseignantRepository.findAll();
+        return new HashSet<>(enseignantList);
+
     }
 
     /**
@@ -227,18 +179,13 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public void deleteById(final Long id) {
+        Optional<Enseignant> enseignant = enseignantRepository.findById(id);
+        enseignantRepository.delete(enseignant.get());
 
-        try {
-            Optional<Enseignant> enseignant = enseignantRepository.findById(id);
-            enseignantRepository.delete(enseignant.get());
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Enseignant_NOT_FOUND +
-                    "deleteById: ");
-        }
     }
 
     /**
-     * @param enseignant 
+     * @param enseignant
      * @param jourDisponible
      * @param heureDebut
      * @param heureFin
@@ -251,9 +198,10 @@ public class EnseignantServiceImpl implements EnseignantService {
 
     /**
      * Récupère les enseignants disponibles pour un jour et une plage horaire spécifique.
+     *
      * @param jourDisponible Le jour de la semaine (ex: LUNDI)
-     * @param heureDebut L'heure de début de la disponibilité
-     * @param heureFin L'heure de fin de la disponibilité
+     * @param heureDebut     L'heure de début de la disponibilité
+     * @param heureFin       L'heure de fin de la disponibilité
      * @return Liste des enseignants disponibles
      */
     public List<Enseignant> getEnseignantsDisponibles(DayOfWeek jourDisponible, LocalTime heureDebut, LocalTime heureFin) {

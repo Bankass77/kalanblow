@@ -12,7 +12,6 @@ import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException
 import ml.kalanblow.gestiondesinscriptions.model.Parent;
 import ml.kalanblow.gestiondesinscriptions.repository.ParentRepository;
 import ml.kalanblow.gestiondesinscriptions.service.ParentService;
-import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Transactional
@@ -45,13 +44,9 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public Optional<Parent> getParentById(final Long id) {
 
-        try {
-            Optional<Parent> parent = parentRepository.findByParentId(id);
-            return parent;
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "getParentById: " + id);
-        }
+        Optional<Parent> parent = parentRepository.findByParentId(id);
+        return parent;
+
     }
 
     /**
@@ -60,29 +55,20 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public List<Parent> getParentsByProfession(final String profession) {
+        return parentRepository.findByProfession(profession);
 
-        try {
-            return parentRepository.findByProfession(profession);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "getParentsByProfession: " + profession);
-        }
     }
 
     /**
-     * @param prenom du parent de l'élève
+     * @param prenom       du parent de l'élève
      * @param nomDeFamille nom de famille du parent
      * @return un parent d'élève
      */
     @Override
     public Optional<Parent> findByUserUserNamePrenomAndUserUserNameNomDeFamille(final String prenom, final String nomDeFamille) {
-        try {
-            return parentRepository.findByUserUserNamePrenomAndUserUserNameNomDeFamille(prenom,
-                      nomDeFamille);
-        }catch ( Exception e){
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "findByUserUserNamePrenomAndUserUserNameNomDeFamille: " + nomDeFamille + " " + prenom);
-        }
+
+        return parentRepository.findByUserUserNamePrenomAndUserUserNameNomDeFamille(prenom,
+                nomDeFamille);
 
     }
 
@@ -92,13 +78,9 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public Optional<Parent> findByUserEmail(final String email) {
-        try {
-            Optional<Parent> parent = parentRepository.findByUserEmail(email);
-            return parent;
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "findByUserEmail: " + email);
-        }
+
+        Optional<Parent> parent = parentRepository.findByUserEmail(email);
+        return parent;
     }
 
     /**
@@ -107,13 +89,8 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public Optional<Parent> findByPhoneNumber(final String phonenumber) {
+        return parentRepository.findByUserPhoneNumber(phonenumber);
 
-        try {
-            return parentRepository.findByUserPhoneNumber(phonenumber);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "findByPhoneNumber: " + phonenumber);
-        }
     }
 
     /**
@@ -123,12 +100,8 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public List<Parent> findParentByEnfants(final Parent parent) {
 
-        try {
-            return parentRepository.findParentByEnfants(parent);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "findParentByEnfants: " + parent);
-        }
+        return parentRepository.findParentByEnfants(parent);
+
     }
 
     /**
@@ -136,12 +109,7 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public void deleteParent(final Long id) {
-        try {
-            parentRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "deleteParent: " + id);
-        }
+        parentRepository.deleteById(id);
     }
 
     /**
@@ -150,14 +118,9 @@ public class ParentServiceImpl implements ParentService {
      */
     @Override
     public Optional<Parent> updateParents(long id, final Parent parent) {
-        try {
-            Optional<Parent> parentToUpdate = parentRepository.findByParentId(id);
-            modelMapper.map(parent, parentToUpdate);
 
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Parent_NOT_FOUND +
-                    "updateParents: " + id);
-        }
-        return Optional.empty();
+        Optional<Parent> parentToUpdate = parentRepository.findByParentId(id);
+        modelMapper.map(parent, parentToUpdate);
+        return parentToUpdate;
     }
 }

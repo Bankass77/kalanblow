@@ -28,7 +28,7 @@ public interface EtablissementRepository extends JpaRepository<Etablissement, Jp
      * @param nomEtablissement Le nom de l'établissement à rechercher.
      * @return L'établissement scolaire correspondant au nom spécifié, s'il existe.
      */
-    Etablissement findByNomEtablissement(String nomEtablissement);
+   Optional <Etablissement> findByNomEtablissement(String nomEtablissement);
 
     /**
      * Recherche un établissement scolaire par son identifiant unique.
@@ -36,7 +36,7 @@ public interface EtablissementRepository extends JpaRepository<Etablissement, Jp
      * @param id L'identifiant de l'établissement à rechercher.
      * @return L'établissement scolaire correspondant à l'identifiant spécifié, s'il existe.
      */
-    Etablissement findByEtablisementScolaireId(long id);
+    Optional<Etablissement> findByEtablisementScolaireId(long id);
 
     /**
      * Recherche un établissement scolaire par son adresse e-mail.

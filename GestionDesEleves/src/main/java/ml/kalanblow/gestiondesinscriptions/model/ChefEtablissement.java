@@ -27,12 +27,12 @@ public class ChefEtablissement implements Serializable {
     private Long chefEtablissementId;
 
     @Column(name = "chefEtablissement_userNmae")
-   private UserName userName;
+    private UserName userName;
 
     @Column(name = "chefEtablissement_email")
-   private Email email;
+    private Email email;
 
     @Column(name = "chefEtablissement_phone")
-   private PhoneNumber phoneNumber;
+    private PhoneNumber phoneNumber;
 }
 

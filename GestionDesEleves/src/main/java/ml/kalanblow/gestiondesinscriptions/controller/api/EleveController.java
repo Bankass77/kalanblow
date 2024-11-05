@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.model.Parent;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/api/eleves")
@@ -33,66 +34,64 @@ public class EleveController {
         this.eleveService = eleveService;
     }
 
-    @GetMapping("/{id}")
+    // Trouver un élève par ID
+    @GetMapping(path = "/id/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Eleve> findById(@PathVariable Long id) {
         Optional<Eleve> eleve = eleveService.FindEleveById(id);
-        log.info("L'élève avec trouvé avec cet id {}", eleve);
         return eleve.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    // Supprimer un élève par ID
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
-        log.info("L'élève  avec l'identifiant {}: ", id + " a été mise supprimé.");
         eleveService.supprimerEleve(id);
     }
 
-    @GetMapping("/{parent}")
-    public ResponseEntity<Eleve> getEleveParents(Parent parent) {
+    // Trouver les élèves associés à un parent spécifique
+    @GetMapping(value = "/parent",  produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Eleve>> getEleveParents(@RequestParam Parent parent) {
         List<Eleve> eleves = eleveService.getEleveParents(parent);
-
-        for (Eleve eleve : eleves) {
-            return ResponseEntity.ok(eleve);
-        }
-        return null;
+        return ResponseEntity.ok(eleves);
     }
 
-    @GetMapping("/{ineNumber}")
+    // Trouver un élève par numéro INE
+    @GetMapping(path = "/ine/{ineNumber}",  produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Eleve> chercherEleve(@PathVariable String ineNumber) {
         Optional<Eleve> optionalEleve = eleveService.findByIneNumber(ineNumber);
-
         return optionalEleve.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @GetMapping("/{nom}/{classe}")
-    public ResponseEntity<Eleve> findByNomAndClasse(@PathVariable String nom, String classe) {
+    // Trouver un élève par nom et classe
+    @GetMapping(value = "/nom-classe", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Eleve>> findByNomAndClasse(@RequestParam String nom, @RequestParam String classe) {
         List<Eleve> eleves = eleveService.findByNomAndClasse(nom, classe);
-        for (Eleve eleve : eleves) {
-            return ResponseEntity.ok(eleve);
-        }
-        return null;
+        return ResponseEntity.ok(eleves);
     }
 
-    @GetMapping("/{phoneNumber}")
-    public ResponseEntity<Eleve> findUserByPhoneNumber(@PathVariable String phoneNumber) {
+    // Trouver un élève par numéro de téléphone
+    @GetMapping(value = "/telephone", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Eleve> findUserByPhoneNumber(@RequestParam String phoneNumber) {
         Optional<Eleve> eleve = eleveService.findUserByPhoneNumber(phoneNumber);
         return eleve.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    @GetMapping("/{nom}/{prenom}")
-    public ResponseEntity<List<Eleve>> findByUserUsername(@PathVariable String nom, @PathVariable String prenom) {
+    // Trouver un élève par nom et prénom
+    @GetMapping(value = "/nom-prenom",  produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Eleve>> findByUserUsername(@RequestParam String nom, @RequestParam String prenom) {
         List<Eleve> eleves = eleveService.findByUserUsername(prenom, nom);
         return ResponseEntity.ok(eleves);
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<Eleve> findUserByEmail(@PathVariable String email) {
+    // Trouver un élève par email
+    @GetMapping(value = "/email", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Eleve> findUserByEmail(@RequestParam String email) {
         Optional<Eleve> eleveOptional = eleveService.findUserByEmail(email);
         return eleveOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     // Endpoint pour récupérer les élèves avec pagination
-    @GetMapping("/listes")
+    @GetMapping(value = "/listes", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<Eleve>> getElevesPagine(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -100,5 +99,4 @@ public class EleveController {
         Page<Eleve> elevesPage = eleveService.getElevesPagine(page, size);
         return ResponseEntity.ok(elevesPage);
     }
-
 }

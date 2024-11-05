@@ -28,7 +28,7 @@ spring:
   kafka:
       bootstrap-servers: ${KAFKA_RESERVATION_BOOTSTRAP_SERVERS:localhost:9092}
       topic:
-        gestions-des-eleves: gestions-des-notes
+        gestions-des-notes: gestions-des-notes
       consumer:
         group-id: gestions-des-cours
   jpa:

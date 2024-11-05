@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.exception.AdministrateurAlreadyExistsException;
 
+import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
+import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.repository.AdministrateurRepository;
 import ml.kalanblow.gestiondesinscriptions.service.AdminService;
-import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -33,29 +33,25 @@ public class AdminServiceImpl implements AdminService {
 
     /**
      * Ajoute un administrateur avec le rôle ADMIN si non défini.
+     *
      * @param administrateur de l'application
      * @return un admin qui peut se connecter au système
      */
     @Override
     public Administrateur ajouterAdministrateur(final Administrateur administrateur) {
-        try {
 
-            if (administrateur.getUser().getRoles().isEmpty()) {
-                administrateur.getUser().setRoles(Set.of(UserRole.ADMIN));
-            } else {
-                administrateur.getUser().getRoles().add(UserRole.ADMIN);
-            }
-            return administrateurRepository.save(administrateur);
-        } catch (Exception e) {
-            log.error("Erreur lors de la création d'un administrateur : {}", e.getMessage());
-
-            throw new AdministrateurAlreadyExistsException(ErrorMessages.ERROR_Admin_ALREADY_FOUND + administrateur);
+        if (administrateur.getUser().getRoles().isEmpty()) {
+            administrateur.getUser().setRoles(Set.of(UserRole.ADMIN));
+        } else {
+            administrateur.getUser().getRoles().add(UserRole.ADMIN);
         }
+        return administrateurRepository.save(administrateur);
     }
 
     /**
      * Authentifie un administrateur par email et mot de passe.
-     * @param email de l'admin
+     *
+     * @param email    de l'admin
      * @param password de l'admin
      * @return un admin authentifié, sinon lève une exception si l'authentification échoue.
      */
@@ -63,57 +59,50 @@ public class AdminServiceImpl implements AdminService {
     public Administrateur authentifierAdministrateur(final String email, final String password) {
         return administrateurRepository.findByUserUserEmailEmail(email)
                 .filter(admin -> admin.getUser().getPassword().equals(password))
-                .orElseThrow(() -> new KaladewnManagementException(ErrorMessages.ERROR_Admin_Authentification_EXCEPTION + email));
+                .orElseThrow(() -> new KaladewnManagementException(email));
     }
 
     /**
      * Supprime un administrateur par identifiant.
+     *
      * @param adminId identifiant de l'admin
      */
     @Override
     public void supprimerAdministrateur(final long adminId) {
         if (!administrateurRepository.existsById(adminId)) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Admin_NOT_FOUND + adminId);
-        }
-        try {
+            throw new EntityNotFoundException(adminId, Administrateur.class);
+        } else {
             administrateurRepository.deleteById(adminId);
-        } catch (Exception e) {
-            log.error("Erreur lors de la suppression de l'administrateur avec ID {} : {}", adminId, e.getMessage());
-            throw  new KaladewnManagementException(ErrorMessages.ERROR_Admin_NOT_FOUND + adminId);
         }
     }
 
     /**
      * Retourne tous les administrateurs.
+     *
      * @return un ensemble d'administrateurs
      */
     @Override
     public Set<Administrateur> getAllAdministrateurs() {
-        try {
-            List<Administrateur> administrateurs = administrateurRepository.findAll();
-            if (administrateurs.isEmpty()) {
-                throw  new KaladewnManagementException(ErrorMessages.ERROR_Admin_NOT_FOUND + "la liste est vide.");
-            }
-            return new HashSet<>(administrateurs);
-        } catch (Exception e) {
-            log.error("Erreur lors de la récupération des administrateurs : {}", e.getMessage());
-            throw  new KaladewnManagementException(ErrorMessages.ERROR_Admin_NOT_FOUND + e.getMessage());
-        }
+        List<Administrateur> administrateurs = administrateurRepository.findAll();
+        return new HashSet<>(administrateurs);
+
     }
 
     /**
      * Met à jour un administrateur existant par ID.
-     * @param id identifiant de l'administrateur
+     *
+     * @param id             identifiant de l'administrateur
      * @param administrateur détails de l'administrateur à mettre à jour
      * @return administrateur mis à jour
      */
     @Override
     public Administrateur updateAdministrateur(final long id, final Administrateur administrateur) {
         Administrateur existingAdmin = administrateurRepository.findById(id)
-                .orElseThrow(() -> new AdministrateurAlreadyExistsException(ErrorMessages.ERROR_Admin_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(id, Eleve.class));
 
         existingAdmin.setUser(administrateur.getUser());
         return administrateurRepository.save(existingAdmin);
+
     }
 
     /**

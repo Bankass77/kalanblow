@@ -1,5 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.service.impl;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
@@ -15,7 +17,6 @@ import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 import ml.kalanblow.gestiondesinscriptions.repository.EtablissementRepository;
 import ml.kalanblow.gestiondesinscriptions.service.EtablissementService;
-import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Slf4j
@@ -46,27 +47,26 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public Etablissement updateEtablissement(final Long etablisementScolaireId, final Etablissement etablissement) {
 
-        Etablissement etab = Optional.ofNullable(etablissementRepository.findByEtablisementScolaireId(etablisementScolaireId))
-                .orElseThrow(() ->  new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND +
-                        "Etablissement non trouvé avec cet id :" + etablisementScolaireId));
+        Optional <Etablissement> etab = Optional.ofNullable(etablissementRepository.findByEtablisementScolaireId(etablisementScolaireId))
+                .orElseThrow(() -> new EntityNotFoundException(etablisementScolaireId, Etablissement.class));
 
-        if (etab != null) {
+        if (etab.isPresent()) {
 
-            etab.setAddress(etablissement.getAddress());
-            etab.setNomEtablissement(etablissement.getNomEtablissement());
-            etab.setEleves(etablissement.getEleves());
-            etab.setEtablissementEmail(etablissement.getEtablissementEmail());
-            etab.setCreatedDate(etablissement.getCreatedDate());
-            etab.setEnseignants(etablissement.getEnseignants());
-            etab.setLastModifiedDate(etablissement.getLastModifiedDate());
-            etab.setPhoneNumber(etablissement.getPhoneNumber());
-            etab.setLogo(etablissement.getLogo());
-            etab.setClasses(etablissement.getClasses());
-            etab.setChefEtablissement(etablissement.getChefEtablissement());
+            etab.get().setAddress(etablissement.getAddress());
+            etab.get().setNomEtablissement(etablissement.getNomEtablissement());
+            etab.get().setEleves(etablissement.getEleves());
+            etab.get().setEtablissementEmail(etablissement.getEtablissementEmail());
+            etab.get().setCreatedDate(etablissement.getCreatedDate());
+            etab.get().setEnseignants(etablissement.getEnseignants());
+            etab.get().setLastModifiedDate(etablissement.getLastModifiedDate());
+            etab.get().setPhoneNumber(etablissement.getPhoneNumber());
+            etab.get().setLogo(etablissement.getLogo());
+            etab.get().setClasses(etablissement.getClasses());
+            etab.get().setChefEtablissement(etablissement.getChefEtablissement());
 
         }
-        assert etab != null;
-        return etablissementRepository.save(etab);
+
+        return etablissementRepository.save(etab.get());
     }
 
     /**
@@ -75,10 +75,9 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public void deleteEtablissement(final Long etablisementScolaireId) {
 
-        Optional<Etablissement> etablissement = Optional.ofNullable(Optional.ofNullable(etablissementRepository
+        Optional<Etablissement> etablissement = Optional.ofNullable(etablissementRepository
                 .findByEtablisementScolaireId(etablisementScolaireId)).orElseThrow(
-                () ->new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND +
-                        " Etablissement non trouvé :" + etablisementScolaireId)));
+                () -> new EntityNotFoundException(etablisementScolaireId, Etablissement.class));
         etablissementRepository.delete(etablissement.get());
     }
 
@@ -87,16 +86,9 @@ public class EtablissementServiceImpl implements EtablissementService {
      * @return
      */
     @Override
-    public Etablissement trouverEtablissementScolaireParSonNom(final String nom) {
+    public Optional <Etablissement> trouverEtablissementScolaireParSonNom(final String nom) {
 
-        if (!nom.isBlank() || !nom.isEmpty()) {
             return etablissementRepository.findByNomEtablissement(nom);
-        } else {
-
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND +
-                    " Etablissement non trouvé avec cet nom  :" + nom);
-        }
-
     }
 
     /**
@@ -104,7 +96,7 @@ public class EtablissementServiceImpl implements EtablissementService {
      * @return
      */
     @Override
-    public Etablissement trouverEtablissementScolaireParSonIdentifiant(final long id) {
+    public Optional <Etablissement> trouverEtablissementScolaireParSonIdentifiant(final long id) {
 
         return etablissementRepository.findByEtablisementScolaireId(id);
     }
@@ -115,16 +107,8 @@ public class EtablissementServiceImpl implements EtablissementService {
      */
     @Override
     public Optional<Etablissement> findEtablissementScolaireByIdentiantEtablissement(final String identifiant) {
-        Optional<Etablissement> etablissement = etablissementRepository.findEtablissementScolaireByIdentiantEtablissement(identifiant);
-        try {
-            if (etablissement.isPresent()) {
 
-                return etablissement;
-            }
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND + "etablissement");
-        }
-        return Optional.empty();
+        return etablissementRepository.findEtablissementScolaireByIdentiantEtablissement(identifiant);
     }
 
     /**
@@ -134,13 +118,7 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public Optional<Etablissement> findEtablissementScolaireByEmail(final Email email) {
 
-        if (!email.getEmail().isEmpty()) {
-
-            return etablissementRepository.findEtablissementScolaireByEtablissementEmail(email);
-        } else {
-
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND + "Email n'est pas trouvé : " + email.getEmail());
-        }
+        return etablissementRepository.findEtablissementScolaireByEtablissementEmail(email);
 
     }
 
@@ -151,12 +129,7 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public Optional<Etablissement> findEtablissementScolaireByPhoneNumber(final PhoneNumber phoneNumber) {
 
-        if (!phoneNumber.asString().isEmpty()) {
-            return etablissementRepository.findEtablissementScolaireByPhoneNumber(phoneNumber);
-        } else {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND +  "Email n'est pas trouvé : " + phoneNumber);
-        }
-
+        return etablissementRepository.findEtablissementScolaireByPhoneNumber(phoneNumber);
     }
 
     /**
@@ -177,20 +150,20 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public Etablissement uploadLogo(final Long etablissementId, final MultipartFile logoFile) {
 
-        try {
-            Etablissement etablissement = Optional.ofNullable(etablissementRepository
-                    .findByEtablisementScolaireId(etablissementId)).orElseThrow(() ->
-                    new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND +
-                           " " + etablissementId));
+        Optional<Etablissement> etablissement = Optional.ofNullable(etablissementRepository
+                .findByEtablisementScolaireId(etablissementId).orElseThrow(() ->
+                        new EntityNotFoundException(etablissementId, Etablissement.class)));
 
-            //Lire l'image et la convertir en tableau d'octets
-            byte[] logBytes = logoFile.getBytes();
-            etablissement.setLogo(logBytes);
-            return etablissementRepository.save(etablissement);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Etablissement_NOT_FOUND +
-                    " " + etablissementId);
+        //Lire l'image et la convertir en tableau d'octets
+        byte[] logBytes = null;
+        try {
+            logBytes = logoFile.getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        etablissement.get().setLogo(logBytes);
+        return etablissementRepository.save(etablissement.get());
+
     }
 
 }

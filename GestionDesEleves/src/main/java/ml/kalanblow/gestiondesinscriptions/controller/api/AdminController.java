@@ -23,6 +23,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Administrateur;
 import ml.kalanblow.gestiondesinscriptions.model.Eleve;
 import ml.kalanblow.gestiondesinscriptions.service.AdminService;
 import ml.kalanblow.gestiondesinscriptions.service.EleveService;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -30,8 +31,8 @@ import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 @Validated
 public class AdminController {
 
-    private final  AdminService adminService;
-    private  final EleveService eleveService;
+    private final AdminService adminService;
+    private final EleveService eleveService;
 
     @Autowired
     public AdminController(final AdminService adminService, final EleveService eleveService) {
@@ -45,8 +46,7 @@ public class AdminController {
         return ResponseEntity.ok(nouvelAdmin);
     }
 
-
-    @PostMapping("/inscrire-eleve")
+    @PostMapping(value = "/inscrire-eleve" ,consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Eleve> create(@RequestBody Eleve eleve) {
         if (eleve == null) {
             return ResponseEntity.badRequest().body(null); // Vérifie que l'objet élève n'est pas nul

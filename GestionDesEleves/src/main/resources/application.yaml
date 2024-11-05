@@ -23,7 +23,9 @@ spring:
   application:
     name: GESTION-DES-INSCRIPTIONS
   messages:
-    basename: messages
+    basename: messages  # Sans extension ni suffixe _fr, pour que toutes les langues soient détectées
+    encoding: UTF-8
+    fallback-to-system-locale: false  # Ignore la locale système pour respecter celle définie ci-dessous
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
@@ -34,7 +36,7 @@ spring:
       org.springframework.web: DEBUG
       org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
   kafka:
-      bootstrap-servers: ${KAFKA_RESERVATION_BOOTSTRAP_SERVERS:localhost:9092}
+      bootstrap-servers: ${kafka:9092:localhost:9092}
       topic:
         gestions-des-eleves: gestions-des-eleves
       consumer:

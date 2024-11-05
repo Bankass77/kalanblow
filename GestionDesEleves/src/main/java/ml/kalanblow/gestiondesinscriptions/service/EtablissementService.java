@@ -26,7 +26,7 @@ public interface EtablissementService {
      * @param nom Le nom de l'établissement scolaire à rechercher.
      * @return L'établissement scolaire correspondant au nom spécifié, s'il existe.
      */
-    Etablissement trouverEtablissementScolaireParSonNom(String nom);
+    Optional <Etablissement> trouverEtablissementScolaireParSonNom(String nom);
 
     /**
      * Trouve un établissement scolaire par son identifiant unique.
@@ -34,7 +34,7 @@ public interface EtablissementService {
      * @param id L'identifiant de l'établissement scolaire à rechercher.
      * @return L'établissement scolaire correspondant à l'identifiant spécifié, s'il existe.
      */
-    Etablissement trouverEtablissementScolaireParSonIdentifiant(long id);
+    Optional <Etablissement> trouverEtablissementScolaireParSonIdentifiant(long id);
 
     /**
      * Trouve un établissement scolaire par son identifiant unique.

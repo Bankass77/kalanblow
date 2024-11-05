@@ -67,8 +67,8 @@ public class EtablissementController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Etablissement> trouverEtablissementScolaire(@PathVariable long id) {
-        Etablissement etablissement = etablissementService.trouverEtablissementScolaireParSonIdentifiant(id);
-        return ResponseEntity.ok(etablissement);
+        Optional<Etablissement> etablissement = etablissementService.trouverEtablissementScolaireParSonIdentifiant(id);
+        return ResponseEntity.ok(etablissement.get());
     }
 
     /**
@@ -134,8 +134,8 @@ public class EtablissementController {
      */
     @GetMapping("/nom/{nom}")
     public ResponseEntity<Etablissement> trouverEtablissementScolaireParSonNom(@PathVariable String nom) {
-        Etablissement etablissement = etablissementService.trouverEtablissementScolaireParSonNom(nom);
-        return ResponseEntity.ok(etablissement);
+        Optional<Etablissement> etablissement = etablissementService.trouverEtablissementScolaireParSonNom(nom);
+        return ResponseEntity.ok(etablissement.get());
     }
 
     /**

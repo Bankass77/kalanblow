@@ -5,14 +5,13 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import ml.kalanblow.gestiondesinscriptions.exception.AnnneeScolaireAlreadyExistsException;
-import ml.kalanblow.gestiondesinscriptions.exception.ClasseAlreadyExistsException;
-import ml.kalanblow.gestiondesinscriptions.exception.EtablissementScolaireAlreadyExistsException;
 
+import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
 import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.model.Classe;
@@ -21,7 +20,6 @@ import ml.kalanblow.gestiondesinscriptions.repository.AnneeScolaireRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.ClasseRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.EtablissementRepository;
 import ml.kalanblow.gestiondesinscriptions.service.ClasseService;
-import ml.kalanblow.gestiondesinscriptions.util.ErrorMessages;
 
 @Service
 @Slf4j
@@ -32,7 +30,6 @@ public class ClasseServiceImpl implements ClasseService {
     private final AnneeScolaireRepository anneeScolaireRepository;
     private final EtablissementRepository etablissementRepository;
     private final ModelMapper modelMapper;
-
 
 
     @Autowired
@@ -54,19 +51,14 @@ public class ClasseServiceImpl implements ClasseService {
         AnneeScolaire anneeScolaire = classe.getAnneeScolaire();
         if (anneeScolaire != null) {
             Optional<AnneeScolaire> anneeScolaireExistant = anneeScolaireRepository.findById(anneeScolaire.getAnneeScolaireId());
-            if (anneeScolaireExistant.isEmpty()) {
-                throw  new KaladewnManagementException(ErrorMessages.ERROR_AnnneeScolaire_ALREADY_FOUND);
-            }
+            classe.setAnneeScolaire(anneeScolaireExistant.get());
         }
 
-        Etablissement etablissementExistant = etablissementRepository.findByEtablisementScolaireId(classe.getEtablissement()
+        Optional<Etablissement> etablissementExistant = etablissementRepository.findByEtablisementScolaireId(classe.getEtablissement()
                 .getEtablisementScolaireId());
-        if (etablissementExistant != null && etablissementExistant.getEtablisementScolaireId() != null) {
-            classe.setEtablissement(etablissementExistant);
-        } else {
-            throw new EtablissementScolaireAlreadyExistsException(ErrorMessages.ERROR_Admin_ALREADY_FOUND + etablissementExistant.getEtablisementScolaireId());
+        if (etablissementExistant.isPresent() && etablissementExistant.get().getEtablisementScolaireId() != null) {
+            classe.setEtablissement(etablissementExistant.get());
         }
-
         return classeRepository.save(classe);
     }
 
@@ -77,30 +69,30 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public Optional<Classe> updateClasse(final Long classeId, final Classe classe) {
-        Optional<Classe> classe1 = Optional.ofNullable(classeRepository.findById(classeId)
-                .orElseThrow(() ->  new ClasseAlreadyExistsException(ErrorMessages.ERROR_Classe_ALREADY_FOUND + classeId)));
+        for (int attempts = 0; attempts < 3; attempts++) {
+            try {
+                Optional<Classe> classe1 = Optional.ofNullable(classeRepository.findById(classeId)
+                        .orElseThrow(() -> new EntityNotFoundException(classeId, Classe.class)));
 
-        if (classe1.isPresent()) {
-            Classe classeToUpdate = classe1.get();
-
-            // Vérifier l'existence de l'année scolaire avant de l'associer
-            AnneeScolaire anneeScolaire = classe.getAnneeScolaire();
-            if (anneeScolaire != null && anneeScolaire.getAnneeScolaireId() != null) {
-                Optional<AnneeScolaire> anneeScolaireExistant = anneeScolaireRepository.findById(anneeScolaire.getAnneeScolaireId());
-                if (!anneeScolaireExistant.isPresent()) {
-                    throw  new AnnneeScolaireAlreadyExistsException(ErrorMessages.ERROR_Classe_ALREADY_FOUND +
-                            "L'année scolaire n'existe pas avec cet id : " + anneeScolaire.getAnneeScolaireId());
+                Classe classeToUpdate = classe1.get();
+                // Vérifier l'existence de l'année scolaire avant de l'associer
+                AnneeScolaire anneeScolaire = classe.getAnneeScolaire();
+                if (anneeScolaire != null && anneeScolaire.getAnneeScolaireId() != null) {
+                    Optional<AnneeScolaire> anneeScolaireExistant = anneeScolaireRepository.findById(anneeScolaire.getAnneeScolaireId());
                 }
-            }
 
-            classeToUpdate.setEtablissement(classe.getEtablissement());
-            classeToUpdate.setNom(classe.getNom());
-            classeToUpdate.setAnneeScolaire(classe.getAnneeScolaire());
-            modelMapper.map(classe, classeToUpdate);
-            return Optional.of(classeRepository.save(classeToUpdate));
+                classeToUpdate.setEtablissement(classe.getEtablissement());
+                classeToUpdate.setNom(classe.getNom());
+                classeToUpdate.setAnneeScolaire(classe.getAnneeScolaire());
+                modelMapper.map(classe, classeToUpdate);
+
+                return Optional.of(classeRepository.save(classeToUpdate));
+            } catch (ObjectOptimisticLockingFailureException e) {
+
+                log.info(e.getMessage());
+            }
         }
-        throw new ClasseAlreadyExistsException(ErrorMessages.ERROR_Classe_ALREADY_FOUND+
-                "La classe n'est pas trouvée avec cet id : " + classeId);
+        throw new RuntimeException("Could not update Classe after multiple attempts.");
     }
 
     /**
@@ -111,10 +103,6 @@ public class ClasseServiceImpl implements ClasseService {
 
         if (classeRepository.existsById(classeId)) {
             classeRepository.deleteById(classeId);
-        } else {
-
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND+
-                    "La classe n'a pas pu être supprimé avec cet id : " + classeId);
         }
 
     }
@@ -124,11 +112,9 @@ public class ClasseServiceImpl implements ClasseService {
      * @return une Classe
      */
     @Override
-    public Optional<Classe> findByClasseById( long classeId) {
+    public Optional<Classe> findByClasseById(long classeId) {
         return Optional.ofNullable(classeRepository.findById(classeId)
-                .orElseThrow(() ->  new  KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND+
-                        "Classe non trouvée pour l'ID : " + classeId
-                )));
+                .orElseThrow(() -> new EntityNotFoundException(classeId, Classe.class)));
     }
 
     /**
@@ -137,14 +123,8 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public List<Classe> findByNom(final String nom) {
-        try {
-            return classeRepository.findByNom(nom);
-        } catch (Exception e) {
+        return classeRepository.findByNom(nom);
 
-            throw  new
-                    KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND+
-                    "findByNom: ");
-        }
     }
 
     /**
@@ -153,12 +133,7 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public List<Classe> findByEtablissement(final Etablissement etablissement) {
-        try {
-            return classeRepository.findByNom(etablissement.getNomEtablissement());
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND+
-                    "findByEtablissement: ");
-        }
+        return classeRepository.findByNom(etablissement.getNomEtablissement());
     }
 
     /**
@@ -167,12 +142,7 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public List<Classe> findByAnneeScolaire(final AnneeScolaire anneeScolaire) {
-        try {
-            return classeRepository.findByAnneeScolaire(anneeScolaire);
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND+
-                    "findByAnneeScolaire: ");
-        }
+        return classeRepository.findByAnneeScolaire(anneeScolaire);
     }
 
     /**
@@ -182,14 +152,8 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public Optional<Classe> findByClasseIdAndEtablissement(final Long classeId, final Etablissement etablissement) {
+        return classeRepository.findByClasseIdAndEtablissement(classeId, etablissement);
 
-        try {
-            return classeRepository.findByClasseIdAndEtablissement(classeId, etablissement);
-        } catch (Exception e) {
-
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND +
-                    "findByClasseIdAndEtablissement: ");
-        }
     }
 
     /**
@@ -198,12 +162,7 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public Long countByEtablissement(final Etablissement etablissement) {
-        try {
-            return classeRepository.countByEtablissement(etablissement);
-        } catch (Exception e) {
-            throw new KaladewnManagementException( ErrorMessages.ERROR_Etablissement_NOT_FOUND +
-                    "countByEtablissement: ");
-        }
+        return classeRepository.countByEtablissement(etablissement);
     }
 
     /**
@@ -212,11 +171,7 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public Optional<Classe> findByClasseName(final String nom) {
-        try {
-            return classeRepository.findByNom(nom).stream().findFirst();
-        } catch (Exception e) {
-            throw new KaladewnManagementException(ErrorMessages.ERROR_Classe_NOT_FOUND +
-                    "findByClasseName: ");
-        }
+        return classeRepository.findByNom(nom).stream().findFirst();
+
     }
 }

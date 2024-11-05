@@ -21,10 +21,10 @@ services:
   kafka:
     image: bitnami/kafka:3.2.0  # Utilisation de l'image Kafka
     ports:
-      - "19092:9092"  # Port fixe pour Kafka
+      - "9092:9092"  # Port fixe pour Kafka
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:19092  # Si Kafka est utilisé en dehors du conteneur
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 # Remplacez `localhost` par `kafka` pour être accessible aux autres conteneurs Docker
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
