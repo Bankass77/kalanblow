@@ -236,7 +236,8 @@
 				<version>3.4.4</version>
 				<configuration>
 					<to>
-						<image>amadouguindo/gestiondeseleves:${project.version}</image>
+						<image>amadouguindo/gestiondesincriptions:${project.version}</image>
+						<credHelper>docker-hub</credHelper>
 					</to>
 				</configuration>
 				<executions>
