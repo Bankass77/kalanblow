@@ -46,7 +46,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class TestGestiondesinscriptionsApplication {
 
-
     @Autowired
     private AdminServiceImpl adminService;
 
@@ -54,21 +53,6 @@ public class TestGestiondesinscriptionsApplication {
     @ClassRule
     public static PostgreSQLContainer<KalanblowPostgresqlContainer> postgreSQLContainer = KalanblowPostgresqlContainer.getInstance();
 
-    /*
-    @DynamicPropertySource
-    public static void ovverideProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.datasource.driver-class-name", postgreSQLContainer::getDriverClassName);
-    }
-
-    @BeforeAll
-    public static void setUp() {
-        postgreSQLContainer.withReuse(true);
-        postgreSQLContainer.start();
-    }
-*/
     @Test
     @Transactional
     void createAdminTest() {
@@ -139,12 +123,6 @@ public class TestGestiondesinscriptionsApplication {
         return new RabbitMQContainer(DockerImageName.parse("rabbitmq:latest"));
     }
 
-
-   /* @AfterAll
-    public static void tearDown() {
-        postgreSQLContainer.stop();
-    }
-*/
     public static void main(String[] args) {
         SpringApplication.from(GestiondesinscriptionsApplication::main).with(TestGestiondesinscriptionsApplication.class).run(args);
     }

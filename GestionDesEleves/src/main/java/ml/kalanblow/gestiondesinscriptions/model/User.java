@@ -25,6 +25,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Embeddable
@@ -34,7 +35,7 @@ import java.util.Set;
 public class User implements Serializable {
 
     @Embedded
-    private UserName userName;
+    private UserName userName = new UserName();
 
     @NotNull(message = "{notnull.message}")
     @JsonDeserialize(using = GenderDeserializer.class)
@@ -61,7 +62,7 @@ public class User implements Serializable {
     @Nullable
     @Embedded
     @Column(name = "user_phoneNumber", unique = true, nullable = false)
-    private PhoneNumber user_phoneNumber;
+    private PhoneNumber user_phoneNumber = new PhoneNumber();
 
     @Column
     @Nullable
@@ -70,7 +71,7 @@ public class User implements Serializable {
     @NotNull(message = "{notnull.message}")
     @Embedded
     @Column(name = "user_email", unique = true, nullable = false)
-    private Email userEmail;
+    private Email userEmail = new Email();
 
     @NotNull(message = "{notnull.message}")
     @Embedded
@@ -86,7 +87,7 @@ public class User implements Serializable {
     @JsonDeserialize(using = UserRoleDeserializer.class)
     @ElementCollection(targetClass = UserRole.class, fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
 
     @NotNull(message = "{notnull.message}")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Le mot de passe doit être fort.")

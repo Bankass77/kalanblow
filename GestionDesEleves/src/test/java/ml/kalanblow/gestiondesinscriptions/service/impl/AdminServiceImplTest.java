@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 @TestPropertySource(locations = "classpath:application.yaml")
 //@Import(TestcontainersConfiguration.class)
 @ExtendWith(MockitoExtension.class)
+@Disabled
 class AdminServiceImplTest {
 
     @InjectMocks

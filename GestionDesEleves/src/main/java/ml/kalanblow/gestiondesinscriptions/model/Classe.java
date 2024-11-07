@@ -19,11 +19,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 @Entity
 @Table(name = "classe")
@@ -42,6 +44,7 @@ public class Classe implements Serializable {
 
     @Column(name = "nom", nullable = false)
     @NotNull(message = "{notnull.message}")
+    @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String nom;
 
     @Version()

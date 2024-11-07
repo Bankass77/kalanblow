@@ -13,7 +13,7 @@ import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
 @Repository
 public interface ClasseRepository extends JpaRepository<Classe, Long> {
     // Trouver par le nom de la classe
-    List<Classe> findByNom(String nom);
+    List<Classe> findClasseByNom(String nom);
     // Trouver par l'établissement
     List<Classe> findByEtablissement(Etablissement etablissement);
 
@@ -26,6 +26,8 @@ public interface ClasseRepository extends JpaRepository<Classe, Long> {
     // Compter le nombre de classes par établissement
     Long countByEtablissement(Etablissement etablissement);
 
-    Optional<Classe> findByClasseId(long id);
+    Optional<Classe> findClasseByClasseId(long id);
+
+    void deleteClasseByClasseId(long id);
 
 }

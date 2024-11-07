@@ -68,7 +68,7 @@ public class ClasseController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClasse(@PathVariable Long classeId) {
         if (classeService.findByClasseById(classeId).isPresent()) {
-            classeService.deleteClasse(classeId);
+            classeService.deleteClasseById(classeId);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
@@ -77,14 +77,14 @@ public class ClasseController {
     // Trouver par le nom de la classe
     @GetMapping("/listes/{nom}")
     public ResponseEntity<List<Classe>> findByNom(@RequestParam String nom) {
-        List<Classe> classes = classeService.findByNom(nom);
+        List<Classe> classes = classeService.findClasseByNom(nom);
         return classes.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(classes);
     }
 
     // Trouver par l'établissement
     @GetMapping("/{etablissement}")
     public ResponseEntity<List<Classe>> findByEtablissement(@RequestParam Etablissement etablissement) {
-        List<Classe> classes = classeService.findByEtablissement(etablissement);
+        List<Classe> classes = classeService.findClasseByEtablissement(etablissement);
         return classes.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(classes);
     }
 

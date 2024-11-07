@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-
 /**
  * Interface pour la gestion des opérations de persistance des établissements scolaires.
  * Cette interface étend JpaRepository pour fournir des fonctionnalités de base de persistance,
@@ -28,7 +27,7 @@ public interface EtablissementRepository extends JpaRepository<Etablissement, Jp
      * @param nomEtablissement Le nom de l'établissement à rechercher.
      * @return L'établissement scolaire correspondant au nom spécifié, s'il existe.
      */
-   Optional <Etablissement> findByNomEtablissement(String nomEtablissement);
+   Optional <Etablissement> findEtablissementByNomEtablissement(String nomEtablissement);
 
     /**
      * Recherche un établissement scolaire par son identifiant unique.

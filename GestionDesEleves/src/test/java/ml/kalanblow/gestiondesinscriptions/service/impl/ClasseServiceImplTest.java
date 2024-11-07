@@ -1,49 +1,46 @@
-/*
 package ml.kalanblow.gestiondesinscriptions.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 
-import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
-import ml.kalanblow.gestiondesinscriptions.model.ChefEtablissement;
 import ml.kalanblow.gestiondesinscriptions.model.Classe;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
-import ml.kalanblow.gestiondesinscriptions.model.PhoneNumber;
 import ml.kalanblow.gestiondesinscriptions.repository.AnneeScolaireRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.ClasseRepository;
 import ml.kalanblow.gestiondesinscriptions.repository.EtablissementRepository;
-import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-//@ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@ActiveProfiles("test")
-class ClasseServiceImplTest {
+public class ClasseServiceImplTest {
 
-    @MockBean
+    @Mock
     private ClasseRepository classeRepository;
-    @MockBean
+
+    @Mock
     private AnneeScolaireRepository anneeScolaireRepository;
-    @MockBean
+
+    @Mock
     private EtablissementRepository etablissementRepository;
-    @MockBean
+
+    @Mock
     private ModelMapper modelMapper;
 
-    @Autowired
+    @InjectMocks
     private ClasseServiceImpl classeService;
 
     @BeforeEach
@@ -53,83 +50,166 @@ class ClasseServiceImplTest {
 
     @Test
     void createClasse() {
-
-        //Arrange:Initialisation de l'objet Classe à tester
         Classe classe = new Classe();
         classe.setNom("6A");
 
-        // Initialisation d'un mock d'anneeScolaire et configuration des retours
         AnneeScolaire anneeScolaire = new AnneeScolaire();
         anneeScolaire.setAnneeScolaireId(1L);
         anneeScolaire.setAnneeScolaireDebut(2024);
         anneeScolaire.setAnneeScolaireFin(2025);
         classe.setAnneeScolaire(anneeScolaire);
-        // Simulation de la récupération de l'année scolaire existante
-        Mockito.when(anneeScolaireRepository.findById(1L)).thenReturn(Optional.of(anneeScolaire));
 
-        // Initialisation d'un mock d'etablissementScolaire
+        when(anneeScolaireRepository.findById(1L)).thenReturn(Optional.of(anneeScolaire));
+
         Etablissement etablissementScolaire = new Etablissement();
         etablissementScolaire.setEtablisementScolaireId(1L);
-        etablissementScolaire.setAddress(new Address());
-        etablissementScolaire.setCreatedDate(LocalDateTime.now());
-        etablissementScolaire.setLastModifiedDate(LocalDateTime.now());
-        etablissementScolaire.setNomEtablissement("Lycéee de jeune Fille");
-        etablissementScolaire.setPhoneNumber(new PhoneNumber("002236768795"));
-        etablissementScolaire.setEnseignants(new HashSet<>());
-        etablissementScolaire.setChefEtablissement(new ChefEtablissement());
-        etablissementScolaire.setIdentiantEtablissement(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
-         classe.setEtablissement(etablissementScolaire);
+        etablissementScolaire.setNomEtablissement("Lycée de jeune Fille");
+        classe.setEtablissement(etablissementScolaire);
 
-        // Simulation de la récupération de l'établissement existant
-        Mockito.when(etablissementRepository.findByEtablisementScolaireId(1L)).thenReturn(etablissementScolaire);
+        when(etablissementRepository.findByEtablisementScolaireId(anyLong())).thenReturn(Optional.of(etablissementScolaire));
+        when(classeRepository.save(any(Classe.class))).thenReturn(classe);
 
-        //Mock
-        Mockito.when(classeRepository.save(any(Classe.class))).thenReturn(classe);
-
-        //Act
         Classe newClasse = classeService.createClasse(classe);
 
-        // Assert: Vérifier que la classe a bien été créée avec les valeurs attendues
-        assertNotNull(newClasse, "La classe ne devrait pas être null après la création.");
-        assertEquals("6A", newClasse.getNom(), "Le nom de la classe devrait être '6A'.");
-        assertEquals("Lycéee de jeune Fille", newClasse.getEtablissement().getNomEtablissement(),
-                "Le nom de l'établissement devrait être 'Lycéee de jeune Fille'.");
+        assertNotNull(newClasse);
+        assertEquals("6A", newClasse.getNom());
+        assertEquals("Lycée de jeune Fille", newClasse.getEtablissement().getNomEtablissement());
     }
-
 
     @Test
     void updateClasse() {
+        Long classeId = 1L;
+        Classe classe = new Classe();
+        classe.setNom("6A");
+
+        when(classeRepository.findById(classeId)).thenReturn(Optional.of(classe));
+        when(classeRepository.save(any(Classe.class))).thenReturn(classe);
+
+        Optional<Classe> updatedClasse = classeService.updateClasse(classeId, classe);
+
+        assertNotNull(updatedClasse);
+        verify(classeRepository, times(1)).save(classe);
     }
 
     @Test
-    void deleteClasse() {
+    void deleteClasseById() {
+        Long classeId = 1L;
+        Classe classe = new Classe();
+        classe.setNom("6A");
+        classe.setClasseId(classeId);
+
+        when(classeRepository.findClasseByClasseId(classeId)).thenReturn(Optional.of(classe));
+
+        //TODO: à corriger l'appel de doNothing()
+        //doNothing().when(classeRepository).deleteClasseById(classe.getClasseId());
+
+        classeService.deleteClasseById(classeId);
+
+        verify(classeRepository, times(1)).deleteClasseByClasseId(classeId);
     }
 
     @Test
     void findByClasseId() {
+        Long classeId = 1L;
+        Classe classe = new Classe();
+        classe.setNom("6A");
+
+        when(classeRepository.findById(classeId)).thenReturn(Optional.of(classe));
+
+        Optional<Classe> foundClasse = classeService.findByClasseById(classeId);
+
+        assertTrue(foundClasse.isPresent());
+        assertEquals("6A", foundClasse.get().getNom());
     }
 
     @Test
     void findByNom() {
+        String nomClasse = "6A";
+        Classe classe = new Classe();
+        classe.setNom(nomClasse);
+
+        when(classeRepository.findClasseByNom(anyString())).thenReturn(List.of(classe));
+
+        Optional<Classe> foundClasse = classeService.findByClasseName(nomClasse);
+
+        assertTrue(foundClasse.isPresent());
+        assertEquals(nomClasse, foundClasse.get().getNom());
     }
 
     @Test
     void findByEtablissement() {
+        // Arrange: Création d'un établissement et de classes associées
+        Long etablissementId = 1L;
+        Etablissement etablissement = new Etablissement();
+        etablissement.setEtablisementScolaireId(etablissementId);
+
+        Classe classe = new Classe();
+        classe.setNom("6A");
+        classe.setEtablissement(etablissement);
+
+        List<Classe> classes = List.of(classe);  // Liste contenant une classe
+
+        // Simulation de la méthode findByEtablissement pour retourner la liste de classes
+        when(classeRepository.findByEtablissement(any(Etablissement.class))).thenReturn(classes);
+
+        // Act: Appel de la méthode de service
+        List<Classe> foundClasses = classeService.findClasseByEtablissement(etablissement);
+
+        // Assert: Vérification que la liste trouvée contient bien la classe attendue
+        assertNotNull(foundClasses);
+        assertEquals(1, foundClasses.size());
+        assertEquals("6A", foundClasses.get(0).getNom());
     }
 
     @Test
     void findByAnneeScolaire() {
+        AnneeScolaire anneeScolaire = new AnneeScolaire();
+        anneeScolaire.setAnneeScolaireId(1L);
+        Classe classe = new Classe();
+        classe.setAnneeScolaire(anneeScolaire);
+        when(classeRepository.findByAnneeScolaire(anneeScolaire)).thenReturn(List.of(classe));
+
+        List<Classe> foundClasse = classeService.findByAnneeScolaire(anneeScolaire);
+
+        assertEquals(1,foundClasse.size());
     }
 
     @Test
     void findByClasseIdAndEtablissement() {
+        Long classeId = 1L;
+        Etablissement etablissement = new Etablissement();
+        etablissement.setEtablisementScolaireId(1L);
+
+        when(classeRepository.findByClasseIdAndEtablissement(classeId, etablissement)).thenReturn(Optional.of(new Classe()));
+
+        Optional<Classe> foundClasse = classeService.findByClasseIdAndEtablissement(classeId, etablissement);
+
+        assertTrue(foundClasse.isPresent());
     }
 
     @Test
     void countByEtablissement() {
+        Etablissement etablissement = new Etablissement();
+        etablissement.setEtablisementScolaireId(1L);
+
+        when(classeRepository.countByEtablissement(etablissement)).thenReturn(10L);
+
+        long count = classeService.countByEtablissement(etablissement);
+
+        assertEquals(10, count);
     }
 
     @Test
     void findByClasseName() {
+        String nomClasse = "6A";
+        Classe classe = new Classe();
+        classe.setNom(nomClasse);
+
+        when(classeRepository.findClasseByNom(nomClasse)).thenReturn(List.of(classe));
+
+        Optional<Classe> foundClasse = classeService.findByClasseName(nomClasse);
+
+        assertTrue(foundClasse.isPresent());
+        assertEquals(nomClasse, foundClasse.get().getNom());
     }
-}*/
+}

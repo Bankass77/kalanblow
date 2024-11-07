@@ -12,7 +12,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.model.Classe;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
@@ -64,7 +63,7 @@ public class ClasseServiceImpl implements ClasseService {
 
     /**
      * @param classeId identifiant de la classe
-     * @param classe   de l'élève
+     * @param classe de l'élève
      * @return une classe mise à jour.
      */
     @Override
@@ -99,12 +98,9 @@ public class ClasseServiceImpl implements ClasseService {
      * @param classeId à supprimer
      */
     @Override
-    public void deleteClasse(final Long classeId) {
-
-        if (classeRepository.existsById(classeId)) {
-            classeRepository.deleteById(classeId);
-        }
-
+    public void deleteClasseById(final Long classeId) {
+         Optional<Classe> classe =classeRepository.findClasseByClasseId(classeId);
+        classe.ifPresent(value -> classeRepository.deleteClasseByClasseId(value.getClasseId()));
     }
 
     /**
@@ -122,8 +118,8 @@ public class ClasseServiceImpl implements ClasseService {
      * @return une classe
      */
     @Override
-    public List<Classe> findByNom(final String nom) {
-        return classeRepository.findByNom(nom);
+    public List<Classe> findClasseByNom(final String nom) {
+        return classeRepository.findClasseByNom(nom);
 
     }
 
@@ -132,8 +128,8 @@ public class ClasseServiceImpl implements ClasseService {
      * @return une classe
      */
     @Override
-    public List<Classe> findByEtablissement(final Etablissement etablissement) {
-        return classeRepository.findByNom(etablissement.getNomEtablissement());
+    public List<Classe> findClasseByEtablissement(final Etablissement etablissement) {
+        return classeRepository.findByEtablissement(etablissement);
     }
 
     /**
@@ -146,7 +142,7 @@ public class ClasseServiceImpl implements ClasseService {
     }
 
     /**
-     * @param classeId      identifiant de la classe
+     * @param classeId identifiant de la classe
      * @param etablissement données
      * @return établissement
      */
@@ -171,7 +167,7 @@ public class ClasseServiceImpl implements ClasseService {
      */
     @Override
     public Optional<Classe> findByClasseName(final String nom) {
-        return classeRepository.findByNom(nom).stream().findFirst();
+        return classeRepository.findClasseByNom(nom).stream().findFirst();
 
     }
 }

@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.controller.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,8 +51,8 @@ public class EleveController {
 
     // Trouver les élèves associés à un parent spécifique
     @GetMapping(value = "/parent",  produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Eleve>> getEleveParents(@RequestParam Parent parent) {
-        List<Eleve> eleves = eleveService.getEleveParents(parent);
+    public ResponseEntity<Set<Eleve>> getEleveParents(@RequestParam Parent parent) {
+        Set<Eleve> eleves = eleveService.getEleveParents(parent);
         return ResponseEntity.ok(eleves);
     }
 

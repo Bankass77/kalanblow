@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Address;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Etablissement;
@@ -88,7 +87,7 @@ public class EtablissementServiceImpl implements EtablissementService {
     @Override
     public Optional <Etablissement> trouverEtablissementScolaireParSonNom(final String nom) {
 
-            return etablissementRepository.findByNomEtablissement(nom);
+            return etablissementRepository.findEtablissementByNomEtablissement(nom);
     }
 
     /**

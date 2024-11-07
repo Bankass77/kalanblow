@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import ml.kalanblow.gestiondesinscriptions.exception.EntityNotFoundException;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 import ml.kalanblow.gestiondesinscriptions.repository.AnneeScolaireRepository;
 import ml.kalanblow.gestiondesinscriptions.service.AnneeScolaireService;
@@ -32,7 +31,7 @@ public class AnneeScolaireServiceImpl implements AnneeScolaireService {
      * @return annneeScoliare
      */
     @Override
-    public Optional<AnneeScolaire> findById(final Long aLong) {
+    public Optional<AnneeScolaire> findAnneeScolaireById(final Long aLong) {
 
         return anneeScolaireRepository.findById(aLong);
     }

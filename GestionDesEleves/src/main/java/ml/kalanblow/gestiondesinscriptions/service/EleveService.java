@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface EleveService {
 
@@ -69,7 +70,7 @@ public interface EleveService {
 
     void supprimerEleve( long id);
 
-    List<Eleve> getEleveParents(final Parent parent);
+    Set<Eleve> getEleveParents(final Parent parent);
 
     Optional<Eleve> FindEleveById(Long id);
 

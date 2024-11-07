@@ -4,13 +4,19 @@ env_file:
   - .env
 # Actuator Endpoint Configurations
 management:
-  endpoint:
-    info:
-      enabled: true
   endpoints:
+    enabled-by-default: false
     web:
       exposure:
-        include: info, health
+        include: 'health, prometheus'
+  endpoint:
+    health:
+      enable: true
+      show-details: always
+    metrics:
+      enable: true
+    prometheus:
+      enabled: true
 info: # /actuator/info
   app:
     description: "The service registry of the  kalanblow-getion-eleve application ."
@@ -36,11 +42,14 @@ spring:
       org.springframework.web: DEBUG
       org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
   kafka:
-      bootstrap-servers: ${kafka:9092:localhost:9092}
+      bootstrap-servers: ${localhost:9092}
       topic:
         gestions-des-eleves: gestions-des-eleves
       consumer:
         group-id: gestions-des-cours
+      backoff:
+        interval: 9000
+        max_failure: 5
   jpa:
     hibernate:
       ddl-auto: update

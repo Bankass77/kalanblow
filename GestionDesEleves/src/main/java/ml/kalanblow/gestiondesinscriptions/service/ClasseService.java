@@ -16,15 +16,15 @@ public interface ClasseService {
     Optional<Classe> updateClasse(Long classeId, Classe classe);
 
     // Supprimer une classe par ID
-    void deleteClasse(Long classeId);
+    void deleteClasseById(Long classeId);
 
     Optional<Classe> findByClasseById(long id);
 
     // Trouver par le nom de la classe
-    List<Classe> findByNom(String nom);
+    List<Classe> findClasseByNom(String nom);
 
     // Trouver par l'établissement
-    List<Classe> findByEtablissement(Etablissement etablissement);
+    List<Classe> findClasseByEtablissement(Etablissement etablissement);
 
     // Trouver par l'année scolaire
     List<Classe> findByAnneeScolaire(AnneeScolaire anneeScolaire);

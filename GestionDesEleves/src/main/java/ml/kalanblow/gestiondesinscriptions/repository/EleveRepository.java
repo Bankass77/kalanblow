@@ -16,6 +16,8 @@ import java.util.Optional;
 @Repository
 public interface EleveRepository  extends JpaRepository<Eleve, Long> {
 
+
+    Optional<Eleve> findEleveByEleveId(long id);
     /**
      *
      * @param nomDeFamille le nom de l'élève
@@ -66,4 +68,5 @@ public interface EleveRepository  extends JpaRepository<Eleve, Long> {
      */
     List<Eleve> findByParents( Parent parent);
 
+    void deleteEleveByEleveId (long id);
 }

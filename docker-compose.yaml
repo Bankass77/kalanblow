@@ -1,11 +1,22 @@
 services:
-  #RabbitMq
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:4.0.3-alpine
     ports:
       - "5672:5672"
-  # Service Zookeeper requis pour Kafka
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8083:8080"  # Access the web UI at http://localhost:8083
+    depends_on:
+      - kafka
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    volumes:
+      - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+
   zookeeper:
     image: bitnami/zookeeper:3.9.2
     ports:
@@ -17,23 +28,57 @@ services:
     volumes:
       - zookeeper_data:/bitnami/zookeeper
 
-  # Service Kafka
   kafka:
-    image: bitnami/kafka:3.2.0  # Utilisation de l'image Kafka
+    image: bitnami/kafka:3.2.0
     ports:
-      - "9092:9092"  # Port fixe pour Kafka
+      - "9092:9092"
     environment:
+      ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 # Remplacez `localhost` par `kafka` pour être accessible aux autres conteneurs Docker
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
     networks:
       - gestiondesincriptions-network
     depends_on:
       - zookeeper
     volumes:
       - kafka_data:/bitnami/kafka
-  # Service Postgres pour la gestion des élèves
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+    depends_on:
+      - kafka
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - gestiondesincriptions-network
+    ports:
+      - "9090:9090"
+    depends_on:
+      - kafka
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - gestiondesincriptions-network
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+
   postgresdb:
     image: postgres
     restart: always
@@ -42,21 +87,21 @@ services:
       - POSTGRES_PASSWORD=${POSTGRESDB_ROOT_PASSWORD}
       - POSTGRES_DB=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
     ports:
-      - "5432:5432"  # Remplacer les variables par un port fixe si nécessaire
+      - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
     env_file:
       - .env
+
   kalanblow-discovery-service:
     build:
-      context: ../kalanblow/Kalanblow-discovery-service  # Répertoire où se trouve le Dockerfile du Discovery Server
+      context: ../kalanblow/Kalanblow-discovery-service
     volumes:
       - ../logs/Kalanblow-discovery-service/:/app/Kalanblow-discovery-service/logs
     ports:
-      - "8761:8761" # Mapping 8761 (host) vers 8761 (container)
+      - "8761:8761"
     networks:
       - gestiondesincriptions-network
-
     environment:
       - eureka.client.register-with-eureka=false
       - eureka.client.fetch-registry=false
@@ -67,9 +112,9 @@ services:
       interval: 4s
       timeout: 2s
       retries: 3
-    # Microservice GestionDesEleves
+
   gestiondeseleves:
-    image: kalanblow/gestiondesincriptions:latest
+    image: amadouguindo/gestiondesincriptions:latest
     depends_on:
       kalanblow-discovery-service:
         condition: service_healthy
@@ -93,7 +138,7 @@ services:
         "spring.datasource.password": "$POSTGRESDB_ROOT_PASSWORD",
         "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.PostgreSQLDialect",
         "spring.jpa.hibernate.ddl-auto": "update"
-     }'
+      }'
     volumes:
       - .m2:/root/.m2
       - ../logs/gestiondeseleves:/app/gestiondeseleves/logs
@@ -110,3 +155,5 @@ volumes:
   db:
   zookeeper_data:
   kafka_data:
+  prometheus_data:
+  grafana_data:

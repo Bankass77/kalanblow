@@ -35,7 +35,6 @@ import ml.kalanblow.gestiondesinscriptions.service.EleveService;
 import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 
-
 @Service
 @Transactional
 @Slf4j
@@ -48,7 +47,6 @@ public class EleveServiceImpl implements EleveService {
     private final AnneeScolaireRepository anneeScolaireRepository;
     private final ModelMapper modelMapper;
     private final KafkaProducer kafkaProducer;
-
 
     @Autowired
     public EleveServiceImpl(final EleveRepository eleveRepository, final ParentRepository parentRepository,
@@ -64,11 +62,12 @@ public class EleveServiceImpl implements EleveService {
 
     }
 
-
     /**
-     * @param nomDeFamille le nom de l'élève
-     * @param prenom       le prénom de l'élève
-     * @return l'élève en fonction de UserName(nom+ nom de famille)
+     * Recherche et retourne une liste d'élèves en fonction de leur prénom et nom de famille.
+     *
+     * @param prenom Le prénom de l'élève.
+     * @param nomDeFamille Le nom de famille de l'élève.
+     * @return Une liste d'élèves correspondant au nom et prénom spécifiés.
      */
     @Override
     public List<Eleve> findByUserUsername(final String prenom, final String nomDeFamille) {
@@ -76,8 +75,11 @@ public class EleveServiceImpl implements EleveService {
     }
 
     /**
-     * @param email de l'élève
-     * @return un élève en fonction de son Email.
+     * Recherche un élève en fonction de son email.
+     *
+     * @param email L'email de l'élève.
+     * @return Un élève correspondant à l'email spécifié.
+     * @throws KaladewnManagementException si aucun élève n'est trouvé avec cet email.
      */
     @Override
     public Optional<Eleve> findUserByEmail(final String email) {
@@ -86,98 +88,108 @@ public class EleveServiceImpl implements EleveService {
     }
 
     /**
-     * @param phoneNumber numéro de l'élève à chercher
-     * @return eleve en fonction de son numéro de téléphone
+     * Recherche un élève en fonction de son numéro de téléphone.
+     *
+     * @param phoneNumber Le numéro de téléphone de l'élève.
+     * @return Un élève correspondant au numéro de téléphone spécifié.
+     * @throws KaladewnManagementException si aucun élève n'est trouvé avec ce numéro.
      */
     @Override
     public Optional<Eleve> findUserByPhoneNumber(final String phoneNumber) {
         return Optional.ofNullable(eleveRepository.findByUserUser_phoneNumberPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new KaladewnManagementException(
-                        "Aucun élève trouvé avec cet numéro de téléphone : " + phoneNumber)));
+                        "Aucun élève trouvé avec ce numéro de téléphone : " + phoneNumber)));
     }
 
     /**
-     * @param nom    de l'élève
-     * @param classe de l'élève
-     * @return elève en fonction de sa classe
+     * Recherche une liste d'élèves en fonction de leur nom et de leur classe.
+     *
+     * @param nom Le nom de famille de l'élève.
+     * @param classe La classe de l'élève.
+     * @return Une liste d'élèves correspondant au nom et à la classe spécifiés.
      */
     @Override
     public List<Eleve> findByNomAndClasse(final String nom, final String classe) {
         List<Eleve> eleves = eleveRepository.findByUserUserNameNomDeFamilleAndClasse(nom, classe);
-        log.info("L'élève avec son ine: {}", eleves);
+        log.info("Liste des élèves selon leur classe: {}", eleves);
         return eleves;
     }
 
     /**
-     * @param ineNumber identifiant de l'élève
-     * @return un élève
+     * Recherche un élève en fonction de son identifiant national (INE).
+     *
+     * @param ineNumber L'identifiant national de l'élève.
+     * @return Un élève correspondant à l'identifiant spécifié.
      */
     @Override
     public Optional<Eleve> findByIneNumber(final String ineNumber) {
         Optional<Eleve> eleve = eleveRepository.findByIneNumber(ineNumber);
         log.info("L'élève avec son ine: {}", eleve);
         return eleve;
-
     }
 
     /**
-     * @param eleve qui doit être inscrit
-     * @return nouveau Elève
+     * Inscrit un nouvel élève dans le système.
+     * <p>
+     * Cette méthode effectue plusieurs étapes : validation de l'unicité de l'email, génération d'un
+     * identifiant national, calcul de l'âge, association des parents, établissement, classe et année scolaire,
+     * puis sauvegarde de l'élève. Un message Kafka est également envoyé pour notifier l'inscription.
+     *
+     * @param eleve L'élève à inscrire.
+     * @return L'élève nouvellement inscrit.
+     * @throws KaladewnManagementException si l'email de l'élève n'est pas unique.
      */
     @Override
     public Eleve inscrireNouveauEleve(final Eleve eleve) {
-
+        validateUniqueEmail(eleve);
         eleve.setIneNumber(KaladewnUtility.generatingandomAlphaNumericStringWithFixedLength());
         eleve.setAge(CalculateUserAge.calculateAge(eleve.getDateDeNaissance()));
 
-        // Définir ou mettre à jour le rôle de l'élève
-        if (eleve.getUser().getRoles() == null || eleve.getUser().getRoles().isEmpty()) {
-            setStudentRole(eleve.getUser());
-        } else {
-            setStudentRole(eleve.getUser());
-        }
+        setStudentRole(eleve.getUser());
 
         Set<Parent> parents = processParents(eleve);
         eleve.setParents(parents);
 
-        // Vérifier si l'établissement est null avant de travailler avec
-        Etablissement etablissement =processEtablissement(eleve);
+        Etablissement etablissement = processEtablissement(eleve);
         eleve.setEtablissement(etablissement);
 
-        // Vérification de la classe de l'élève
         Classe classe = processClasse(eleve, etablissement);
+        if (classe == null) {
+            log.error("Classe non trouvée ou invalide pour l'élève : {}", eleve);
+            throw new IllegalStateException("La classe de l'élève n'est pas valide");
+        }
         eleve.setClasseActuelle(classe);
-        // Vérifier et persister l'année scolaire
-        AnneeScolaire anneeScolaire = processAnneeScolaire(classe);
-        eleve.setHistoriqueScolaires(List.of(anneeScolaire));
 
-        // Persister l'élève dans la base de données
+        assert classe != null;
+        AnneeScolaire anneeScolaire = processAnneeScolaire(classe);
+        List<AnneeScolaire> anneeScolaires = new ArrayList<>();
+        anneeScolaires.add(anneeScolaire);
+        eleve.setHistoriqueScolaires(anneeScolaires);
         Eleve savedEleve = eleveRepository.save(eleve);
         log.info("Inscription d'un nouvel élève: {}", savedEleve);
 
-        // Étape 2 : Essayer d'envoyer un message Kafka
         try {
             kafkaProducer.sendMessage("Un nouvel élève a été créé", savedEleve.getEleveId().toString());
         } catch (Exception e) {
             log.error("Échec de l'envoi du message Kafka pour l'élève ID : {}", savedEleve.getEleveId(), e);
-            // Vous pouvez aussi enregistrer cette erreur pour une tentative ultérieure si nécessaire
         }
 
         return savedEleve;
     }
 
     /**
-     * @param id       de l'élève à mettre à jour
-     * @param eleveDto èlève à modifier
-     * @return élève mise à jour
+     * Met à jour les informations d'un élève existant.
+     *
+     * @param id L'identifiant de l'élève à mettre à jour.
+     * @param eleveDto Les nouvelles informations de l'élève.
+     * @return L'élève mis à jour.
+     * @throws EntityNotFoundException si l'élève avec l'identifiant spécifié n'existe pas.
      */
-
     @Override
     public Eleve mettreAjourEleve(final Long id, final Eleve eleveDto) {
-        Eleve eleveToUpdate = eleveRepository.findById(id)
+        Eleve eleveToUpdate = eleveRepository.findEleveByEleveId(id)
                 .orElseThrow(() -> new EntityNotFoundException(id, Eleve.class));
 
-        // Mapper uniquement les champs non-nuls de eleveDto vers eleveToUpdate
         modelMapper.map(eleveDto, eleveToUpdate);
 
         Eleve updatedEleve = eleveRepository.save(eleveToUpdate);
@@ -187,38 +199,43 @@ public class EleveServiceImpl implements EleveService {
     }
 
     /**
-     * @param id de l'élève à supprimer
+     * Supprime un élève en fonction de son identifiant.
+     *
+     * @param id L'identifiant de l'élève à supprimer.
+     * @throws EntityNotFoundException si l'élève avec l'identifiant spécifié n'existe pas.
      */
     @Override
     public void supprimerEleve(final long id) {
-
-        if (eleveRepository.existsById(id)) {
-            eleveRepository.deleteById(id);
+        Optional<Eleve> eleve =eleveRepository.findEleveByEleveId(id);
+        if (eleve.isPresent()) {
+            eleveRepository.deleteEleveByEleveId(id);
         } else {
-
             throw new EntityNotFoundException(id, Eleve.class);
         }
     }
 
     /**
-     * @param parent de l'élève
-     * @return une liste d'élèves
+     * Recherche les élèves associés à un parent.
+     *
+     * @param parent Le parent dont on souhaite récupérer la liste des élèves.
+     * @return Une liste d'élèves associés au parent spécifié.
      */
     @Override
-    public List<Eleve> getEleveParents(final Parent parent) {
-
+    public Set<Eleve> getEleveParents(final Parent parent) {
         List<Eleve> eleves = eleveRepository.findByParents(parent);
-        log.info("Liste des élève par parent: {}", eleves);
-        return eleves;
+        log.info("Liste des élèves par parent: {}", eleves);
+        return  new HashSet<>(eleves);
     }
 
     /**
-     * @param id de l'élève
-     * @return un élève
+     * Recherche un élève en fonction de son identifiant.
+     *
+     * @param id L'identifiant de l'élève.
+     * @return Un élève correspondant à l'identifiant spécifié.
      */
     @Override
     public Optional<Eleve> FindEleveById(final Long id) {
-        Optional<Eleve> eleve = eleveRepository.findById(id);
+        Optional<Eleve> eleve = eleveRepository.findEleveByEleveId(id);
         log.info("L'élève avec cet id: {}", eleve);
         return eleve;
     }
@@ -247,55 +264,147 @@ public class EleveServiceImpl implements EleveService {
         return eleveRepository.findByClasseActuelle(classe, pageable);
     }
 
+    /**
+     * Assigne le rôle étudiant à l'utilisateur s'il ne l'a pas déjà.
+     * <p>
+     * Si l'utilisateur n'a pas de rôles assignés, un ensemble de rôles est créé
+     * avec le rôle {@link UserRole#STUDENT}. Si des rôles existent déjà,
+     * le rôle étudiant est simplement ajouté.
+     *
+     * @param user L'utilisateur auquel le rôle étudiant doit être assigné.
+     */
     private void setStudentRole(User user) {
         if (user.getRoles() == null) {
             user.setRoles(new HashSet<>(Collections.singleton(UserRole.STUDENT)));
-        } else if (!user.getRoles().contains(UserRole.STUDENT)) {
-            user.getRoles().add(UserRole.STUDENT);
-        }
+        } else user.getRoles().add(UserRole.STUDENT);
     }
 
+    /**
+     * Traite et retourne l'ensemble des parents d'un élève, en vérifiant leur existence dans la base de données.
+     * <p>
+     * Pour chaque parent associé à l'élève, la méthode vérifie si le parent existe dans le dépôt
+     * en fonction de son identifiant. Si le parent n'existe pas, il est sauvegardé dans le dépôt.
+     *
+     * @param eleve L'élève dont on cherche le(s) parent(s).
+     * @return Un ensemble de parents de l'élève, sauvegardés dans le dépôt si nécessaire.
+     */
     private Set<Parent> processParents(Eleve eleve) {
         Set<Parent> parents = new HashSet<>();
         if (eleve.getParents() != null) {
             for (Parent parent : eleve.getParents()) {
                 if (parent != null && parent.getUser() != null && parent.getUser().getUserName() != null) {
-                    Optional<Parent> parentExistant = parentRepository.findByParentId(parent.getParentId());
-                    parents.add(parentExistant.orElseGet(() -> parentRepository.save(parent)));
+                    // Vérifie si parentId est non null avant de continuer
+                    if (parent.getParentId() != null) {
+                        Optional<Parent> parentExistant = parentRepository.findByParentId(parent.getParentId());
+                        parents.add(parentExistant.orElseGet(() -> parentRepository.save(parent)));
+                    } else {
+                        // Logique pour gérer le cas où parentId est null
+                        log.warn("Parent sans identifiant (parentId null) détecté, création possible...");
+                        parents.add(parentRepository.save(parent));
+                    }
                 }
             }
         }
         return parents;
     }
 
+    /**
+     * Associe un élève à un établissement, en le créant si nécessaire.
+     * <p>
+     * Si un établissement avec l'identifiant scolaire ou le nom de l'établissement fourni existe déjà dans le dépôt,
+     * il est retourné. Sinon, un nouvel établissement est sauvegardé dans le dépôt.
+     *
+     * @param eleve L'élève à inscrire au sein d'un établissement.
+     * @return L'établissement associé à l'élève, créé ou récupéré du dépôt.
+     */
     private Etablissement processEtablissement(Eleve eleve) {
         Etablissement etablissement = eleve.getEtablissement();
         if (etablissement != null && etablissement.getEtablisementScolaireId() != null) {
             return etablissementRepository.findByEtablisementScolaireId(etablissement.getEtablisementScolaireId())
                     .orElseGet(() -> etablissementRepository.save(etablissement));
+        } else if (etablissement != null && etablissement.getNomEtablissement() != null) {
+            return etablissementRepository.findEtablissementByNomEtablissement(etablissement.getNomEtablissement())
+                    .orElseGet(() -> etablissementRepository.save(etablissement));
         }
         return null;
     }
 
+    /**
+     * Associe un élève à une classe dans un établissement donné, en créant la classe si nécessaire.
+     * <p>
+     * Si une classe associée à l'élève existe déjà dans le dépôt, elle est retournée.
+     * Sinon, une nouvelle classe est créée et associée à l'établissement avant d'être sauvegardée dans le dépôt.
+     *
+     * @param eleve L'élève pour lequel on souhaite associer une classe.
+     * @param etablissement L'établissement scolaire auquel la classe est associée.
+     * @return La classe associée à l'élève et à l'établissement, créée ou récupérée du dépôt.
+     */
     private Classe processClasse(Eleve eleve, Etablissement etablissement) {
         Classe classe = eleve.getClasseActuelle();
         if (classe != null) {
-            return classeRepository.findById(classe.getClasseId())
-                    .orElseGet(() -> {
-                        classe.setEtablissement(etablissement);
-                        return classeRepository.save(classe);
-                    });
+            List<Classe> result = classeRepository.findClasseByNom(classe.getNom());
+
+            if (result.isEmpty()) {
+                log.info("Classe introuvable, création d'une nouvelle classe avec le nom : {}", classe.getNom());
+                classe.setEtablissement(etablissement);  // Associer l'établissement si nécessaire
+                Classe savedClasse = classeRepository.save(classe); // Sauvegarde de la nouvelle classe
+                log.info("Nouvelle classe créée et sauvegardée avec ID : {}", savedClasse.getClasseId());
+                return savedClasse;
+            } else {
+                Classe foundClasse = result.get(0);
+                if (foundClasse.getClasseId() == null) {
+                    log.error("Classe trouvée sans identifiant (classeId) pour le nom : {}", classe.getNom());
+                    throw new IllegalStateException("La classe de l'élève n'est pas valide - classeId manquant pour le nom : " + classe.getNom());
+                }
+                return foundClasse;
+            }
+        }
+        log.error("Classe actuelle de l'élève non définie ou null");
+        return null;
+    }
+
+    /**
+     * Associe une année scolaire à une classe, en créant l'année scolaire si nécessaire.
+     * <p>
+     * Si l'année scolaire de la classe existe déjà dans le dépôt, elle est retournée.
+     * Sinon, une nouvelle année scolaire est sauvegardée dans le dépôt.
+     *
+     * @param classe La classe pour laquelle on souhaite associer une année scolaire.
+     * @return L'année scolaire associée à la classe, créée ou récupérée du dépôt.
+     */
+    private AnneeScolaire processAnneeScolaire(Classe classe) {
+        AnneeScolaire anneeScolaire = classe.getAnneeScolaire();
+        if (anneeScolaire != null) {
+            // Vérifier si l'ID de l'année scolaire est non nul avant de chercher dans le repository
+            if (anneeScolaire.getAnneeScolaireId() != null) {
+                return anneeScolaireRepository.findAnneeScolaireByAnneeScolaireId(anneeScolaire.getAnneeScolaireId())
+                        .orElseGet(() -> anneeScolaireRepository.save(anneeScolaire));
+            } else {
+                // Si anneeScolaireId est nul, loguez-le et sauvegardez l'année scolaire
+                log.warn("Année scolaire sans identifiant (anneeScolaireId null) détectée, création d'une nouvelle année scolaire...");
+                return anneeScolaireRepository.save(anneeScolaire);
+            }
         }
         return null;
     }
 
-    private AnneeScolaire processAnneeScolaire(Classe classe) {
-        AnneeScolaire anneeScolaire = classe.getAnneeScolaire();
-        if (anneeScolaire != null) {
-            return anneeScolaireRepository.findById(anneeScolaire.getAnneeScolaireId())
-                    .orElseGet(() -> anneeScolaireRepository.save(anneeScolaire));
+    /**
+     * Valide l'unicité de l'email de l'élève, en s'assurant qu'il n'est pas déjà utilisé par un autre élève.
+     * <p>
+     * Si un autre élève avec le même email existe, une exception est levée pour indiquer
+     * l'existence d'un email en double.
+     *
+     * @param eleve L'élève dont on souhaite valider l'email.
+     * @throws KaladewnManagementException si l'email est déjà utilisé par un autre élève.
+     */
+    private void validateUniqueEmail(Eleve eleve) {
+        if (eleve.getUser() != null && eleve.getUser().getUserEmail() != null) {
+            String email = eleve.getUser().getUserEmail().getEmail();
+            Optional<Eleve> existingEleve = eleveRepository.findByUserUserEmailEmail(email);
+            if (existingEleve.isPresent() && !existingEleve.get().getEleveId().equals(eleve.getEleveId())) {
+                throw new KaladewnManagementException("Un élève avec cet email existe déjà : " + email);
+            }
         }
-        return null;
     }
 
 }

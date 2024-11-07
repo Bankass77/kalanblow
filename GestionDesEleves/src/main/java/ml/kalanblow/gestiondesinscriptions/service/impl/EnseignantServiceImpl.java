@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import ml.kalanblow.gestiondesinscriptions.enums.UserRole;
-import ml.kalanblow.gestiondesinscriptions.exception.KaladewnManagementException;
 import ml.kalanblow.gestiondesinscriptions.model.Disponibilite;
 import ml.kalanblow.gestiondesinscriptions.model.Email;
 import ml.kalanblow.gestiondesinscriptions.model.Enseignant;
@@ -27,10 +26,8 @@ import ml.kalanblow.gestiondesinscriptions.service.EnseignantService;
 @Transactional
 public class EnseignantServiceImpl implements EnseignantService {
 
-
     private final EnseignantRepository enseignantRepository;
     private final ModelMapper modelMapper;
-
 
     @Autowired
     public EnseignantServiceImpl(final EnseignantRepository enseignantRepository, ModelMapper modelMapper) {
@@ -46,7 +43,6 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     public Enseignant createEnseignant(final Enseignant enseignant) {
 
-
         if (enseignant.getUser().getRoles() == null || enseignant.getUser().getRoles().isEmpty()) {
             Set<UserRole> roles = new HashSet<>();
             roles.add(UserRole.TEACHER);
@@ -55,7 +51,6 @@ public class EnseignantServiceImpl implements EnseignantService {
             enseignant.getUser().getRoles().add(UserRole.TEACHER);
         }
         return enseignantRepository.saveAndFlush(enseignant);
-
 
     }
 
@@ -66,11 +61,8 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public Enseignant updateEnseignant(final Long enseignantId, final Enseignant enseignant) {
-
         Optional<Enseignant> enseignantToUpdate = enseignantRepository.findByLeMatricule(enseignant.getLeMatricule());
-
         modelMapper.map(enseignant, enseignantToUpdate);
-
         return enseignantToUpdate.get();
     }
 
@@ -80,9 +72,7 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     public void deleteEnseignant(final Long enseignantId) {
         Optional<Enseignant> enseignant = enseignantRepository.findById(enseignantId);
-
         enseignant.ifPresent(enseignantRepository::delete);
-
     }
 
     /**
@@ -91,8 +81,6 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public Optional<Enseignant> findByLeMatricule(final String leMatricule) {
-
-
         Optional<Enseignant> enseignant = enseignantRepository.findByLeMatricule(leMatricule);
         return enseignant;
 
@@ -104,7 +92,6 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public List<Enseignant> findByEtablissement(final Etablissement etablissement) {
-
         List<Enseignant> enseignants = enseignantRepository.findByEtablissement(etablissement);
         return enseignants;
 
@@ -116,7 +103,6 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public Optional<Enseignant> findById(final Long aLong) {
-
         return enseignantRepository.findById(aLong);
     }
 
@@ -126,7 +112,6 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public Optional<Enseignant> searchAllByEmailIsLike(final Email email) {
-
         return enseignantRepository.findByUserEmail(email.asString());
 
     }
@@ -138,7 +123,6 @@ public class EnseignantServiceImpl implements EnseignantService {
      */
     @Override
     public List<Enseignant> getEnseignantByUserCreatedDateIsBetween(final LocalDate debut, final LocalDate fin) {
-
         return enseignantRepository.getEnseignantByUserCreatedDateIsBetween(debut, fin);
 
     }

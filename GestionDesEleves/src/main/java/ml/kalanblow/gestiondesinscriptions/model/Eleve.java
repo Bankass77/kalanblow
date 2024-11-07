@@ -6,13 +6,11 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -86,6 +84,7 @@ public class Eleve implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "etablisementScolaireId", nullable = false, referencedColumnName = "etablisementScolaireId")
+    @JsonIgnore
     private Etablissement etablissement;
 
     @Column
@@ -98,6 +97,7 @@ public class Eleve implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "classeId", nullable = false,referencedColumnName ="classeId" )
+    @JsonIgnore
     private Classe classeActuelle;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)

@@ -7,7 +7,7 @@ import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 
 public interface AnneeScolaireService {
 
-    Optional<AnneeScolaire> findById(Long aLong);
+    Optional<AnneeScolaire> findAnneeScolaireById(Long aLong);
 
     Optional<AnneeScolaire> findByAnneeScolaireDebutAndAnneeScolaireFin(int debut, int fin);
 

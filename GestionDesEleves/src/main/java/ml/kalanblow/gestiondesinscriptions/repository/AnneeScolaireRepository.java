@@ -11,10 +11,8 @@ import ml.kalanblow.gestiondesinscriptions.model.AnneeScolaire;
 @Repository
 public interface AnneeScolaireRepository  extends JpaRepository<AnneeScolaire, Long> {
 
-    @Override
-    Optional<AnneeScolaire> findById(Long aLong);
+    Optional<AnneeScolaire> findAnneeScolaireByAnneeScolaireId(Long aLong);
 
-    @Override
     List<AnneeScolaire> findAll();
 
     Optional<AnneeScolaire> findByAnneeScolaireDebutAndAnneeScolaireFin(int debut, int fin);

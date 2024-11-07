@@ -1,5 +1,6 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Data
 @Entity
 @JsonDeserialize(builder = Parent.ParentBuilder.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Parent implements Serializable {
 
     @Id

@@ -1,14 +1,15 @@
 package ml.kalanblow.gestiondesinscriptions.model;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import ml.kalanblow.gestiondesinscriptions.validation.ValidationGroupOne;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,6 +26,7 @@ import java.util.Set;
 @Entity
 @Table(name = "school")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Etablissement implements Serializable {
 
     @Id
@@ -37,12 +39,12 @@ public class Etablissement implements Serializable {
 
     @Column
     @NotNull(message = "{notnull.message}")
-    @Size(min = 2, max = 200)
+    @Size(min = 1, max = 200, groups = ValidationGroupOne.class)
     private String nomEtablissement;
 
     @NotNull
     @Column
-    @Size(min = 8, max = 18)
+    @Size(min = 10, max = 200, groups = ValidationGroupOne.class)
     private String identiantEtablissement;
 
     @NotNull(message = "{notnull.message}")
@@ -69,7 +71,7 @@ public class Etablissement implements Serializable {
     @Column(name = "etablissement_created_date", nullable = false, updatable = false)
     @JsonIgnore
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedDate
@@ -95,5 +97,6 @@ public class Etablissement implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "chef_etablissement_id", referencedColumnName = "chefEtablissementId")
+    @JsonIgnore
     private ChefEtablissement chefEtablissement;
 }

@@ -2,6 +2,7 @@ package ml.kalanblow.gestiondesinscriptions.model;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Entity;
@@ -23,6 +24,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

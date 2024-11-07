@@ -50,7 +50,7 @@ public class AnneeScolaireControlaire {
 
     @GetMapping(value = "/{anneeSclaireId}")
     public ResponseEntity<AnneeScolaire> getAnneeSclaire(@PathVariable long anneeSclaireId) {
-        Optional<AnneeScolaire> anneeScolaire = anneeScolaireService.findById(anneeSclaireId);
+        Optional<AnneeScolaire> anneeScolaire = anneeScolaireService.findAnneeScolaireById(anneeSclaireId);
         return ResponseEntity.ofNullable(anneeScolaire.get());
     }
 
@@ -65,7 +65,7 @@ public class AnneeScolaireControlaire {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteResource(@PathVariable long id) {
 
-        Optional<AnneeScolaire> anneeScolaire = anneeScolaireService.findById(id);
+        Optional<AnneeScolaire> anneeScolaire = anneeScolaireService.findAnneeScolaireById(id);
 
         if (anneeScolaire.isPresent()) {
             return ResponseEntity.status(HttpStatus.FOUND).build();
