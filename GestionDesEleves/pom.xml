@@ -237,7 +237,7 @@
 				<configuration>
 					<to>
 						<image>amadouguindo/gestiondesincriptions:${project.version}</image>
-						<!--<credHelper>docker-hub</credHelper>-->
+						<credHelper>docker-hub</credHelper>
 					</to>
 				</configuration>
 				<executions>
