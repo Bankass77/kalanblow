@@ -3,7 +3,6 @@ package ml.kalanblow.gestiondesinscriptions.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -49,12 +47,10 @@ import ml.kalanblow.gestiondesinscriptions.util.CalculateUserAge;
 import ml.kalanblow.gestiondesinscriptions.util.KaladewnUtility;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 @TestPropertySource(locations = "classpath:application.yaml")
 //@Import(TestcontainersConfiguration.class)
 @EmbeddedKafka(bootstrapServersProperty = "spring.kafka.bootstrap-servers")
-@Disabled
 class EleveServiceImplTest {
 
     @Mock

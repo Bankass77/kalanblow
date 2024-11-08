@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,14 +30,11 @@ import ml.kalanblow.gestiondesinscriptions.repository.AdministrateurRepository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestPropertySource(locations = "classpath:application.yaml")
 //@Import(TestcontainersConfiguration.class)
 @ExtendWith(MockitoExtension.class)
-@Disabled
 class AdminServiceImplTest {
 
     @InjectMocks
