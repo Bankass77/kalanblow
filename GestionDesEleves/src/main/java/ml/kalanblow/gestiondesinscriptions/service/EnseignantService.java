@@ -36,7 +36,7 @@ public interface EnseignantService {
      * @param aLong L'identifiant unique de l'enseignant à rechercher.
      * @return Une instance facultative (Optional) de l'enseignant trouvé, ou une instance vide si aucun enseignant correspondant n'est trouvé.
      */
-    Optional<Enseignant> findById(Long aLong);
+    Optional<Enseignant> findEnseignantById(Long aLong);
 
 
     /**
@@ -67,14 +67,10 @@ public interface EnseignantService {
      * @param heureFinDisponibilite   L'heure de fin de disponibilité à rechercher.
      * @return Une instance facultative (Optional) de l'enseignant trouvé, ou une instance vide si aucun enseignant correspondant n'est trouvé.
      */
-    Optional<Enseignant> getEnseignantByCoursDEnseignementsAndHeureDebutDisponibiliteAndAndHeureFinDisponibilite(Enseignant enseignant, DayOfWeek jourDisponible, LocalTime heureDebutDisponibilite, LocalTime heureFinDisponibilite);
+    Optional<Enseignant> getEnseignantByCoursDEnseignementsAndHeureDebutDisponibiliteAndAndHeureFinDisponibilite
+    (Enseignant enseignant, DayOfWeek jourDisponible, LocalTime heureDebutDisponibilite, LocalTime heureFinDisponibilite);
 
     Set<Enseignant> getAllEnseignants();
-
-    void deleteById(Long id);
-
-    Optional<Enseignant> getEnseignantByCoursDEnseignementsAndHeureDebutDisponibiliteAndHeureFinDisponibilite(
-            Enseignant enseignant, DayOfWeek jourDisponible, LocalTime heureDebut, LocalTime heureFin);
 
     /**
      * Récupère les enseignants disponibles pour un jour et une plage horaire spécifique.

@@ -87,7 +87,7 @@ public class EnseignantController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Enseignant> recupererEnseignant(@PathVariable long id) {
-        Optional<Enseignant> enseignant = enseignantService.findById(id);
+        Optional<Enseignant> enseignant = enseignantService.findEnseignantById(id);
         return enseignant.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -100,7 +100,7 @@ public class EnseignantController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> supprimerEnseignant(@PathVariable long id) {
-        Optional<Enseignant> enseignant = enseignantService.findById(id);
+        Optional<Enseignant> enseignant = enseignantService.findEnseignantById(id);
         if (enseignant.isPresent()) {
             enseignantService.deleteEnseignant(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
