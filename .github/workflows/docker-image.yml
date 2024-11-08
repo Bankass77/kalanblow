@@ -21,5 +21,7 @@ jobs:
 
     - name: Build and push Docker images with Docker Compose
       run: |
+        export TAG=${GITHUB_SHA::7}
         docker-compose -f docker-compose.yaml build
         docker-compose -f docker-compose.yaml push
+
