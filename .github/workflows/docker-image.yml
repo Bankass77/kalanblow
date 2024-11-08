@@ -1,0 +1,21 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag gestiondesincriptions:latest
+        # Étape 4 : Pousser l'image vers Docker Hub
+    - name: Push Docker image
+      run: docker push gestiondesincriptions:latest
